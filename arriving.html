@@ -8,18 +8,19 @@
     <link rel="stylesheet" href="css/progress.css">
     <script src="js/common.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-auto-next="arrived.html" data-delay="8000">
+    <div id="wrap" class="map-page" data-auto-next="arrived.html" data-delay="5000">
         <div class="map-view" style="--map-height: 129px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
             <div class="map-me" data-static-pos data-place="me" style="--x: 126px; --y: 15px; --heading: 177deg;">
                 <img src="image/map-heading.svg" alt="">
             </div>
-            <div class="map-car" data-static-pos data-place="car" style="--x: 236px; --y: 21px;">
+            <div class="map-car" data-static-pos data-place="car" data-move-to="pickup" data-move-range="0.6,1" data-move-ms="5000" style="--x: 236px; --y: 21px;">
                 <img src="image/ud-taxi.png" alt="">
             </div>
             <span class="map-chip map-chip--primary" data-static-pos style="--x: 96px; --y: 54px;">탑승 위치</span>
@@ -28,6 +29,9 @@
             <a href="index.html" class="btn-float btn-float--back" aria-label="홈으로">
                 <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
+            <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
+                <span class="icon icon--location-current" aria-hidden="true"></span>
+            </button>
         </div>
 
         <section class="sheet sheet--assigned">
@@ -41,7 +45,7 @@
             <p class="pickup-row">
                 <img class="pin-pickup-icon" src="image/pin-pickup.svg" alt="">
                 <span class="pickup-row__label">탑승 위치</span>
-                <span class="pickup-row__place">아파트 정문 · 경사로 쪽</span>
+                <span class="pickup-row__place" data-trip="pickup-spot">101동 정문 · 경사로 쪽</span>
             </p>
 
             <p class="boarding-note">
@@ -52,15 +56,15 @@
             <div class="card driver-card">
                 <img class="driver-card__photo" src="image/driver.png" alt="">
                 <div class="driver-card__text">
-                    <p class="driver-card__plate">12가 3456</p>
-                    <p class="driver-card__info">김○○ 기사님 · 흰색 PV5</p>
+                    <p class="driver-card__plate">33바 5521</p>
+                    <p class="driver-card__info">강○○ 기사님 · 흰색 PV5</p>
                 </div>
                 <img class="driver-card__car" src="image/pv5-side.png" alt="">
             </div>
 
             <p class="riders-row">
                 <span class="riders-row__label">탑승 인원</span>
-                <span class="riders-row__value">본인 + 동승자 1명</span>
+                <span class="riders-row__value" data-trip="riders">본인 + 동승자 1명</span>
             </p>
 
             <div class="contact-block">

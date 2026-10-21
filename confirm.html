@@ -9,6 +9,7 @@
     <script src="js/common.js"></script>
     <script src="js/ride-info.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
 </head>
 <body>
@@ -29,7 +30,7 @@
                 <span class="map-pin__dot"></span>
             </div>
             <div class="map-pin map-pin--destination" data-static-pos data-place="destination" style="--x: 189px; --y: 72px;">
-                <span class="map-pin__label">목적지까지 이동 약 48분</span>
+                <span class="map-pin__label" data-trip="ride-pin">목적지까지 이동 약 13분</span>
                 <span class="map-pin__stem"></span>
                 <span class="map-pin__dot"></span>
             </div>
@@ -37,6 +38,9 @@
             <a href="pickup.html" class="btn-float btn-float--back" data-history-back aria-label="뒤로">
                 <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
+            <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
+                <span class="icon icon--location-current" aria-hidden="true"></span>
+            </button>
         </div>
 
         <section class="sheet sheet--confirm">
@@ -53,7 +57,7 @@
                     <p class="vehicle-card__desc">탑승정보에 맞는 차를 배정해요</p>
                 </div>
                 <div class="vehicle-card__fare">
-                    <p class="vehicle-card__price">2,100원</p>
+                    <p class="vehicle-card__price" data-trip="fare">1,500원</p>
                     <p class="vehicle-card__fare-note">예상 · 바우처</p>
                 </div>
             </div>
@@ -63,23 +67,23 @@
                     <p class="confirm-route__item confirm-route__item--start">
                         <span class="confirm-route__dot" aria-hidden="true"></span>
                         <span class="confirm-route__label">출발</span>
-                        <span class="confirm-route__place">OO아파트 101동 정문</span>
+                        <span class="confirm-route__place" data-trip="pickup-name">래미안베라힐즈 101동 정문</span>
                     </p>
                     <p class="confirm-route__item">
                         <span class="confirm-route__dot" aria-hidden="true"></span>
                         <span class="confirm-route__label">도착</span>
-                        <span class="confirm-route__place">OO주민센터</span>
+                        <span class="confirm-route__place" data-trip="dest-name">은평성모병원</span>
                     </p>
                     <img class="confirm-route__line" src="image/route-connector.svg" alt="">
                 </div>
-                <p class="confirm-time">목적지까지 약 48분 · 24.6km (차에 탄 뒤 기준)</p>
+                <p class="confirm-time" data-trip="ride-time">목적지까지 약 13분 · 4.9km (차에 탄 뒤 기준)</p>
             </div>
 
             <ul class="card summary-list">
                 <li class="summary-list__row">
                     <div class="summary-list__text">
                         <p class="summary-list__title">탑승 인원</p>
-                        <p class="summary-list__value summary-list__value--medium" data-riders-text>본인 1명 · 동승자 없음</p>
+                        <p class="summary-list__value summary-list__value--medium" data-riders-text data-trip="riders-confirm">본인 1명 · 동승자 없음</p>
                     </div>
                     <button type="button" class="summary-list__edit" data-open-riders>변경</button>
                 </li>
@@ -106,7 +110,7 @@
         </section>
 
         <div class="bottom-action bottom-action--call">
-            <a href="waiting.html" class="btn btn--primary">호출하기</a>
+            <a href="waiting.html" class="btn btn--primary" data-call>호출하기</a>
         </div>
     </div>
 
@@ -168,7 +172,7 @@
 
         // 탑승 인원: "변경" → 시트에서 고르고 "적용"하면 행 문구만 바뀜 (닫으면 기존 인원 유지)
         var sheet = document.getElementById('riders-sheet');
-        var applied = 0;
+        var applied = Trip.get().riders || 0;
 
         function selected() {
             return Number(sheet.querySelector('input[name="riders"]:checked').value);
@@ -198,9 +202,15 @@
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
         sheet.querySelector('[data-apply-riders]').addEventListener('click', function () {
             applied = selected();
+            Trip.set({ riders: applied });
             document.querySelector('[data-riders-text]').textContent =
                 '본인 1명 · ' + (applied ? '동승자 ' + applied + '명' : '동승자 없음');
             closeSheet();
+        });
+
+        // 호출하기: 접수 시각과 인원을 저장하고 진행 화면으로
+        document.querySelector('[data-call]').addEventListener('click', function () {
+            Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null });
         });
     </script>
 </body>

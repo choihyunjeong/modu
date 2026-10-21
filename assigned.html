@@ -8,18 +8,19 @@
     <link rel="stylesheet" href="css/progress.css">
     <script src="js/common.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page">
+    <div id="wrap" class="map-page" data-auto-next="arriving.html" data-delay="8000">
         <div class="map-view" style="--map-height: 304px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
             <div class="map-me" data-static-pos data-place="me" style="--x: 126px; --y: 15px; --heading: 177deg;">
                 <img src="image/map-heading.svg" alt="">
             </div>
-            <div class="map-car" data-static-pos data-place="car" style="--x: 236px; --y: 21px;">
+            <div class="map-car" data-static-pos data-place="car" data-move-to="pickup" data-move-range="0,0.6" data-move-ms="8000" style="--x: 236px; --y: 21px;">
                 <img src="image/ud-taxi.png" alt="">
             </div>
             <span class="map-chip map-chip--primary" data-static-pos style="--x: 96px; --y: 54px;">탑승 위치</span>
@@ -28,6 +29,9 @@
             <a href="index.html" class="btn-float btn-float--back" aria-label="홈으로">
                 <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
+            <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
+                <span class="icon icon--location-current" aria-hidden="true"></span>
+            </button>
         </div>
 
         <section class="sheet sheet--assigned sheet--grouped">
@@ -52,14 +56,14 @@
                             <span class="icon icon--sm icon--location" aria-hidden="true"></span>
                             탑승 위치
                         </span>
-                        <span class="pickup-row__place">101동 정문 · 경사로 쪽</span>
+                        <span class="pickup-row__place" data-trip="pickup-spot">101동 정문 · 경사로 쪽</span>
                     </p>
                     <p class="pickup-row">
                         <span class="pickup-row__label">
                             <span class="icon icon--sm icon--user-multiple" aria-hidden="true"></span>
                             탑승 인원
                         </span>
-                        <span class="pickup-row__place">본인 + 동승자 1명</span>
+                        <span class="pickup-row__place" data-trip="riders">본인 + 동승자 1명</span>
                     </p>
                 </div>
             </div>
@@ -119,7 +123,7 @@
                     <span class="icon icon--sm icon--send" aria-hidden="true"></span>
                 </button>
                 <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
-                    101동 정문 경사로 쪽에 있어요
+                    <span><span data-trip="pickup-short">101동 정문</span>에 있어요</span>
                     <span class="icon icon--sm icon--send" aria-hidden="true"></span>
                 </button>
                 <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
@@ -145,14 +149,14 @@
     </div>
 
     <!-- N2 곧 도착 알림 (미리보기 · 누르면 도착 임박 화면) -->
-    <template data-push data-delay="6000">
+    <template data-push data-delay="5000">
         <a href="arriving.html" class="push-card">
             <span class="push-card__head">
                 <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
                 <span>10:13</span>
             </span>
             <span class="push-card__title">UD택시가 약 3분 후 도착해요</span>
-            <span class="push-card__body">33바 5521 · 흰색 PV5<br>탑승 위치: 101동 정문 경사로 쪽</span>
+            <span class="push-card__body">33바 5521 · 흰색 PV5<br>탑승 위치: <span data-trip="pickup-spot">101동 정문 · 경사로 쪽</span></span>
         </a>
     </template>
 

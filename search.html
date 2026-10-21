@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/search.css">
     <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
+    <script src="js/map.js"></script>
 </head>
 <body>
     <div id="wrap">
@@ -36,6 +39,14 @@
 
         <hr class="divider">
 
+        <!-- 검색 결과 (입력하면 자주 가는 곳·최근 목적지 대신 보임) -->
+        <section class="place-block" data-search-results hidden>
+            <h2 class="blind">검색 결과</h2>
+            <ul class="place-list place-list--recent" data-result-list aria-live="polite"></ul>
+            <p class="search-empty" data-result-empty hidden>검색 결과가 없어요. 다른 이름으로 찾아보세요.</p>
+        </section>
+
+        <div data-search-default>
         <!-- 자주 가는 곳 -->
         <section class="place-block">
             <div class="place-block__head">
@@ -44,29 +55,29 @@
             </div>
             <ul class="place-list">
                 <li>
-                    <a href="pickup.html" class="place-list__item">
+                    <a href="pickup.html" class="place-list__item" data-dest="집" data-lat="37.6029" data-lng="126.9360">
                         <span class="place-list__tile"><span class="icon icon--home" aria-hidden="true"></span></span>
                         <span class="place-list__text">
                             <strong class="place-list__name">집</strong>
-                            <span class="place-list__addr">은평구 통일로 000 · OO아파트 101동</span>
+                            <span class="place-list__addr">은평구 통일로 630 · 래미안베라힐즈</span>
                         </span>
                     </a>
                 </li>
                 <li>
-                    <a href="pickup.html" class="place-list__item">
+                    <a href="pickup.html" class="place-list__item" data-dest="은평성모병원" data-lat="37.6334" data-lng="126.9176">
                         <span class="place-list__tile"><span class="icon icon--location-star" aria-hidden="true"></span></span>
                         <span class="place-list__text">
-                            <strong class="place-list__name">OO주민센터</strong>
-                            <span class="place-list__addr">송파구 올림픽로 000 · 정문</span>
+                            <strong class="place-list__name">은평성모병원</strong>
+                            <span class="place-list__addr">은평구 통일로 1021 · 본관 정문</span>
                         </span>
                     </a>
                 </li>
                 <li>
-                    <a href="pickup.html" class="place-list__item">
+                    <a href="pickup.html" class="place-list__item" data-dest="녹번동 주민센터" data-lat="37.6022" data-lng="126.9298">
                         <span class="place-list__tile"><span class="icon icon--recently-viewed" aria-hidden="true"></span></span>
                         <span class="place-list__text">
-                            <strong class="place-list__name">은평장애인복지관</strong>
-                            <span class="place-list__addr">은평구 ○○로 000 · 정문 앞</span>
+                            <strong class="place-list__name">녹번동 주민센터</strong>
+                            <span class="place-list__addr">은평구 은평로 · 은평구청 옆</span>
                         </span>
                     </a>
                 </li>
@@ -83,25 +94,25 @@
             </div>
             <ul class="place-list place-list--recent">
                 <li class="place-list__item">
-                    <a href="pickup.html" class="place-list__text">
+                    <a href="pickup.html" class="place-list__text" data-dest="연신내역 3번 출구" data-lat="37.6179" data-lng="126.9225">
                         <span class="place-list__name">연신내역 3번 출구</span>
-                        <span class="place-list__addr">은평구 통일로 000</span>
+                        <span class="place-list__addr">은평구 통일로 · 3·6호선 연신내역</span>
                     </a>
                     <button type="button" class="place-list__map" aria-label="연신내역 3번 출구 지도에서 보기">
                         <span class="icon icon--xs icon--map" aria-hidden="true"></span>
                     </button>
                 </li>
                 <li class="place-list__item">
-                    <a href="pickup.html" class="place-list__text">
-                        <span class="place-list__name">불광천 공영주차장</span>
-                        <span class="place-list__addr">은평구 증산로 000</span>
+                    <a href="pickup.html" class="place-list__text" data-dest="녹번역 3호선" data-lat="37.6011" data-lng="126.9331">
+                        <span class="place-list__name">녹번역 3호선</span>
+                        <span class="place-list__addr">은평구 통일로 · 녹번동</span>
                     </a>
-                    <button type="button" class="place-list__map" aria-label="불광천 공영주차장 지도에서 보기">
+                    <button type="button" class="place-list__map" aria-label="녹번역 3호선 지도에서 보기">
                         <span class="icon icon--xs icon--map" aria-hidden="true"></span>
                     </button>
                 </li>
                 <li class="place-list__item">
-                    <a href="pickup.html" class="place-list__text">
+                    <a href="pickup.html" class="place-list__text" data-dest="은평구청" data-lat="37.6028" data-lng="126.9292">
                         <span class="place-list__name">은평구청</span>
                         <span class="place-list__addr">은평구 은평로 195</span>
                     </a>
@@ -111,6 +122,74 @@
                 </li>
             </ul>
         </section>
+        </div>
     </div>
+
+    <script>
+        // 목적지 고르기: 이번 호출의 목적지로 저장하고 탑승 위치 확인으로
+        function chooseDest(name, addr, lat, lng) {
+            Trip.start({ name: name, addr: addr, lat: Number(lat), lng: Number(lng) });
+            location.href = 'pickup.html';
+        }
+
+        document.querySelectorAll('[data-dest]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                chooseDest(a.dataset.dest, '', a.dataset.lat, a.dataset.lng);
+            });
+        });
+
+        // 장소 검색 (카카오 장소 검색 · 내 위치 가까운 곳 먼저)
+        var input = document.getElementById('destination');
+        var results = document.querySelector('[data-search-results]');
+        var list = document.querySelector('[data-result-list]');
+        var empty = document.querySelector('[data-result-empty]');
+        var defaults = document.querySelector('[data-search-default]');
+        var timer = null;
+
+        function render(items) {
+            list.innerHTML = '';
+            empty.hidden = items.length > 0;
+            items.forEach(function (place) {
+                var li = document.createElement('li');
+                li.className = 'place-list__item';
+                var a = document.createElement('a');
+                a.href = 'pickup.html';
+                a.className = 'place-list__text';
+                var name = document.createElement('span');
+                name.className = 'place-list__name';
+                name.textContent = place.place_name;
+                var addr = document.createElement('span');
+                addr.className = 'place-list__addr';
+                addr.textContent = place.road_address_name || place.address_name;
+                a.appendChild(name);
+                a.appendChild(addr);
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    chooseDest(place.place_name, addr.textContent, place.y, place.x);
+                });
+                li.appendChild(a);
+                list.appendChild(li);
+            });
+        }
+
+        function search(query) {
+            MapKit.load(function () {
+                var me = Trip.places().me;
+                new kakao.maps.services.Places().keywordSearch(query, function (data, status) {
+                    if (input.value.trim() !== query) return;
+                    render(status === kakao.maps.services.Status.OK ? data : []);
+                }, { location: new kakao.maps.LatLng(me.lat, me.lng), size: 10 });
+            });
+        }
+
+        input.addEventListener('input', function () {
+            var query = input.value.trim();
+            clearTimeout(timer);
+            results.hidden = !query;
+            defaults.hidden = !!query;
+            if (query) timer = setTimeout(function () { search(query); }, 300);
+        });
+    </script>
 </body>
 </html>

@@ -6,10 +6,13 @@
 document.addEventListener('DOMContentLoaded', function () {
     var auto = document.querySelector('[data-auto-next]');
     if (auto) {
-        setTimeout(function () {
+        var next = function () {
+            // 시트(메시지·대기 현황)를 보고 있으면 닫을 때까지 조금씩 미룸
+            if (document.body.classList.contains('is-modal-open')) return setTimeout(next, 1500);
             // replace: 자동으로 바뀐 상태는 뒤로 가기 기록에 남기지 않음
             location.replace(auto.dataset.autoNext);
-        }, Number(auto.dataset.delay || 8000));
+        };
+        setTimeout(next, Number(auto.dataset.delay || 8000));
     }
 
     document.querySelectorAll('template[data-push]').forEach(function (tpl) {

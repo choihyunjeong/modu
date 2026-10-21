@@ -8,11 +8,16 @@
     <link rel="stylesheet" href="css/progress.css">
     <script src="js/common.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
+    <script>
+        // 탑승 시각 기록 (도착 예상·이동 완료 시각 계산에 씀)
+        if (!Trip.get().boardedAt) Trip.set({ boardedAt: Date.now() });
+    </script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-auto-next="trip-done.html" data-delay="10000">
+    <div id="wrap" class="map-page" data-auto-next="trip-done.html" data-delay="8000">
         <div class="map-view" style="--map-height: 485px; --map-img-top: -121px;" data-map data-center="riding" data-route="pickup,destination">
             <img class="map-view__static" src="image/map-static.png" alt="">
             <img class="map-view__route map-view__route--long" src="image/map-route-long.svg" alt="" style="--x: 119px; --y: 181px;" data-static-pos>
@@ -30,7 +35,7 @@
                 <span class="map-pin__stem"></span>
                 <span class="map-pin__dot"></span>
             </div>
-            <div class="map-car map-car--riding" data-static-pos data-place="riding" style="--x: 160px; --y: 265px;">
+            <div class="map-car map-car--riding" data-static-pos data-place="riding" data-move-to="destination" data-move-range="0,0.9" data-move-ms="8000" style="--x: 160px; --y: 265px;">
                 <img src="image/ud-taxi.png" alt="">
             </div>
 
@@ -38,7 +43,7 @@
                 <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
             <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
-                <span class="icon icon--sm icon--current-location" aria-hidden="true"></span>
+                <span class="icon icon--location-current" aria-hidden="true"></span>
             </button>
         </div>
 
@@ -47,11 +52,11 @@
 
             <div class="riding-head">
                 <h1 class="assigned-title">목적지로 이동 중</h1>
-                <span class="riding-head__eta">약 4분 남음</span>
+                <span class="riding-head__eta" data-trip="ride-left">약 4분 남음</span>
             </div>
             <div class="riding-info">
-                <p>한양대학교병원 정문 · 10:32 도착 예상</p>
-                <p>12가 3456 · 흰색 PV5 · 김○○ 기사님</p>
+                <p><span data-trip="dest-name">은평성모병원</span> · <span data-trip="arrive-clock">오후 3:43 도착 예상</span></p>
+                <p>33바 5521 · 흰색 PV5 · 강○○ 기사님</p>
             </div>
 
             <div class="btn-line-row">

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/call.css">
     <script src="js/common.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
 </head>
 <body>
@@ -45,7 +46,7 @@
             <fieldset class="pickup-options">
                 <legend class="blind">탑승 위치</legend>
                 <label class="pickup-option">
-                    <input type="radio" class="radio" name="pickup" value="apt-main" checked>
+                    <input type="radio" class="radio" name="pickup" value="apt-main" data-name="래미안베라힐즈 101동 정문" data-short="101동 정문" data-spot="101동 정문 · 경사로 쪽" data-lat="37.6029" data-lng="126.9360" data-x="62" data-y="220" checked>
                     <span class="pickup-option__text">
                         <span class="pickup-option__title">
                             101동 정문
@@ -55,7 +56,7 @@
                     </span>
                 </label>
                 <label class="pickup-option">
-                    <input type="radio" class="radio" name="pickup" value="back-parking">
+                    <input type="radio" class="radio" name="pickup" value="back-parking" data-name="래미안베라힐즈 후문 주차장 입구" data-short="후문 주차장 입구" data-spot="후문 주차장 입구" data-lat="37.6037" data-lng="126.9348" data-x="168" data-y="132">
                     <span class="pickup-option__text">
                         <span class="pickup-option__title">후문 주차장 입구</span>
                         <span class="pickup-option__desc">턱 없어요 · 차가 설 자리 좁아요 · 슬로프 공간 확인 안 됨 · 집에서 약 120m</span>
@@ -65,9 +66,30 @@
 
             <div class="sheet-actions">
                 <button type="button" class="btn btn--gray btn--md">다른 위치 선택하기</button>
-                <a href="confirm.html" class="btn btn--primary">이 위치로 부를게요</a>
+                <a href="confirm.html" class="btn btn--primary" data-confirm-pickup>이 위치로 부를게요</a>
             </div>
         </section>
     </div>
+    <script>
+        // 탑승 위치를 고르면 지도 핀이 그 자리로 옮겨가고, 이번 호출에 저장
+        var pin = document.querySelector('.map-pin[data-place="pickup"]');
+        function choosePickup(radio) {
+            var d = radio.dataset;
+            var pos = { lat: Number(d.lat), lng: Number(d.lng) };
+            Trip.set({ pickupName: d.name, pickupShort: d.short, pickupSpot: d.spot, pickupPos: pos });
+            MapKit.setPlace('pickup', pos);
+            // 정적 지도일 때는 디자인 좌표로 옮김
+            pin.style.setProperty('--x', d.x + 'px');
+            pin.style.setProperty('--y', d.y + 'px');
+        }
+        document.querySelectorAll('input[name="pickup"]').forEach(function (radio) {
+            radio.addEventListener('change', function () { choosePickup(radio); });
+        });
+        // 이전에 고른 탑승 위치가 있으면 그대로 선택해 둠
+        var saved = Trip.get().pickupShort;
+        var current = saved && document.querySelector('input[name="pickup"][data-short="' + saved + '"]');
+        if (current) current.checked = true;
+        choosePickup(document.querySelector('input[name="pickup"]:checked'));
+    </script>
 </body>
 </html>

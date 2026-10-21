@@ -235,7 +235,7 @@ button {
 .icon--microphone-01 { --icon-url: url("../image/microphone-01.svg"); }
 .icon--map { --icon-url: url("../image/map.svg"); }
 .icon--recently-viewed { --icon-url: url("../image/recently-viewed.svg"); }
-.icon--location-current { --icon-url: url("../image/location--current.svg"); }
+.icon--location-current { --icon-url: url("../image/tabler_current-location.svg"); }
 .icon--checkmark-outline { --icon-url: url("../image/checkmark--outline.svg"); }
 .icon--location-star { --icon-url: url("../image/location--star.svg"); }
 .icon--information { --icon-url: url("../image/information.svg"); }
@@ -695,7 +695,7 @@ fieldset {
 .btn-float--locate {
     right: var(--space-20);
     bottom: calc(22px + var(--sheet-overlap, 16px));
-    color: var(--color-icon);
+    color: var(--color-text-secondary);
 }
 
 /* 지도 아래에서 올라온 시트 */

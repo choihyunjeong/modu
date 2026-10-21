@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="css/progress.css">
     <script src="js/common.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page">
+    <div id="wrap" class="map-page" data-auto-next="assigned.html" data-delay="8000">
         <div class="map-view" style="--map-height: 244px; --map-img-top: -235px;" data-map data-center="pickup">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
@@ -27,7 +28,7 @@
             <div class="map-pin map-pin--wait" data-static-pos data-place="pickup" style="--x: 34px; --y: 88px;">
                 <span class="map-pin__label">
                     <span class="icon icon--xs icon--user" aria-hidden="true"></span>
-                    여기서 탑승 · 101동 정문
+                    여기서 탑승 · <span data-trip="pickup-short">101동 정문</span>
                 </span>
                 <span class="map-pin__dot"></span>
             </div>
@@ -35,6 +36,9 @@
             <a href="index.html" class="btn-float btn-float--back btn-float--line" aria-label="홈으로">
                 <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
+            <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
+                <span class="icon icon--location-current" aria-hidden="true"></span>
+            </button>
             <button type="button" class="btn-pill-float">호출 취소</button>
         </div>
 
@@ -47,7 +51,7 @@
                     <span class="status-head__icon"><span class="icon-placeholder" aria-hidden="true"></span></span>
                     <div class="status-head__text">
                         <h1 class="status-head__title">차량을 찾고 있어요</h1>
-                        <p class="status-head__desc">접수 후 3분 경과 · 접수번호 1125</p>
+                        <p class="status-head__desc" data-trip="called-status">접수 후 3분 경과 · 접수번호 1125</p>
                     </div>
                 </div>
 
@@ -76,18 +80,18 @@
                     <li class="route-list__item">
                         <img src="image/route-dot-start.svg" alt="">
                         <span class="route-list__label">출발</span>
-                        <span class="route-list__place">OO아파트 101동 정문</span>
+                        <span class="route-list__place" data-trip="pickup-name">래미안베라힐즈 101동 정문</span>
                     </li>
                     <li class="route-list__item">
                         <img src="image/route-dot-end.svg" alt="">
                         <span class="route-list__label">도착</span>
-                        <span class="route-list__place">OO주민센터</span>
+                        <span class="route-list__place" data-trip="dest-name">은평성모병원</span>
                     </li>
                     <li class="route-list__line" role="presentation"><img src="image/route-line.svg" alt=""></li>
                 </ul>
 
                 <ul class="tag-list" aria-label="함께 전달된 정보">
-                    <li class="tag">본인 + 동승자 1명</li>
+                    <li class="tag" data-trip="riders">본인 + 동승자 1명</li>
                     <li class="tag">수동 휠체어</li>
                     <li class="tag tag--primary">UD 가능</li>
                     <li class="tag">문자·앱 메시지로 연락</li>
@@ -140,14 +144,14 @@
     </div>
 
     <!-- N1 차량 배정 알림 (미리보기 · 누르면 차량 배정 화면) -->
-    <template data-push data-delay="6000">
+    <template data-push data-delay="5000">
         <a href="assigned.html" class="push-card">
             <span class="push-card__head">
                 <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
                 <span>지금</span>
             </span>
             <span class="push-card__title">UD택시가 배정됐어요</span>
-            <span class="push-card__body">약 8분 후 도착 예정이에요.<br>33바 5521 · 흰색 PV5<br>탑승 위치: 101동 정문 경사로 쪽</span>
+            <span class="push-card__body">약 8분 후 도착 예정이에요.<br>33바 5521 · 흰색 PV5<br>탑승 위치: <span data-trip="pickup-spot">101동 정문 · 경사로 쪽</span></span>
         </a>
     </template>
 

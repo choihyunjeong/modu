@@ -63,7 +63,6 @@
 /* 내 위치 버튼: 시트 위 28px */
 .map-page--pickup .btn-float--locate {
     bottom: calc(28px + var(--sheet-overlap, 16px));
-    color: var(--color-text-secondary);
 }
 
 .pickup-options {
