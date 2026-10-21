@@ -149,7 +149,10 @@ var MapKit = (function () {
             } else if (el.dataset.movePath === 'approach' && window.Trip) {
                 var p = places();
                 Trip.fetchRoute(p.car, p.pickup, function (route) {
-                    move(overlay, route ? toPath(route.path) : [toLatLng('car'), toLatLng('pickup')], el);
+                    var road = route ? toPath(route.path) : [toLatLng('car'), toLatLng('pickup')];
+                    // 차가 오는 길 전체가 보이게 (data-fit 장소들과 함께)
+                    if (view.dataset.fit) fit(map, road.concat(view.dataset.fit.split(',').map(toLatLng).filter(Boolean)), pad);
+                    move(overlay, road, el);
                 });
             } else if (el.dataset.moveTo && toLatLng(el.dataset.moveTo)) {
                 move(overlay, [position, toLatLng(el.dataset.moveTo)], el);
