@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차량 배정 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/progress.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/push.js"></script>
+</head>
+<body>
+    <div id="wrap" class="map-page">
+        <div class="map-view" style="--map-height: 304px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2">
+            <img class="map-view__static" src="image/map-static.png" alt="">
+
+            <div class="map-me" data-static-pos data-place="me" style="--x: 126px; --y: 15px; --heading: 177deg;">
+                <img src="image/map-heading.svg" alt="">
+            </div>
+            <div class="map-car" data-static-pos data-place="car" style="--x: 236px; --y: 21px;">
+                <img src="image/ud-taxi.png" alt="">
+            </div>
+            <span class="map-chip map-chip--primary" data-static-pos style="--x: 96px; --y: 54px;">탑승 위치</span>
+            <span class="map-chip map-chip--light" data-static-pos style="--x: 268px; --y: 7px;" data-eta-chip>약 8분</span>
+
+            <a href="index.html" class="btn-float btn-float--back" aria-label="홈으로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <section class="sheet sheet--assigned sheet--grouped">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+
+            <!-- 요약 · 시간 · 위치 · 인원 -->
+            <div class="assigned-group assigned-group--summary">
+                <div class="assigned-head">
+                    <div class="assigned-head__text">
+                        <h1 class="assigned-title">약 8분 후 도착 예정</h1>
+                        <p class="assigned-desc">차량이 배정됐어요</p>
+                    </div>
+                    <!-- 더보기: 보호자 공유 · 접수 취소 -->
+                    <button type="button" class="btn-icon-round" aria-label="더보기">
+                        <span class="icon icon--more" aria-hidden="true"></span>
+                    </button>
+                </div>
+
+                <div class="info-rows">
+                    <p class="pickup-row">
+                        <span class="pickup-row__label">
+                            <span class="icon icon--sm icon--location" aria-hidden="true"></span>
+                            탑승 위치
+                        </span>
+                        <span class="pickup-row__place">101동 정문 · 경사로 쪽</span>
+                    </p>
+                    <p class="pickup-row">
+                        <span class="pickup-row__label">
+                            <span class="icon icon--sm icon--user-multiple" aria-hidden="true"></span>
+                            탑승 인원
+                        </span>
+                        <span class="pickup-row__place">본인 + 동승자 1명</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 배차 차량 · 안내 · 기사 -->
+            <div class="assigned-group">
+                <p class="boarding-note">
+                    <span class="icon icon--sm icon--information" aria-hidden="true"></span>
+                    옆문 경사로가 있는 UD택시가 배차됐어요
+                </p>
+
+                <div class="driver-card">
+                    <img class="driver-card__photo" src="image/driver.png" alt="">
+                    <div class="driver-card__text">
+                        <p class="driver-card__plate">33바 5521</p>
+                        <p class="driver-card__info">강○○ 기사님 · 흰색 PV5</p>
+                    </div>
+                    <img class="driver-card__car" src="image/pv5-side.png" alt="">
+                </div>
+            </div>
+
+            <!-- 연락 · 메시지 · 전화 · 도움 -->
+            <div class="assigned-group assigned-group--contact">
+                <div class="btn-line-row">
+                    <button type="button" class="btn-line" data-open-msg aria-haspopup="dialog">
+                        <span class="icon icon--chat" aria-hidden="true"></span>
+                        메시지
+                    </button>
+                    <button type="button" class="btn-line">
+                        <span class="icon icon--phone" aria-hidden="true"></span>
+                        전화
+                    </button>
+                </div>
+                <div class="help-row">
+                    <button type="button" class="btn-help">
+                        <span class="icon icon--sm icon--help" aria-hidden="true"></span>
+                        도움이 필요해요
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 기사님께 메시지 시트 (메시지 버튼에서 열림 · 자주 쓰는 말) -->
+    <div class="modal-sheet modal-sheet--dim" id="msg-sheet" role="dialog" aria-modal="true" aria-labelledby="msg-title" hidden>
+        <div class="modal-sheet__panel modal-sheet__panel--msg">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div class="msg-sheet__head">
+                <h2 class="msg-sheet__title" id="msg-title">기사님께 메시지</h2>
+                <p class="msg-sheet__desc">강○○ 기사님 · 33바 5521</p>
+            </div>
+
+            <div class="msg-sheet__group">
+                <p class="msg-sheet__caption">자주 쓰는 말 · 누르면 바로 보내져요</p>
+                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
+                    탑승 준비에 시간이 필요해요
+                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
+                    101동 정문 경사로 쪽에 있어요
+                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
+                    5분 정도 늦게 나가요
+                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
+                    짐이 조금 있어요
+                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <div class="msg-sheet__group">
+                <div class="msg-input">
+                    <input class="msg-input__field" id="msg-input" type="text" placeholder="직접 입력하기" aria-label="기사님께 보낼 메시지 직접 입력">
+                    <button type="button" class="msg-input__mic" aria-label="말로 입력하기">
+                        <span class="icon icon--sm icon--microphone" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <p class="msg-sheet__hint">보내면 기사님 앱에 바로 떠요</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- N2 곧 도착 알림 (미리보기 · 누르면 도착 임박 화면) -->
+    <template data-push data-delay="6000">
+        <a href="arriving.html" class="push-card">
+            <span class="push-card__head">
+                <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
+                <span>10:13</span>
+            </span>
+            <span class="push-card__title">UD택시가 약 3분 후 도착해요</span>
+            <span class="push-card__body">33바 5521 · 흰색 PV5<br>탑승 위치: 101동 정문 경사로 쪽</span>
+        </a>
+    </template>
+
+    <script>
+        // 기사님께 메시지 시트 열기/닫기 (스크림 누르기 · Esc · 자주 쓰는 말 보내면 닫힘)
+        var msgSheet = document.getElementById('msg-sheet');
+        var msgOpener = document.querySelector('[data-open-msg]');
+        function openMsgSheet() {
+            msgSheet.hidden = false;
+            document.body.classList.add('is-modal-open');
+            msgSheet.querySelector('[data-send-msg]').focus();
+        }
+        function closeMsgSheet() {
+            msgSheet.hidden = true;
+            document.body.classList.remove('is-modal-open');
+            msgOpener.focus();
+        }
+        msgOpener.addEventListener('click', openMsgSheet);
+        msgSheet.querySelectorAll('[data-send-msg]').forEach(function (btn) {
+            btn.addEventListener('click', closeMsgSheet);
+        });
+        msgSheet.addEventListener('click', function (e) { if (e.target === msgSheet) closeMsgSheet(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !msgSheet.hidden) closeMsgSheet(); });
+    </script>
+</body>
+</html>

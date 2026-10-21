@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도착 임박 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/progress.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/push.js"></script>
+</head>
+<body>
+    <div id="wrap" class="map-page" data-auto-next="arrived.html" data-delay="8000">
+        <div class="map-view" style="--map-height: 129px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2">
+            <img class="map-view__static" src="image/map-static.png" alt="">
+
+            <div class="map-me" data-static-pos data-place="me" style="--x: 126px; --y: 15px; --heading: 177deg;">
+                <img src="image/map-heading.svg" alt="">
+            </div>
+            <div class="map-car" data-static-pos data-place="car" style="--x: 236px; --y: 21px;">
+                <img src="image/ud-taxi.png" alt="">
+            </div>
+            <span class="map-chip map-chip--primary" data-static-pos style="--x: 96px; --y: 54px;">탑승 위치</span>
+            <span class="map-chip map-chip--light" data-static-pos style="--x: 268px; --y: 7px;" data-eta-chip>약 3분</span>
+
+            <a href="index.html" class="btn-float btn-float--back" aria-label="홈으로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <section class="sheet sheet--assigned">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+
+            <div>
+                <h1 class="assigned-title">약 3분 후 도착 예정</h1>
+                <p class="assigned-desc">차가 거의 다 왔어요</p>
+            </div>
+
+            <p class="pickup-row">
+                <img class="pin-pickup-icon" src="image/pin-pickup.svg" alt="">
+                <span class="pickup-row__label">탑승 위치</span>
+                <span class="pickup-row__place">아파트 정문 · 경사로 쪽</span>
+            </p>
+
+            <p class="boarding-note">
+                <span class="icon icon--sm icon--information" aria-hidden="true"></span>
+                차가 멈추면 기사님이 내려 탑승을 도와드려요.
+            </p>
+
+            <div class="card driver-card">
+                <img class="driver-card__photo" src="image/driver.png" alt="">
+                <div class="driver-card__text">
+                    <p class="driver-card__plate">12가 3456</p>
+                    <p class="driver-card__info">김○○ 기사님 · 흰색 PV5</p>
+                </div>
+                <img class="driver-card__car" src="image/pv5-side.png" alt="">
+            </div>
+
+            <p class="riders-row">
+                <span class="riders-row__label">탑승 인원</span>
+                <span class="riders-row__value">본인 + 동승자 1명</span>
+            </p>
+
+            <div class="contact-block">
+                <h2 class="contact-block__title">기사님께 연락</h2>
+                <div class="btn-line-row">
+                    <button type="button" class="btn-line">
+                        <span class="icon icon--chat" aria-hidden="true"></span>
+                        메시지
+                    </button>
+                    <button type="button" class="btn-line">
+                        <span class="icon icon--phone" aria-hidden="true"></span>
+                        전화
+                    </button>
+                </div>
+                <div class="quick-msg">
+                    <p class="quick-msg__title">자주 쓰는 말 바로 보내기</p>
+                    <p class="quick-msg__desc">누르면 기사님께 바로 전송돼요.</p>
+                </div>
+                <div class="quick-msg__list">
+                    <button type="button" class="btn-line quick-msg__btn">
+                        탑승 위치에서 기다리고 있어요
+                        <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn-line quick-msg__btn">
+                        탑승 준비에 시간이 필요해요
+                        <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+
+            <hr class="divider-line">
+
+            <div class="btn-line-row">
+                <button type="button" class="btn-line">
+                    <span class="icon icon--sm icon--hand" aria-hidden="true"></span>
+                    도움 요청
+                </button>
+                <button type="button" class="btn-line btn-line--more">
+                    <span class="icon icon--more" aria-hidden="true"></span>
+                    더보기
+                </button>
+            </div>
+        </section>
+    </div>
+
+</body>
+</html>

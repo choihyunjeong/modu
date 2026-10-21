@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차량 찾는 중 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/progress.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/push.js"></script>
+</head>
+<body>
+    <div id="wrap" class="map-page">
+        <div class="map-view" style="--map-height: 244px; --map-img-top: -235px;" data-map data-center="pickup">
+            <img class="map-view__static" src="image/map-static.png" alt="">
+
+            <div class="map-me" data-static-pos data-place="me" style="--x: 108px; --y: 192px; --heading: 139deg;">
+                <img src="image/map-heading.svg" alt="">
+            </div>
+            <div class="map-pulse" data-static-pos style="--x: 126px; --y: 136px;" aria-hidden="true">
+                <img src="image/map-pulse-1.svg" alt="">
+                <img src="image/map-pulse-2.svg" alt="">
+                <img src="image/map-pulse-3.svg" alt="">
+            </div>
+            <div class="map-pin map-pin--wait" data-static-pos data-place="pickup" style="--x: 34px; --y: 88px;">
+                <span class="map-pin__label">
+                    <span class="icon icon--xs icon--user" aria-hidden="true"></span>
+                    여기서 탑승 · 101동 정문
+                </span>
+                <span class="map-pin__dot"></span>
+            </div>
+
+            <a href="index.html" class="btn-float btn-float--back btn-float--line" aria-label="홈으로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+            </a>
+            <button type="button" class="btn-pill-float">호출 취소</button>
+        </div>
+
+        <section class="sheet sheet--progress">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+
+            <!-- 상태 · 예상 -->
+            <div class="progress-group">
+                <div class="status-head">
+                    <span class="status-head__icon"><span class="icon-placeholder" aria-hidden="true"></span></span>
+                    <div class="status-head__text">
+                        <h1 class="status-head__title">차량을 찾고 있어요</h1>
+                        <p class="status-head__desc">접수 후 3분 경과 · 접수번호 1125</p>
+                    </div>
+                </div>
+
+                <div class="wait-card">
+                    <div class="wait-card__head">
+                        <p class="wait-card__label">차량 배정까지 예상</p>
+                        <span class="live-badge">
+                            <img src="image/live-dot.svg" alt="">
+                            실시간
+                        </span>
+                    </div>
+                    <p class="wait-card__minutes">약 35분</p>
+                    <div class="wait-card__foot">
+                        <span class="wait-card__nearby">주변 대기 3명</span>
+                        <button type="button" class="wait-card__more" data-open-wait aria-haspopup="dialog">
+                            대기 현황 보기
+                            <span class="icon icon--xs icon--chevron-right" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 경로 · 전달 정보 -->
+            <div class="progress-group progress-group--route">
+                <ul class="route-list">
+                    <li class="route-list__item">
+                        <img src="image/route-dot-start.svg" alt="">
+                        <span class="route-list__label">출발</span>
+                        <span class="route-list__place">OO아파트 101동 정문</span>
+                    </li>
+                    <li class="route-list__item">
+                        <img src="image/route-dot-end.svg" alt="">
+                        <span class="route-list__label">도착</span>
+                        <span class="route-list__place">OO주민센터</span>
+                    </li>
+                    <li class="route-list__line" role="presentation"><img src="image/route-line.svg" alt=""></li>
+                </ul>
+
+                <ul class="tag-list" aria-label="함께 전달된 정보">
+                    <li class="tag">본인 + 동승자 1명</li>
+                    <li class="tag">수동 휠체어</li>
+                    <li class="tag tag--primary">UD 가능</li>
+                    <li class="tag">문자·앱 메시지로 연락</li>
+                </ul>
+            </div>
+
+            <!-- 안내 · 버튼 -->
+            <div class="progress-group">
+                <p class="notice-line">
+                    <span class="icon icon--xs icon--notification" aria-hidden="true"></span>
+                    차량이 배정되면 알림으로 알려드려요
+                </p>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn--outline">보호자에게 알리기</button>
+                    <button type="button" class="btn btn--outline">콜센터 문의</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- E4a 대기 현황 상세 시트 (스크림 위로 열림) -->
+    <div class="modal-sheet modal-sheet--wait" id="wait-sheet" role="dialog" aria-modal="true" aria-labelledby="wait-title" hidden>
+        <div class="modal-sheet__panel modal-sheet__panel--wait">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div class="wait-detail">
+                <h2 class="modal-sheet__title" id="wait-title">현재 대기 현황</h2>
+                <div class="wait-detail__main">
+                    <p class="wait-detail__label">차량 배정까지 예상</p>
+                    <p class="wait-detail__minutes">약 35분</p>
+                    <p class="wait-detail__note">현재 배차 상황을 바탕으로 한 예상이에요.</p>
+                </div>
+            </div>
+            <div class="wait-detail wait-detail--status">
+                <dl class="card wait-rows">
+                    <div class="wait-rows__row">
+                        <dt class="wait-rows__label"><span>주변 대기</span><span>출발지가 있는 자치구 접수</span></dt>
+                        <dd class="wait-rows__value">3명</dd>
+                    </div>
+                    <div class="wait-rows__row">
+                        <dt class="wait-rows__label"><span>전체 대기</span><span>서울 전체 접수</span></dt>
+                        <dd class="wait-rows__value">12명</dd>
+                    </div>
+                </dl>
+                <p class="wait-detail__basis">오후 2:34 기준</p>
+                <p class="wait-detail__note">차량 운행·접수 상황에 따라 달라질 수 있어요.</p>
+            </div>
+            <button type="button" class="btn btn--close" data-close-wait>닫기</button>
+        </div>
+    </div>
+
+    <!-- N1 차량 배정 알림 (미리보기 · 누르면 차량 배정 화면) -->
+    <template data-push data-delay="6000">
+        <a href="assigned.html" class="push-card">
+            <span class="push-card__head">
+                <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
+                <span>지금</span>
+            </span>
+            <span class="push-card__title">UD택시가 배정됐어요</span>
+            <span class="push-card__body">약 8분 후 도착 예정이에요.<br>33바 5521 · 흰색 PV5<br>탑승 위치: 101동 정문 경사로 쪽</span>
+        </a>
+    </template>
+
+    <script>
+        // 대기 현황 시트 열기/닫기 (#detail로 들어오면 바로 열림 · N3 알림에서)
+        var sheet = document.getElementById('wait-sheet');
+        var opener = document.querySelector('[data-open-wait]');
+        function openSheet() {
+            sheet.hidden = false;
+            document.body.classList.add('is-modal-open');
+            sheet.querySelector('[data-close-wait]').focus();
+        }
+        function closeSheet() {
+            sheet.hidden = true;
+            document.body.classList.remove('is-modal-open');
+            opener.focus();
+        }
+        opener.addEventListener('click', openSheet);
+        sheet.querySelector('[data-close-wait]').addEventListener('click', closeSheet);
+        sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+        if (location.hash === '#detail') openSheet();
+    </script>
+</body>
+</html>

@@ -1,0 +1,829 @@
+/* =========================================================
+   호출 진행 · 차량 찾는 중 / 차량 배정 / 도착 임박
+   ========================================================= */
+
+.map-page { min-height: 100vh; }
+
+/* 지도 위 흰 버튼 (테두리 있는 형태) */
+.btn-float--line {
+    border: 1px solid var(--color-border-strong);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.btn-pill-float {
+    position: absolute;
+    top: var(--space-8);
+    right: var(--space-16);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    height: var(--touch-size);
+    padding: 0 var(--space-14);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    background: var(--color-bg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-21);
+}
+
+/* ---------- 차량 찾는 중 ---------- */
+.map-pulse {
+    pointer-events: none;
+}
+
+.map-pulse img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: none;
+    transform: translate(-50%, -50%);
+    animation: pulse 2.4s ease-out infinite;
+}
+
+.map-pulse img:nth-child(1) { width: 220px; height: 220px; }
+.map-pulse img:nth-child(2) { width: 150px; height: 150px; animation-delay: 0.4s; }
+.map-pulse img:nth-child(3) { width: 84px; height: 84px; animation-delay: 0.8s; }
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.85); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .map-pulse img { animation: none; }
+}
+
+/* 탑승 위치 핀 (말풍선 + 점) */
+.map-pin--wait { gap: var(--space-4); }
+
+.map-pin--wait .map-pin__label {
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    line-height: 20px;
+}
+
+.map-pin--wait .map-pin__dot {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    background: var(--color-primary);
+}
+
+.sheet--progress {
+    gap: var(--space-20);
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-16);
+    box-shadow: none;
+}
+
+.sheet--progress .sheet__grabber {
+    height: 4px;
+    border-radius: 2px;
+}
+
+/* 시트 안 묶음 (상태·예상 / 경로·전달 정보 / 안내·버튼) */
+.progress-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.progress-group--route { gap: var(--space-10); }
+
+.status-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-14);
+}
+
+.status-head__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-bg);
+}
+
+/* 디자인의 아이콘 자리 표시 (아이콘 확정 전) */
+.icon-placeholder {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+}
+
+.status-head__text { flex: 1; min-width: 0; }
+
+.status-head__title {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: calc(30px * var(--font-scale));
+    color: var(--color-text-secondary);
+}
+
+.status-head__desc {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.wait-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding: var(--space-14) var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-gray);
+}
+
+.wait-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+}
+
+.wait-card__label {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+/* 실시간 라벨 */
+.live-badge {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--space-4);
+    padding: 3px var(--space-8);
+    border-radius: var(--radius-md);
+    background: var(--color-primary-soft);
+    font-size: var(--fs-12);
+    font-weight: var(--font-weight-bold);
+    line-height: normal;
+    color: var(--color-primary);
+}
+
+.live-badge img { width: 6px; height: 6px; }
+
+.wait-card__minutes {
+    font-size: calc(32px * var(--font-scale));
+    font-weight: var(--font-weight-bold);
+    line-height: calc(40px * var(--font-scale));
+}
+
+.wait-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+}
+
+.wait-card__nearby {
+    padding: var(--space-4) var(--space-8);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-medium);
+    line-height: normal;
+    color: var(--color-text-secondary);
+}
+
+.wait-card__more {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 7px 7px 7px var(--space-12);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 8px;
+    background: var(--color-bg);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-bold);
+    line-height: normal;
+    color: var(--color-text);
+}
+
+.wait-card__more .icon { color: var(--color-text-sub); }
+
+.route-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.route-list__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+}
+
+.route-list__item img { width: 10px; height: 10px; }
+
+/* 출발 ↔ 도착 점선 */
+.route-list__line {
+    position: absolute;
+    top: 19px;
+    left: 4px;
+}
+
+.route-list__line img { width: 2px; height: 14px; }
+
+.route-list__label {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.route-list__place {
+    flex: 1;
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+}
+
+.tag {
+    padding: 3px 7px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 3px;
+    background: var(--color-bg);
+    font-size: var(--fs-12);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-17);
+    color: var(--color-text-secondary);
+}
+
+/* 강조 배지 (UD 가능) — 테두리 없음 */
+.tag--primary {
+    border: 0;
+    background: var(--color-primary-soft);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+/* 안내 줄 (윗줄 구분선 + 아이콘) */
+.notice-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-12) var(--space-2) var(--space-4);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.btn-row {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.btn-row .btn {
+    flex: 1;
+    min-height: var(--touch-size);
+    border-color: var(--color-border-strong);
+    font-size: var(--fs-15);
+    line-height: var(--lh-21);
+}
+
+/* E4a 대기 현황 시트 (스크림 위) */
+.modal-sheet__panel--wait { gap: var(--space-20); }
+
+.wait-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.wait-detail--status { gap: var(--space-8); }
+
+.wait-detail__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.wait-detail__label {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.wait-detail__minutes {
+    font-size: calc(32px * var(--font-scale));
+    font-weight: var(--font-weight-bold);
+    line-height: calc(40px * var(--font-scale));
+}
+
+.wait-detail__basis {
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-text-sub);
+}
+
+.wait-rows { padding: 0 var(--space-16); }
+
+.wait-rows__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-14) 0;
+}
+
+.wait-rows__row + .wait-rows__row { border-top: 1px solid var(--color-divider); }
+
+.wait-rows__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    color: var(--color-text-sub);
+}
+
+.wait-rows__label span:first-child {
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.wait-rows__label span:last-child {
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+}
+
+.wait-rows__value {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.wait-detail__note {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.btn--close {
+    min-height: var(--touch-size);
+    background: var(--color-divider);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+    color: var(--color-text);
+}
+
+/* ---------- 차량 배정 / 도착 임박 ---------- */
+.map-car {
+    width: 31px;
+    height: 21px;
+    pointer-events: none;
+}
+
+.map-car img {
+    width: 16px;
+    height: 28px;
+    margin: -3.5px 0 0 7.5px;
+    transform: rotate(-79deg);
+}
+
+.map-chip {
+    padding: var(--space-6) var(--space-10);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    font-size: 13px;
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.map-chip--primary {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+.map-chip--light {
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+}
+
+.sheet--assigned { gap: var(--space-8); }
+
+/* 묶음으로 나눈 시트 (차량 배정) */
+.sheet--grouped { gap: var(--space-20); }
+
+.assigned-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.assigned-group--summary { gap: var(--space-10); }
+.assigned-group--contact { gap: var(--space-6); }
+
+/* 제목 줄 + 더보기 */
+.assigned-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.assigned-head__text { flex: 1; min-width: 0; }
+
+.assigned-title {
+    font-size: var(--fs-20);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-28);
+}
+
+.assigned-desc,
+.pickup-row__place,
+.riders-row__value,
+.quick-msg__desc {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+/* 동그란 아이콘 버튼 (더보기 · 보호자 공유 · 접수 취소) */
+.btn-icon-round {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* 탑승 위치 · 탑승 인원 */
+.info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.icon--user-multiple { --icon-url: url("../image/user--multiple.svg"); }
+.icon--help { --icon-url: url("../image/help.svg"); }
+
+.pickup-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.pickup-row__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.pin-pickup-icon { width: 24px; height: 24px; }
+
+/* 탑승 안내 (고정 66 · 내용만 바뀜) */
+.boarding-note {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: 66px;
+    padding: var(--space-12) var(--space-12) var(--space-12) var(--space-14);
+    border-radius: var(--radius-md);
+    background: var(--color-primary-bg);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+}
+
+.boarding-note .icon { color: var(--color-primary); }
+
+/* 기사·차량 카드 (회색 면 · 테두리 없음) */
+.driver-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    padding: var(--space-14);
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-gray);
+}
+
+.driver-card__photo {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-full);
+    background: var(--color-divider);
+    object-fit: cover;
+    object-position: 40% 20%;
+}
+
+.driver-card__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.driver-card__plate {
+    font-size: calc(22px * var(--font-scale));
+    font-weight: var(--font-weight-bold);
+    line-height: calc(30px * var(--font-scale));
+}
+
+.driver-card__info {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.driver-card__car {
+    flex-shrink: 0;
+    width: 70px;
+    height: 47px;
+    object-fit: cover;
+}
+
+.riders-row {
+    display: flex;
+    gap: var(--space-6);
+}
+
+.riders-row__label {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.contact-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.contact-block__title {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.btn-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    min-height: var(--touch-size);
+    padding: 0 var(--space-16);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.btn-line-row {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.btn-line-row .btn-line { flex: 1; }
+.btn-line-row .btn-line--more { flex: 0 0 108px; }
+
+.quick-msg {
+    padding-top: var(--space-4);
+}
+
+.quick-msg__title {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.quick-msg__desc { margin-top: var(--space-2); }
+
+.quick-msg__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    min-height: 104px;
+}
+
+.quick-msg__btn {
+    justify-content: space-between;
+    width: 100%;
+    text-align: left;
+}
+
+.quick-msg__btn .icon { color: var(--color-text-sub); }
+
+/* 도움이 필요해요 (글자 버튼) */
+.help-row {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--space-4);
+}
+
+.btn-help {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: var(--touch-size);
+    padding: 0 var(--space-8);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-22);
+    color: var(--color-text-secondary);
+}
+
+.btn-help .icon { color: var(--color-text); }
+
+/* 기사님께 메시지 시트 */
+.modal-sheet--dim { background: rgba(0, 0, 0, 0.4); }
+
+.modal-sheet__panel--msg {
+    gap: var(--space-20);
+    padding-top: var(--space-12);
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-sheet__panel--msg .sheet__grabber {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-border-strong);
+}
+
+.msg-sheet__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.msg-sheet__title {
+    font-size: var(--fs-20);
+    font-weight: var(--font-weight-bold);
+    line-height: normal;
+}
+
+.msg-sheet__desc,
+.msg-sheet__caption {
+    font-size: var(--fs-14);
+    line-height: normal;
+    color: var(--color-text-sub);
+}
+
+.msg-sheet__caption { font-weight: var(--font-weight-medium); }
+
+.msg-sheet__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.quick-msg__btn--sheet {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: var(--touch-size);
+    padding: 0 var(--space-14) 0 var(--space-16);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 12px;
+    background: var(--color-bg);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    line-height: normal;
+}
+
+/* 직접 입력 */
+.msg-input {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: var(--touch-size);
+    padding: 0 var(--space-4) 0 var(--space-16);
+    border-radius: 12px;
+    background: var(--color-bg-gray);
+}
+
+.msg-input__field {
+    flex: 1;
+    min-width: 0;
+    height: var(--touch-size);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: var(--fs-15);
+    color: var(--color-text);
+    outline: none;
+}
+
+.msg-input__field::placeholder { color: var(--color-text-placeholder); }
+
+.msg-input:focus-within { box-shadow: 0 0 0 2px var(--color-primary); }
+
+.msg-input__mic {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-text-secondary);
+}
+
+.msg-sheet__hint {
+    font-size: var(--fs-13);
+    line-height: normal;
+    color: var(--color-text-sub);
+}
+
+.divider-line {
+    height: 1px;
+    margin: 0;
+    border: 0;
+    background: var(--color-divider);
+}
+
+.icon-img { width: 20px; height: 20px; }
+
+/* ---------- 탑승 중 ---------- */
+.map-view__route--long {
+    width: 130px;
+    height: 240px;
+}
+
+.map-pin--start .map-pin__label {
+    font-weight: var(--font-weight-medium);
+}
+
+.map-car--riding {
+    width: 31px;
+    height: 31px;
+}
+
+.map-car--riding img {
+    margin: 1.5px 0 0 7.5px;
+    transform: rotate(45deg);
+}
+
+.sheet--riding {
+    gap: var(--space-8);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.sheet--riding .sheet__grabber {
+    margin-bottom: var(--space-8);
+    background: var(--color-border);
+}
+
+.riding-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+}
+
+.riding-head__eta {
+    flex-shrink: 0;
+    padding: var(--space-6) var(--space-12);
+    border-radius: var(--radius-lg);
+    background: var(--color-primary);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-20);
+    color: var(--color-text-inverse);
+}
+
+.riding-info,
+.riding-guardian {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.icon-img--22 { width: 22px; height: 22px; }

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>목적지 검색 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/search.css">
+    <script src="js/common.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <!-- 검색 영역 -->
+        <div class="search-area">
+            <div class="search-area__row">
+                <a href="index.html" class="search-area__back" data-history-back aria-label="뒤로">
+                    <span class="icon icon--chevron-left" aria-hidden="true"></span>
+                </a>
+                <form class="search-box" role="search" onsubmit="return false;">
+                    <span class="icon icon--search" aria-hidden="true"></span>
+                    <label for="destination" class="blind">목적지</label>
+                    <input type="search" id="destination" class="search-box__input" placeholder="어디로 가세요?" autocomplete="off">
+                    <button type="button" class="search-box__voice" aria-label="말로 목적지 입력">
+                        <span class="icon icon--microphone" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </div>
+            <div class="search-area__quick">
+                <button type="button" class="map-chip">
+                    <span class="icon icon--xs icon--map" aria-hidden="true"></span>
+                    지도에서 직접 고르기
+                </button>
+            </div>
+            <p class="search-area__help">장소를 고르면 내릴 출입구(정문·후문)도 확인해요</p>
+        </div>
+
+        <hr class="divider">
+
+        <!-- 자주 가는 곳 -->
+        <section class="place-block">
+            <div class="place-block__head">
+                <h2 class="place-block__title">자주 가는 곳</h2>
+                <button type="button" class="place-block__action">편집</button>
+            </div>
+            <ul class="place-list">
+                <li>
+                    <a href="pickup.html" class="place-list__item">
+                        <span class="place-list__tile"><span class="icon icon--home" aria-hidden="true"></span></span>
+                        <span class="place-list__text">
+                            <strong class="place-list__name">집</strong>
+                            <span class="place-list__addr">은평구 통일로 000 · OO아파트 101동</span>
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pickup.html" class="place-list__item">
+                        <span class="place-list__tile"><span class="icon icon--location-star" aria-hidden="true"></span></span>
+                        <span class="place-list__text">
+                            <strong class="place-list__name">OO주민센터</strong>
+                            <span class="place-list__addr">송파구 올림픽로 000 · 정문</span>
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pickup.html" class="place-list__item">
+                        <span class="place-list__tile"><span class="icon icon--recently-viewed" aria-hidden="true"></span></span>
+                        <span class="place-list__text">
+                            <strong class="place-list__name">은평장애인복지관</strong>
+                            <span class="place-list__addr">은평구 ○○로 000 · 정문 앞</span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <hr class="divider divider--thick">
+
+        <!-- 최근 목적지 -->
+        <section class="place-block">
+            <div class="place-block__head">
+                <h2 class="place-block__title">최근 목적지</h2>
+                <button type="button" class="place-block__action">전체 지우기</button>
+            </div>
+            <ul class="place-list place-list--recent">
+                <li class="place-list__item">
+                    <a href="pickup.html" class="place-list__text">
+                        <span class="place-list__name">연신내역 3번 출구</span>
+                        <span class="place-list__addr">은평구 통일로 000</span>
+                    </a>
+                    <button type="button" class="place-list__map" aria-label="연신내역 3번 출구 지도에서 보기">
+                        <span class="icon icon--xs icon--map" aria-hidden="true"></span>
+                    </button>
+                </li>
+                <li class="place-list__item">
+                    <a href="pickup.html" class="place-list__text">
+                        <span class="place-list__name">불광천 공영주차장</span>
+                        <span class="place-list__addr">은평구 증산로 000</span>
+                    </a>
+                    <button type="button" class="place-list__map" aria-label="불광천 공영주차장 지도에서 보기">
+                        <span class="icon icon--xs icon--map" aria-hidden="true"></span>
+                    </button>
+                </li>
+                <li class="place-list__item">
+                    <a href="pickup.html" class="place-list__text">
+                        <span class="place-list__name">은평구청</span>
+                        <span class="place-list__addr">은평구 은평로 195</span>
+                    </a>
+                    <button type="button" class="place-list__map" aria-label="은평구청 지도에서 보기">
+                        <span class="icon icon--xs icon--map" aria-hidden="true"></span>
+                    </button>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>

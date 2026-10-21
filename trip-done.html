@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이동 완료 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/after.css">
+    <script src="js/common.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <header class="app-header">
+            <a href="index.html" class="app-header__back" aria-label="홈으로">
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </a>
+            <h1 class="app-header__title app-header__title--medium">이동 완료</h1>
+            <span class="app-header__blank" aria-hidden="true"></span>
+        </header>
+
+        <main class="content content--done">
+            <div class="done-title">
+                <h2 class="page-title__heading">
+                    <span>OO주민센터에</span>
+                    <span>도착했어요</span>
+                </h2>
+                <p class="done-title__desc">16:43 하차 · 오늘 이동이 끝났어요</p>
+            </div>
+
+            <div class="card trip-summary">
+                <p class="trip-summary__route">OO아파트 101동 &nbsp;→&nbsp; OO주민센터</p>
+                <p class="trip-summary__meta">15:55 탑승 · 16:43 하차 · 24.6km</p>
+                <p class="trip-summary__meta">33바 5521 · 흰색 PV5 · 강○○ 기사님 · 본인 + 동승자 1명</p>
+            </div>
+
+            <!-- 귀가 알림을 설정한 경우에만 (기본은 숨김) -->
+            <div class="return-banner" hidden>
+                <div>
+                    <p class="return-banner__title">돌아갈 때 호출 알림 · 오후 2:30</p>
+                    <p class="return-banner__desc">알림이 오면 바로 호출할 수 있어요</p>
+                </div>
+                <button type="button" class="return-banner__edit">바꾸기 ›</button>
+            </div>
+
+            <div class="done-actions">
+                <a href="feedback.html" class="feedback-entry">
+                    <span>
+                        <span class="feedback-entry__title">이번 휠체어 탑승은 어떠셨나요?</span>
+                        <span class="feedback-entry__desc">탑승 경험 남기기</span>
+                    </span>
+                    <span class="icon icon--sm icon--chevron-right feedback-entry__arrow" aria-hidden="true"></span>
+                </a>
+
+                <a href="index.html" class="btn btn--primary btn--home">홈으로</a>
+            </div>
+        </main>
+    </div>
+
+    <!-- G4 ① 전송 성공 토스트 (탑승 경험을 보내고 돌아왔을 때 잠시) -->
+    <p class="toast" role="status" hidden>
+        <span class="icon icon--sm icon--checkmark-outline" aria-hidden="true"></span>
+        탑승 경험을 보냈어요.
+    </p>
+
+    <script>
+        if (new URLSearchParams(location.search).get('sent') === '1') {
+            var toast = document.querySelector('.toast');
+            toast.hidden = false;
+            setTimeout(function () { toast.hidden = true; }, 3000);
+        }
+    </script>
+</body>
+</html>

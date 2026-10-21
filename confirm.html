@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>호출 전 확인 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/call.css">
+    <script src="js/common.js"></script>
+    <script src="js/ride-info.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+</head>
+<body>
+    <div id="wrap" class="map-page">
+        <div class="map-view" style="--map-height: 215px; --map-img-top: -235px;" data-map data-center="destination" data-route="pickup,destination">
+            <img class="map-view__static" src="image/map-static.png" alt="">
+            <img class="map-view__route" src="image/map-route.svg" alt="" style="--x: 120px; --y: 122px;" data-static-pos>
+
+            <div class="map-me" data-static-pos data-place="me" style="--x: 108px; --y: 192px; --heading: 139deg;">
+                <img src="image/map-heading.svg" alt="">
+            </div>
+            <div class="map-pin" data-static-pos data-place="pickup" style="--x: 64px; --y: 232px;">
+                <span class="map-pin__label">
+                    <span class="icon icon--xs icon--user" aria-hidden="true"></span>
+                    여기서 탑승
+                </span>
+                <span class="map-pin__stem"></span>
+                <span class="map-pin__dot"></span>
+            </div>
+            <div class="map-pin map-pin--destination" data-static-pos data-place="destination" style="--x: 189px; --y: 72px;">
+                <span class="map-pin__label">목적지까지 이동 약 48분</span>
+                <span class="map-pin__stem"></span>
+                <span class="map-pin__dot"></span>
+            </div>
+
+            <a href="pickup.html" class="btn-float btn-float--back" data-history-back aria-label="뒤로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <section class="sheet sheet--confirm">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <h1 class="blind">호출 정보</h1>
+
+            <div class="vehicle-card">
+                <img class="vehicle-card__img" src="image/ud-taxi.png" alt="UD택시">
+                <div class="vehicle-card__text">
+                    <p class="vehicle-card__wait">
+                        <span>예상 대기</span>
+                        <strong class="vehicle-card__wait-time">30~45분</strong>
+                    </p>
+                    <p class="vehicle-card__desc">탑승정보에 맞는 차를 배정해요</p>
+                </div>
+                <div class="vehicle-card__fare">
+                    <p class="vehicle-card__price">2,100원</p>
+                    <p class="vehicle-card__fare-note">예상 · 바우처</p>
+                </div>
+            </div>
+
+            <div class="confirm-trip">
+                <div class="confirm-route">
+                    <p class="confirm-route__item confirm-route__item--start">
+                        <span class="confirm-route__dot" aria-hidden="true"></span>
+                        <span class="confirm-route__label">출발</span>
+                        <span class="confirm-route__place">OO아파트 101동 정문</span>
+                    </p>
+                    <p class="confirm-route__item">
+                        <span class="confirm-route__dot" aria-hidden="true"></span>
+                        <span class="confirm-route__label">도착</span>
+                        <span class="confirm-route__place">OO주민센터</span>
+                    </p>
+                    <img class="confirm-route__line" src="image/route-connector.svg" alt="">
+                </div>
+                <p class="confirm-time">목적지까지 약 48분 · 24.6km (차에 탄 뒤 기준)</p>
+            </div>
+
+            <ul class="card summary-list">
+                <li class="summary-list__row">
+                    <div class="summary-list__text">
+                        <p class="summary-list__title">탑승 인원</p>
+                        <p class="summary-list__value summary-list__value--medium" data-riders-text>본인 1명 · 동승자 없음</p>
+                    </div>
+                    <button type="button" class="summary-list__edit" data-open-riders>변경</button>
+                </li>
+                <li class="summary-list__row">
+                    <div class="summary-list__text">
+                        <p class="summary-list__title">탑승 정보 · 함께 전달</p>
+                        <div class="ride-chips" data-ride-chips>
+                            <span class="ride-chip">수동 휠체어</span>
+                            <span class="ride-chip">폭 65cm</span>
+                            <span class="ride-chip ride-chip--primary">UD 가능</span>
+                        </div>
+                        <p class="summary-list__value" data-ride-requests>미리 전할 요청 · 천천히 출발해 주세요</p>
+                    </div>
+                    <a href="ride-info.html?from=confirm" class="summary-list__edit">수정</a>
+                </li>
+                <li class="summary-list__row">
+                    <div class="summary-list__text">
+                        <p class="summary-list__title">연락 방법</p>
+                        <p class="summary-list__value" data-ride-contact>문자·앱 메시지로 연락</p>
+                    </div>
+                    <a href="ride-info-contact.html?from=confirm" class="summary-list__edit">수정</a>
+                </li>
+            </ul>
+        </section>
+
+        <div class="bottom-action bottom-action--call">
+            <a href="waiting.html" class="btn btn--primary">호출하기</a>
+        </div>
+    </div>
+
+    <!-- E3a 탑승 인원 선택 시트 -->
+    <div class="modal-sheet" id="riders-sheet" role="dialog" aria-modal="true" aria-labelledby="riders-title" hidden>
+        <div class="modal-sheet__panel modal-sheet__panel--riders">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div>
+                <h2 class="modal-sheet__title" id="riders-title">함께 타는 분이 있나요?</h2>
+                <p class="modal-sheet__desc">본인을 제외하고 함께 탈 인원을 선택해 주세요.</p>
+            </div>
+            <div class="rider-select">
+                <fieldset class="rider-options">
+                    <legend class="blind">동승 인원</legend>
+                    <label class="rider-option">
+                        <input type="radio" name="riders" value="0" checked>
+                        없어요
+                    </label>
+                    <label class="rider-option">
+                        <input type="radio" name="riders" value="1">
+                        1명
+                    </label>
+                    <label class="rider-option">
+                        <input type="radio" name="riders" value="2">
+                        2명
+                    </label>
+                </fieldset>
+                <div class="rider-total">
+                    <p class="rider-total__count" data-riders-total></p>
+                    <p class="rider-total__desc" data-riders-detail></p>
+                </div>
+            </div>
+            <div class="rider-foot">
+                <p class="rider-note">보호자로 연결된 분도 함께 탈 때만 인원에 포함해 주세요.</p>
+                <button type="button" class="btn btn--primary" data-apply-riders>이 인원으로 적용</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 저장한 탑승 정보·연락 방법이 있으면 요약 문구를 바꿈 (없으면 기본 문구 그대로)
+        var ride = RideInfo.describe();
+        if (ride) {
+            // 보조기기 문구(" · "로 이어짐)를 라벨로 나눠 보여줌
+            if (ride.device) {
+                var chips = document.querySelector('[data-ride-chips]');
+                chips.innerHTML = '';
+                ride.device.split(' · ').forEach(function (text) {
+                    var chip = document.createElement('span');
+                    chip.className = 'ride-chip';
+                    chip.textContent = text;
+                    chips.appendChild(chip);
+                });
+            }
+            document.querySelector('[data-ride-requests]').textContent = ride.requests;
+            document.querySelector('[data-ride-requests]').hidden = !ride.requests;
+            if (ride.contact) document.querySelector('[data-ride-contact]').textContent = ride.contact;
+        }
+
+        // 탑승 인원: "변경" → 시트에서 고르고 "적용"하면 행 문구만 바뀜 (닫으면 기존 인원 유지)
+        var sheet = document.getElementById('riders-sheet');
+        var applied = 0;
+
+        function selected() {
+            return Number(sheet.querySelector('input[name="riders"]:checked').value);
+        }
+        function updateTotal() {
+            var n = selected();
+            sheet.querySelector('[data-riders-total]').textContent = '총 탑승 인원 ' + (n + 1) + '명';
+            sheet.querySelector('[data-riders-detail]').textContent =
+                '본인 1명' + (n ? ' + 동승자 ' + n + '명' : '') + ' · 좌석 확보에 쓰여요';
+        }
+        function openSheet() {
+            sheet.querySelector('input[value="' + applied + '"]').checked = true;
+            updateTotal();
+            sheet.hidden = false;
+            document.body.classList.add('is-modal-open');
+            sheet.querySelector('input:checked').focus();
+        }
+        function closeSheet() {
+            sheet.hidden = true;
+            document.body.classList.remove('is-modal-open');
+            document.querySelector('[data-open-riders]').focus();
+        }
+
+        document.querySelector('[data-open-riders]').addEventListener('click', openSheet);
+        sheet.addEventListener('change', updateTotal);
+        sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+        sheet.querySelector('[data-apply-riders]').addEventListener('click', function () {
+            applied = selected();
+            document.querySelector('[data-riders-text]').textContent =
+                '본인 1명 · ' + (applied ? '동승자 ' + applied + '명' : '동승자 없음');
+            closeSheet();
+        });
+    </script>
+</body>
+</html>

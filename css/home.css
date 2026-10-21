@@ -1,0 +1,268 @@
+/* =========================================================
+   승객 홈 (홈_v18_01_기본)
+   ========================================================= */
+
+/* 본문: 구역 사이 24 · 아래 32 */
+.home {
+    gap: var(--space-24);
+    padding-bottom: var(--space-32);
+}
+
+/* 맨 위 줄 + 지금 상황 (사이 간격 없음) */
+.home-head {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 맨 위 줄 · 글자 크기 / 읽어주기 (오른쪽 정렬) */
+.home-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-8);
+}
+
+/* "가" 원 버튼 (글자 크기 시트 열기) */
+.btn-circle--text {
+    font-size: var(--fs-20);
+    font-weight: var(--font-weight-bold);
+    line-height: normal;
+    color: var(--color-text);
+}
+
+/* 지금 상황 */
+.now {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+}
+
+.now__title {
+    font-size: var(--fs-24);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.5;
+}
+
+.now__title span { display: block; }
+
+.now__nearby {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.now__car {
+    width: 26px;
+    height: 17px;
+    object-fit: cover;
+}
+
+.now__count {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.now__time {
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-text-sub);
+}
+
+.now__basis {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.btn-help {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: var(--font-weight-bold);
+    line-height: 18px;
+    color: var(--color-text-sub);
+}
+
+/* 부르기 */
+.call {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+/* 내 탑승 정보 */
+.ride-info {
+    padding: 0 var(--space-16);
+}
+
+.ride-info__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    padding: 11px 0;
+}
+
+.ride-info__row + .ride-info__row {
+    border-top: 1px solid var(--color-divider);
+}
+
+.ride-info__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.ride-info__title {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.ride-info__desc {
+    font-size: var(--fs-13);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+/* 등록 · 연결: 테두리 없는 회색 버튼 */
+.ride-info .btn-sm {
+    border: 0;
+    background: var(--color-bg-page);
+}
+
+/* 안내 줄: 연한 파랑 바탕 + 파란 체크 */
+.home-notice {
+    background: var(--color-primary-bg);
+}
+
+.home-notice .icon {
+    margin: 0;
+    color: var(--color-primary);
+}
+
+
+/* =========================================================
+   글자 크기 시트 (홈_글자크기_시트)
+   - 선택지·미리보기는 지금 앱 글자 크기와 상관없이 고정 크기로 보여 줌
+   ========================================================= */
+.font-sheet {
+    gap: var(--space-20);
+    padding: var(--space-12) var(--page-padding) 34px;
+    border-radius: 20px 20px 0 0;
+}
+
+.font-sheet .sheet__grabber {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-border-strong);
+}
+
+.font-sheet .modal-sheet__title { line-height: normal; }
+.font-sheet .modal-sheet__desc { line-height: normal; }
+
+.font-sheet__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+/* 선택지 3개 */
+.font-options {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.font-option {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+    min-width: 0;
+    height: 92px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 12px;
+    background: var(--color-bg);
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    line-height: normal;
+    color: var(--color-text-secondary);
+}
+
+.font-option__sample {
+    font-weight: var(--font-weight-bold);
+    line-height: normal;
+    color: var(--color-text);
+}
+
+.font-option--normal .font-option__sample { font-size: 18px; }
+.font-option--large .font-option__sample { font-size: 24px; }
+.font-option--xlarge .font-option__sample { font-size: 30px; }
+
+.font-option[aria-pressed="true"] {
+    border: 2px solid var(--color-primary);
+    background: var(--color-primary-bg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.font-option[aria-pressed="true"] .font-option__sample { color: var(--color-primary); }
+
+/* 미리보기: 고른 크기 비율로 글자가 커짐 */
+.font-preview {
+    --preview-scale: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-14) var(--space-16);
+    border-radius: 12px;
+    background: var(--color-bg-gray);
+    line-height: normal;
+}
+
+.font-preview[data-size="large"] { --preview-scale: 1.15; }
+.font-preview[data-size="xlarge"] { --preview-scale: 1.3; }
+
+.font-preview__label {
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-sub);
+}
+
+.font-preview__title {
+    font-size: calc(22px * var(--preview-scale));
+    font-weight: var(--font-weight-bold);
+}
+
+.font-preview__desc {
+    font-size: calc(16px * var(--preview-scale));
+    color: var(--color-text-secondary);
+}
+
+/* 적용하기 */
+.font-sheet__apply {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.font-sheet__note {
+    font-size: 13px;
+    line-height: normal;
+    color: var(--color-text-sub);
+}

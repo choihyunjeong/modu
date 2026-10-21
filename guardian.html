@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보호자 연결 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/guardian.css">
+    <script src="js/common.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <header class="app-header">
+            <a href="index.html" class="app-header__back" data-history-back aria-label="뒤로">
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </a>
+            <h1 class="app-header__title">보호자 연결</h1>
+            <span class="app-header__blank" aria-hidden="true"></span>
+        </header>
+
+        <main class="content content--sub guardian">
+            <div class="page-title">
+                <h2 class="page-title__heading">
+                    <span>보호자로 연결할 분을</span>
+                    <span>알려주세요</span>
+                </h2>
+                <p class="page-title__desc">상대방이 초대를 수락하면 연결돼요.</p>
+            </div>
+
+            <!-- 휴대폰 번호 -->
+            <div class="text-field">
+                <label for="guardian-phone" class="text-field__label">휴대폰 번호</label>
+                <input type="tel" id="guardian-phone" class="text-field__input" placeholder="010-0000-0000" inputmode="numeric" autocomplete="tel">
+            </div>
+
+            <!-- 관계 -->
+            <div class="guardian__group guardian__group--tight">
+                <p class="field-title">
+                    <span class="field-title__main">연결할 분과의 관계</span>
+                    <span class="field-title__sub">선택 사항</span>
+                </p>
+                <div class="guardian__chips" role="group" aria-label="연결할 분과의 관계" data-select-group>
+                    <button type="button" class="chip chip--md" aria-pressed="true">가족</button>
+                    <button type="button" class="chip chip--md" aria-pressed="false">활동지원사</button>
+                    <button type="button" class="chip chip--md" aria-pressed="false">기타</button>
+                </div>
+            </div>
+
+            <!-- 허용할 기능 -->
+            <div class="guardian__group">
+                <p class="field-title">
+                    <span class="field-title__main">연결할 분이 이용할 기능</span>
+                    <span class="field-title__sub">허용할 기능을 선택해 주세요</span>
+                </p>
+                <div class="card choice-list">
+                    <label class="choice-list__item">
+                        <input type="checkbox" class="checkbox" name="permission" value="notify">
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">이동 알림 받기</span>
+                            <span class="choice-list__desc">접수·배차·도착을 함께 받아요</span>
+                        </span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="checkbox" class="checkbox" name="permission" value="proxy">
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">대신 접수하기</span>
+                            <span class="choice-list__desc">내 탑승 정보로 차를 부를 수 있어요</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <p class="notice notice--sub">
+                <span class="icon icon--sm icon--information" aria-hidden="true"></span>
+                초대 문자를 보내면, 상대방이 수락한 뒤에 연결돼요. 함께 타는지는 이동을 접수할 때마다 물어봐요.
+            </p>
+        </main>
+
+        <div class="bottom-action">
+            <button type="button" class="btn btn--primary">초대 문자 보내기</button>
+            <a href="index.html" class="btn btn--text">나중에 할게요</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/home.css">
+    <script src="js/common.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <main class="content home">
+            <!-- 맨 위 줄 + 지금 상황 (둘 사이 간격 없음) -->
+            <div class="home-head">
+                <!-- 맨 위 줄 · 글자 크기 / 읽어주기 -->
+                <div class="home-top">
+                    <button type="button" class="btn-circle btn-circle--text" aria-label="글자 크기 바꾸기" aria-haspopup="dialog" aria-controls="font-size-sheet" data-open-font-size>가</button>
+                    <button type="button" class="btn-circle" aria-label="화면 읽어주기">
+                        <span class="icon icon--speak" aria-hidden="true"></span>
+                    </button>
+                </div>
+
+                <!-- 지금 상황 -->
+                <section class="now">
+                    <h1 class="now__title">
+                        <span>평일 오후 2~3시</span>
+                        <span>차량 배정까지 평균 32분</span>
+                    </h1>
+                    <p class="now__nearby">
+                        <img class="now__car" src="image/car.png" alt="">
+                        <span class="now__count">주변 배차 가능 차량 5대</span>
+                        <span class="now__time">· 오후 2:25 기준</span>
+                    </p>
+                    <div class="now__basis">
+                        <span>은평구 · 최근 4주 같은 시간대 기준</span>
+                        <button type="button" class="btn-help" aria-label="기준 안내 보기">?</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 부르기 -->
+            <div class="call">
+                <a href="search.html" class="btn btn--primary">바로 부르기</a>
+                <button type="button" class="btn btn--outline">
+                    <span class="icon icon--microphone" aria-hidden="true"></span>
+                    음성으로 부르기
+                </button>
+            </div>
+
+            <!-- 내 탑승 정보 -->
+            <section class="section">
+                <h2 class="section__title">내 탑승 정보</h2>
+                <ul class="card ride-info">
+                    <li class="ride-info__row">
+                        <div class="ride-info__text">
+                            <p class="ride-info__title">탑승 정보</p>
+                            <p class="ride-info__desc">이동 보조기기와 필요한 도움을 기사님께 미리 알려드려요.</p>
+                        </div>
+                        <a href="ride-info.html" class="btn-sm">등록</a>
+                    </li>
+                    <li class="ride-info__row">
+                        <div class="ride-info__text">
+                            <p class="ride-info__title">보호자 연결</p>
+                            <p class="ride-info__desc">보호자와 차량 도착·이동 상황을 공유해요.</p>
+                        </div>
+                        <a href="guardian.html" class="btn-sm">연결</a>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- 안내 줄 -->
+            <p class="notice home-notice">
+                <span class="icon icon--checkmark-outline" aria-hidden="true"></span>
+                한 번 등록한 탑승정보는 다음 호출에도 사용할 수 있어요. 언제든 수정할 수 있어요.
+            </p>
+        </main>
+
+        <!-- 탭바 -->
+        <nav class="tab-bar" aria-label="주 메뉴">
+            <a href="index.html" class="tab-bar__item is-active" aria-current="page">
+                <span class="icon icon--home" aria-hidden="true"></span>
+                홈
+            </a>
+            <a href="#" class="tab-bar__item">
+                <span class="icon icon--calendar" aria-hidden="true"></span>
+                예약
+            </a>
+            <a href="#" class="tab-bar__item">
+                <span class="icon icon--time" aria-hidden="true"></span>
+                이용내역
+            </a>
+            <a href="#" class="tab-bar__item">
+                <span class="icon icon--settings" aria-hidden="true"></span>
+                설정
+            </a>
+        </nav>
+    </div>
+
+    <!-- 글자 크기 시트 (오른쪽 위 "가"에서 열림 · 적용하면 앱 전체 글자 크기 변경) -->
+    <div class="modal-sheet" id="font-size-sheet" role="dialog" aria-modal="true" aria-labelledby="font-size-title" hidden data-font-size-sheet>
+        <div class="modal-sheet__panel font-sheet">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div class="font-sheet__head">
+                <h2 class="modal-sheet__title" id="font-size-title">글자 크기</h2>
+                <p class="modal-sheet__desc">앱 전체의 글자 크기가 바뀌어요</p>
+            </div>
+            <div class="font-sheet__body">
+                <div class="font-options" role="group" aria-label="글자 크기 선택">
+                    <button type="button" class="font-option font-option--normal" data-font-size-option="normal" aria-pressed="true">
+                        <span class="font-option__sample" aria-hidden="true">가</span>
+                        보통
+                    </button>
+                    <button type="button" class="font-option font-option--large" data-font-size-option="large" aria-pressed="false">
+                        <span class="font-option__sample" aria-hidden="true">가</span>
+                        크게
+                    </button>
+                    <button type="button" class="font-option font-option--xlarge" data-font-size-option="xlarge" aria-pressed="false">
+                        <span class="font-option__sample" aria-hidden="true">가</span>
+                        아주 크게
+                    </button>
+                </div>
+                <div class="font-preview" data-font-size-preview data-size="normal">
+                    <p class="font-preview__label">미리보기</p>
+                    <p class="font-preview__title">차량 배정까지 평균 32분</p>
+                    <p class="font-preview__desc">주변 배차 가능 차량 5대</p>
+                </div>
+            </div>
+            <div class="font-sheet__apply">
+                <button type="button" class="btn btn--primary" data-apply-font-size>적용하기</button>
+                <p class="font-sheet__note">설정에서도 바꿀 수 있어요</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

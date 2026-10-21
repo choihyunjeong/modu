@@ -1,0 +1,216 @@
+/* =========================================================
+   F · 알림 흐름 (잠금 화면 / 알림 센터 예시)
+   ========================================================= */
+.lock-screen { background: var(--color-bg-page); }
+
+.lock-screen #wrap {
+    gap: var(--space-24);
+    padding: var(--space-16) var(--space-12) var(--space-32);
+    background: transparent;
+}
+
+.lock-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.lock-item__label {
+    padding: 0 var(--space-4);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-20);
+}
+
+.lock-item__link {
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-size);
+    padding: 0 var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+}
+
+.lock-screen__caption {
+    padding: 0 var(--space-4);
+    font-size: var(--fs-12);
+    line-height: 16px;
+    color: var(--color-text-sub);
+}
+
+/* =========================================================
+   N1-K 카카오톡 채널 알림톡
+   ========================================================= */
+.chat-screen {
+    --chat-bg: #b2c7d9;
+    --chat-text: #1f2a33;
+    --chat-sub: var(--color-text-secondary); /* #484a4e */
+    --chat-sender: #3a4650;
+    --chat-notice: #fee500;
+    background: var(--chat-bg);
+}
+
+#wrap.chat { background: var(--chat-bg); }
+
+.chat__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    height: 56px;
+}
+
+.chat__back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-size);
+    height: var(--touch-size);
+}
+
+.chat__back .icon { color: var(--color-text); }
+
+.chat__name {
+    font-size: var(--fs-17);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-24);
+    color: var(--chat-text);
+}
+
+.chat__type {
+    font-size: var(--fs-12);
+    line-height: 16px;
+    color: var(--chat-sub);
+}
+
+.chat__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-16);
+    padding: var(--space-20) var(--space-12);
+}
+
+.chat__date {
+    align-self: center;
+    padding: var(--space-4) var(--space-12);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.12);
+    font-size: var(--fs-12);
+    line-height: 16px;
+    color: var(--color-text-inverse);
+}
+
+.chat-msg {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.chat-msg__avatar {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+}
+
+.chat-msg__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.chat-msg__sender {
+    font-size: var(--fs-12);
+    line-height: 16px;
+    color: var(--chat-sender);
+}
+
+.chat-msg__time {
+    font-size: var(--fs-11);
+    line-height: 14px;
+    color: var(--chat-sub);
+}
+
+.alimtalk {
+    width: 260px;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--color-bg);
+}
+
+.alimtalk__head {
+    padding: var(--space-8) var(--space-14);
+    background: var(--chat-notice);
+    font-size: var(--fs-12);
+    font-weight: var(--font-weight-medium);
+    line-height: 16px;
+    color: var(--chat-text);
+}
+
+.alimtalk__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    padding: var(--space-14);
+}
+
+.alimtalk__title {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.alimtalk__text {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+}
+
+.alimtalk__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    border-radius: 8px;
+    background: var(--color-divider);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.chat__input {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    height: 56px;
+    padding: 0 var(--space-16);
+    background: var(--color-bg);
+}
+
+.chat__input-icon {
+    font-size: 22px;
+    font-weight: var(--font-weight-medium);
+    line-height: 26px;
+    color: var(--chat-sub);
+}
+
+.chat__input-icon--hash { font-size: 20px; }
+
+.chat__field {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-10) var(--space-14);
+    border: 0;
+    border-radius: 20px;
+    outline: 0;
+    background: var(--color-divider);
+    font: inherit;
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+}
+
+.chat__field::placeholder { color: var(--color-text-sub); }

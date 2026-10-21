@@ -1,0 +1,295 @@
+/* =========================================================
+   하차 후 · 이동 완료 / 탑승 경험 남기기
+   ========================================================= */
+
+.app-header__title--medium { font-weight: var(--font-weight-medium); }
+
+/* ---------- 이동 완료 ---------- */
+.content--done { gap: var(--space-24); }
+
+.done-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.done-title__desc {
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
+    color: var(--color-text-sub);
+}
+
+.trip-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-14) var(--space-16);
+}
+
+.trip-summary__route {
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-22);
+}
+
+.trip-summary__meta {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.return-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-12) var(--space-14);
+    border-radius: var(--radius-md);
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+}
+
+.return-banner__title {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.return-banner__desc {
+    margin-top: var(--space-2);
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+}
+
+.return-banner__edit {
+    flex-shrink: 0;
+    min-height: 32px;
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.feedback-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-primary-bg);
+}
+
+.feedback-entry__title {
+    display: block;
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.feedback-entry__desc {
+    display: block;
+    margin-top: var(--space-2);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.feedback-entry__arrow { color: var(--color-primary); }
+
+/* 탑승 경험 진입 + 홈으로 묶음 */
+.done-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+/* 홈으로 (48 · 채운 버튼) */
+.btn--home {
+    min-height: var(--touch-size);
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
+}
+
+/* 성공 토스트 */
+.toast {
+    position: fixed;
+    bottom: var(--space-24);
+    left: 50%;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    width: calc(100% - 40px);
+    max-width: calc(var(--app-width) - 40px);
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-md);
+    background: var(--color-text);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-22);
+    color: var(--color-text-inverse);
+    transform: translateX(-50%);
+}
+
+
+/* ---------- 탑승 경험 ---------- */
+.this-car {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    padding: var(--space-14) var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-gray);
+}
+
+.this-car__img {
+    flex-shrink: 0;
+    width: 36px;
+    height: 24px;
+    object-fit: cover;
+}
+
+.this-car__name {
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-21);
+}
+
+.this-car__desc {
+    margin-top: var(--space-2);
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-text-sub);
+}
+
+/* 카드 없이 화면 폭 그대로 */
+.feedback-list { padding: 0; }
+
+.feedback-list .choice-list__item + .issue-panel { border-top: 0; }
+
+/* "불편한 점"을 고르면 아래 패널과 붙도록 */
+.feedback-list .choice-list__item:has(input[value="bad"]:checked) { padding-bottom: var(--space-10); }
+
+.issue-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    padding: var(--space-14);
+    border-radius: 12px;
+    background: var(--color-bg-gray);
+}
+
+.issue-panel__guide {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-secondary);
+}
+
+.issue-panel__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.issue-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-12) var(--space-12) var(--space-12) var(--space-14);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+    cursor: pointer;
+}
+
+/* 고른 항목은 파란 테두리 */
+.issue-item:has(:checked) { box-shadow: inset 0 0 0 1.5px var(--color-primary); }
+
+.checkbox-sm {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    border: 1.5px solid var(--color-border);
+    border-radius: 5px;
+    background: var(--color-bg) center / 14px no-repeat;
+    cursor: pointer;
+    appearance: none;
+}
+
+.checkbox-sm:checked {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    background-image: url("../image/check-line-white.svg");
+}
+
+.issue-note {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-10) var(--space-12);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+}
+
+.issue-note:focus-within { border-color: var(--color-primary); }
+
+.issue-note__label {
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-18);
+    color: var(--color-text-sub);
+}
+
+.issue-note__input {
+    padding: 0;
+    border: 0;
+    outline: 0;
+    resize: none;
+    font: inherit;
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
+    color: var(--color-text);
+}
+
+.issue-note__input::placeholder { color: var(--color-text-sub); }
+
+.issue-note__voice {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    align-self: flex-start;
+    min-height: 32px;
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-18);
+    color: var(--color-primary);
+}
+
+.send-error {
+    padding: var(--space-12) var(--space-14);
+    border-radius: var(--radius-md);
+    background: var(--color-error-bg);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+    color: var(--color-error);
+}
+
+/* 고르기 전 비활성 버튼 */
+.btn--primary:disabled {
+    background: var(--color-divider);
+    color: var(--color-text);
+    cursor: not-allowed;
+}
+
+/* 하단 버튼 간격 12 · 건너뛰기는 36 높이 */
+.bottom-action--feedback { gap: var(--space-12); }
+
+.bottom-action--feedback .btn--text {
+    align-items: flex-start;
+    min-height: 36px;
+    font-weight: var(--font-weight-medium);
+}

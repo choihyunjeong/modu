@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탑승 중 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/progress.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/push.js"></script>
+</head>
+<body>
+    <div id="wrap" class="map-page" data-auto-next="trip-done.html" data-delay="10000">
+        <div class="map-view" style="--map-height: 485px; --map-img-top: -121px;" data-map data-center="riding" data-route="pickup,destination">
+            <img class="map-view__static" src="image/map-static.png" alt="">
+            <img class="map-view__route map-view__route--long" src="image/map-route-long.svg" alt="" style="--x: 119px; --y: 181px;" data-static-pos>
+
+            <div class="map-pin map-pin--start" data-static-pos data-place="pickup" style="--x: 64px; --y: 382px;">
+                <span class="map-pin__label">
+                    <span class="icon icon--xs icon--user" aria-hidden="true"></span>
+                    출발
+                </span>
+                <span class="map-pin__stem"></span>
+                <span class="map-pin__dot"></span>
+            </div>
+            <div class="map-pin map-pin--destination" data-static-pos data-place="destination" style="--x: 190px; --y: 102px;">
+                <span class="map-pin__label">도착 · 약 4분</span>
+                <span class="map-pin__stem"></span>
+                <span class="map-pin__dot"></span>
+            </div>
+            <div class="map-car map-car--riding" data-static-pos data-place="riding" style="--x: 160px; --y: 265px;">
+                <img src="image/ud-taxi.png" alt="">
+            </div>
+
+            <a href="index.html" class="btn-float btn-float--back" aria-label="홈으로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+            </a>
+            <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
+                <span class="icon icon--sm icon--current-location" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <section class="sheet sheet--riding">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+
+            <div class="riding-head">
+                <h1 class="assigned-title">목적지로 이동 중</h1>
+                <span class="riding-head__eta">약 4분 남음</span>
+            </div>
+            <div class="riding-info">
+                <p>한양대학교병원 정문 · 10:32 도착 예상</p>
+                <p>12가 3456 · 흰색 PV5 · 김○○ 기사님</p>
+            </div>
+
+            <div class="btn-line-row">
+                <button type="button" class="btn-line">
+                    <span class="icon icon--chat" aria-hidden="true"></span>
+                    기사님과 대화
+                </button>
+                <button type="button" class="btn-line">
+                    <img class="icon-img icon-img--22" src="image/help-octagon.svg" alt="">
+                    도움 요청
+                </button>
+            </div>
+
+            <p class="riding-guardian">김민정 님에게 이동 시작 알림을 보냈어요</p>
+        </section>
+    </div>
+</body>
+</html>

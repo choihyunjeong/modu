@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탑승 정보 등록 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/ride-info.css">
+    <script src="js/common.js"></script>
+    <script src="js/ride-info.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <header class="app-header">
+            <a href="index.html" class="app-header__back" aria-label="뒤로" data-history-back>
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </a>
+            <h1 class="app-header__title">탑승 정보 등록</h1>
+            <span class="app-header__blank" aria-hidden="true"></span>
+        </header>
+
+        <main class="content content--sub">
+            <div class="page-title">
+                <h2 class="page-title__heading">
+                    <span>평소 사용하는</span>
+                    <span>이동 보조기기를 알려주세요</span>
+                </h2>
+                <p class="page-title__desc">미리 저장하면 차량을 부를 때 다시 설명하지 않아도 돼요.</p>
+            </div>
+
+            <!-- 이동 보조기기 고르기 -->
+            <fieldset class="device-tiles">
+                <legend class="blind">이동 보조기기</legend>
+                <label class="device-tile">
+                    <input type="radio" name="device" value="manual-wheelchair" data-wheelchair checked>
+                    <img class="device-tile__img" src="image/wheelchair-manual.png" alt="">
+                    <span class="device-tile__label">수동 휠체어</span>
+                </label>
+                <label class="device-tile">
+                    <input type="radio" name="device" value="power-wheelchair" data-wheelchair>
+                    <img class="device-tile__img" src="image/wheelchair-power.png" alt="">
+                    <span class="device-tile__label">전동 휠체어</span>
+                </label>
+                <label class="device-tile">
+                    <input type="radio" name="device" value="walker">
+                    <img class="device-tile__img" src="image/walker.png" alt="">
+                    <span class="device-tile__label">보행기</span>
+                </label>
+                <label class="device-tile">
+                    <input type="radio" name="device" value="cane">
+                    <img class="device-tile__img" src="image/crutches.png" alt="">
+                    <span class="device-tile__label">지팡이·목발</span>
+                </label>
+                <label class="device-tile device-tile--text">
+                    <input type="radio" name="device" value="other">
+                    <span class="device-tile__label">다른 이동 보조기기</span>
+                </label>
+                <label class="device-tile device-tile--text">
+                    <input type="radio" name="device" value="none">
+                    <span class="device-tile__label">사용하지 않아요</span>
+                </label>
+            </fieldset>
+
+            <!-- 휠체어 선택 시에만 -->
+            <fieldset class="section" data-wheelchair-only>
+                <legend class="field-title__main section-question">
+                    <span>이전에 휠체어 크기나 형태 때문에</span>
+                    <span>차량에 타지 못한 적이 있나요?</span>
+                </legend>
+                <div class="card choice-list">
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="refused" value="no">
+                        <span class="choice-list__title">없어요</span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="refused" value="yes">
+                        <span class="choice-list__title">있어요</span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="refused" value="unknown">
+                        <span class="choice-list__title">기억나지 않아요</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="boarding-guide" data-wheelchair-only>
+                <img class="boarding-guide__img" src="image/pv5-ramp.png" alt="차량 옆문 경사로로 휠체어가 탑승하는 모습">
+                <p class="boarding-guide__title">휠체어에 앉은 채 탑승해요</p>
+                <p class="boarding-guide__desc">옆문 경사로로 들어간 뒤 차량 안에서 휠체어를 고정해요.</p>
+                <a href="#" class="boarding-guide__link">다른 탑승 방법이 필요해요 ›</a>
+            </div>
+
+            <a href="#" class="card link-row" data-wheelchair-only>
+                <span class="choice-list__text">
+                    <span class="choice-list__title">휠체어 정보 추가하기</span>
+                    <span class="field-title__sub">선택 사항 · 지금 안 해도 돼요</span>
+                </span>
+                <span class="icon icon--chevron-right" aria-hidden="true"></span>
+            </a>
+        </main>
+
+        <div class="bottom-action">
+            <!-- 호출 전 확인에서 '수정'으로 들어오면 "저장" → 호출 전 확인으로 돌아감 -->
+            <a href="ride-info-contact.html" class="btn btn--primary" data-return data-return-label="저장" data-save-device>다음</a>
+        </div>
+    </div>
+
+    <script>
+        // 저장해 둔 값이 있으면 채워 넣고, 다음/저장 누를 때 저장
+        RideInfo.fillDevice();
+        document.querySelector('[data-save-device]').addEventListener('click', RideInfo.saveDevice);
+
+        // 휠체어를 고른 경우에만 휠체어 관련 안내·질문을 보여줌
+        var devices = document.querySelectorAll('input[name="device"]');
+        function updateWheelchairOnly() {
+            var checked = document.querySelector('input[name="device"]:checked');
+            var isWheelchair = !!(checked && checked.hasAttribute('data-wheelchair'));
+            document.querySelectorAll('[data-wheelchair-only]').forEach(function (el) {
+                el.hidden = !isWheelchair;
+            });
+        }
+        devices.forEach(function (d) { d.addEventListener('change', updateWheelchairOnly); });
+        updateWheelchairOnly();
+    </script>
+</body>
+</html>

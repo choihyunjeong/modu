@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탑승 경험 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/after.css">
+    <script src="js/common.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <header class="app-header">
+            <a href="trip-done.html" class="app-header__back" data-history-back aria-label="뒤로">
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </a>
+            <h1 class="app-header__title">이번 탑승</h1>
+            <span class="app-header__blank" aria-hidden="true"></span>
+        </header>
+
+        <main class="content content--sub">
+            <div class="page-title">
+                <h2 class="page-title__heading">
+                    <span>이번 휠체어 탑승은</span>
+                    <span>어떠셨나요?</span>
+                </h2>
+                <p class="page-title__desc">알려주신 내용은 다음 탑승 준비와 서비스 개선에 참고해요.</p>
+            </div>
+
+            <div class="this-car">
+                <img class="this-car__img" src="image/pv5-side.png" alt="">
+                <div>
+                    <p class="this-car__name">33바 5521 · PV5 WAV · 옆문 경사로</p>
+                    <p class="this-car__desc">수동 휠체어에 앉은 채 탑승</p>
+                </div>
+            </div>
+
+            <fieldset class="choice-list feedback-list">
+                <legend class="blind">탑승 경험</legend>
+                <label class="choice-list__item">
+                    <span class="choice-list__text">
+                        <span class="choice-list__title">불편 없이 탔어요</span>
+                    </span>
+                    <input type="radio" class="radio" name="experience" value="good">
+                </label>
+                <label class="choice-list__item">
+                    <span class="choice-list__text">
+                        <span class="choice-list__title">불편한 점이 있었어요</span>
+                        <span class="choice-list__desc">경사로 · 휠체어 고정 · 차내 공간 등</span>
+                    </span>
+                    <input type="radio" class="radio" name="experience" value="bad">
+                </label>
+
+                <!-- "불편한 점이 있었어요"를 고르면 펼침 -->
+                <div class="issue-panel" hidden>
+                    <p class="issue-panel__guide">불편했던 점을 모두 선택해 주세요</p>
+                    <div class="issue-panel__items">
+                        <label class="issue-item">경사로 <input type="checkbox" class="checkbox-sm" name="issue" value="ramp"></label>
+                        <label class="issue-item">휠체어 고정 <input type="checkbox" class="checkbox-sm" name="issue" value="tie-down"></label>
+                        <label class="issue-item">차내 공간 <input type="checkbox" class="checkbox-sm" name="issue" value="space"></label>
+                        <label class="issue-item">기타 <input type="checkbox" class="checkbox-sm" name="issue" value="etc"></label>
+                    </div>
+                    <div class="issue-note">
+                        <label for="issue-text" class="issue-note__label">추가 설명 (선택)</label>
+                        <textarea id="issue-text" class="issue-note__input" rows="2" placeholder="예: 휠체어를 고정한 뒤에도 흔들림이 느껴졌어요"></textarea>
+                        <button type="button" class="issue-note__voice">
+                            <span class="icon icon--xs icon--microphone" aria-hidden="true"></span>
+                            음성으로 입력
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- G4 ② 전송 실패 (선택·입력 내용은 그대로) -->
+            <p class="send-error" role="alert" hidden>보내지 못했어요. 답변은 그대로 있어요.</p>
+        </main>
+
+        <div class="bottom-action bottom-action--feedback">
+            <button type="button" class="btn btn--primary" data-send disabled>탑승 경험 보내기</button>
+            <a href="trip-done.html" class="btn btn--text">지금은 건너뛰기</a>
+        </div>
+    </div>
+
+    <script>
+        var sendBtn = document.querySelector('[data-send]');
+        var panel = document.querySelector('.issue-panel');
+        var error = document.querySelector('.send-error');
+
+        // 고르기 전엔 보내기 비활성 · "불편한 점"이면 항목 펼침
+        document.querySelectorAll('input[name="experience"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                sendBtn.disabled = false;
+                panel.hidden = radio.value !== 'bad';
+            });
+        });
+
+        // 보내기: 성공하면 이동 완료 화면에 토스트, 실패하면 답변 유지 + 다시 보내기
+        sendBtn.addEventListener('click', function () {
+            if (navigator.onLine) {
+                location.href = 'trip-done.html?sent=1';
+            } else {
+                error.hidden = false;
+                sendBtn.textContent = '다시 보내기';
+            }
+        });
+    </script>
+</body>
+</html>

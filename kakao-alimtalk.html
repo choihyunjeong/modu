@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림톡 · 차량 배정 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/notice.css">
+    <script src="js/common.js"></script>
+</head>
+<body class="chat-screen">
+    <!-- N1-K 카카오톡 채널 알림톡 (차량 배정 · 카카오 채널 연동 결정 뒤 적용 · 누르면 앱 진행 5) -->
+    <div id="wrap" class="chat">
+        <header class="chat__head">
+            <a href="notifications.html" class="chat__back" data-history-back aria-label="뒤로">
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </a>
+            <div>
+                <h1 class="chat__name">모두의 이동</h1>
+                <p class="chat__type">채널 · 알림톡</p>
+            </div>
+        </header>
+
+        <main class="chat__body">
+            <p class="chat__date">2026년 10월 12일 월요일</p>
+
+            <div class="chat-msg">
+                <img class="chat-msg__avatar" src="image/logo.svg" alt="">
+                <div class="chat-msg__main">
+                    <p class="chat-msg__sender">모두의 이동</p>
+                    <div class="alimtalk">
+                        <p class="alimtalk__head">알림톡 도착</p>
+                        <div class="alimtalk__body">
+                            <p class="alimtalk__title">UD택시가 배정됐어요</p>
+                            <p class="alimtalk__text">
+                                이○○ 님, 호출하신 UD택시가 배정됐어요.<br><br>
+                                도착 예정 · 약 8분 후<br>
+                                차량 · 33바 5521 (흰색 PV5)<br>
+                                탑승 위치 · 101동 정문 경사로 쪽<br><br>
+                                기사님이 도착하면 다시 알려드려요.
+                            </p>
+                            <a href="assigned.html" class="alimtalk__btn">차량 위치·탑승 안내 보기</a>
+                            <button type="button" class="alimtalk__btn">기사님에게 메시지 보내기</button>
+                        </div>
+                    </div>
+                    <p class="chat-msg__time">오후 3:43</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="chat__input">
+            <span class="chat__input-icon" aria-hidden="true">+</span>
+            <label for="chat-message" class="blind">메시지 입력</label>
+            <input type="text" id="chat-message" class="chat__field" placeholder="메시지 입력">
+            <span class="chat__input-icon chat__input-icon--hash" aria-hidden="true">#</span>
+        </div>
+    </div>
+</body>
+</html>

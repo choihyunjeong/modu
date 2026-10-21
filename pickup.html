@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탑승 위치 확인 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/call.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+</head>
+<body>
+    <div id="wrap" class="map-page map-page--pickup">
+        <div class="map-view" style="--map-height: 305px; --map-img-top: -248px;" data-map data-center="pickup">
+            <img class="map-view__static" src="image/map-static.png" alt="">
+
+            <div class="map-me" data-static-pos data-place="me" style="--x: 112px; --y: 177px;">
+                <img src="image/map-heading.svg" alt="">
+            </div>
+            <div class="map-pin" data-static-pos data-place="pickup" style="--x: 62px; --y: 220px;">
+                <span class="map-pin__label">
+                    <span class="icon icon--xs icon--user" aria-hidden="true"></span>
+                    여기서 탑승
+                </span>
+                <span class="map-pin__stem"></span>
+                <span class="map-pin__dot"></span>
+            </div>
+
+            <a href="search.html" class="btn-float btn-float--back" data-history-back aria-label="뒤로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+            </a>
+            <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
+                <span class="icon icon--location-current" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <section class="sheet">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div class="sheet-head">
+                <h1 class="sheet-title">탑승 위치를 확인해 주세요</h1>
+                <p class="sheet-desc">추천 위치를 고르거나 다른 위치를 선택하세요</p>
+            </div>
+
+            <fieldset class="pickup-options">
+                <legend class="blind">탑승 위치</legend>
+                <label class="pickup-option">
+                    <input type="radio" class="radio" name="pickup" value="apt-main" checked>
+                    <span class="pickup-option__text">
+                        <span class="pickup-option__title">
+                            101동 정문
+                            <span class="badge badge--primary">추천</span>
+                        </span>
+                        <span class="pickup-option__desc">경사로 있어요 · 차가 설 자리 있어요 · 슬로프 펼칠 공간 있음 · 집에서 약 50m</span>
+                    </span>
+                </label>
+                <label class="pickup-option">
+                    <input type="radio" class="radio" name="pickup" value="back-parking">
+                    <span class="pickup-option__text">
+                        <span class="pickup-option__title">후문 주차장 입구</span>
+                        <span class="pickup-option__desc">턱 없어요 · 차가 설 자리 좁아요 · 슬로프 공간 확인 안 됨 · 집에서 약 120m</span>
+                    </span>
+                </label>
+            </fieldset>
+
+            <div class="sheet-actions">
+                <button type="button" class="btn btn--gray btn--md">다른 위치 선택하기</button>
+                <a href="confirm.html" class="btn btn--primary">이 위치로 부를게요</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

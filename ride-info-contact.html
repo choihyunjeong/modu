@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탑승 정보 등록 · 연락과 요청 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/ride-info.css">
+    <script src="js/common.js"></script>
+    <script src="js/ride-info.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <header class="app-header">
+            <a href="ride-info.html" class="app-header__back" aria-label="뒤로" data-history-back>
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </a>
+            <h1 class="app-header__title">탑승 정보 등록</h1>
+            <span class="app-header__blank" aria-hidden="true"></span>
+        </header>
+
+        <main class="content content--sub">
+            <div class="page-title">
+                <h2 class="page-title__heading">
+                    <span>연락은 어떻게</span>
+                    <span>받으시겠어요?</span>
+                </h2>
+                <p class="page-title__desc">저장한 내용은 이용할 때 기사님께 전달돼요. 필요하면 수정할 수 있어요.</p>
+            </div>
+
+            <!-- 연락받을 방법 -->
+            <fieldset class="section">
+                <legend class="field-title section-legend">
+                    <span class="field-title__main">연락받을 방법</span>
+                    <span class="field-title__sub">하나 선택</span>
+                </legend>
+                <div class="card choice-list">
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="contact" value="message">
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">문자·앱 메시지</span>
+                            <span class="choice-list__desc">전화도 받을 수 있어요</span>
+                        </span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="contact" value="message-only" checked>
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">문자·앱 메시지만</span>
+                            <span class="choice-list__desc">통화가 어려워요 <b>·</b> 위치를 바꿀 때도 문자로</span>
+                        </span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="contact" value="phone">
+                        <span class="choice-list__title">전화</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <!-- 기사님께 미리 전할 내용 -->
+            <div class="section">
+                <p class="field-title">
+                    <span class="field-title__main">기사님께 미리 전할 내용</span>
+                    <span class="field-title__sub">선택 사항</span>
+                </p>
+                <button type="button" class="card toggle-row" aria-expanded="false" aria-controls="request-panel">
+                    <span class="toggle-row__label">요청이 있어요</span>
+                    <span class="icon icon--sm icon--chevron-down" aria-hidden="true"></span>
+                </button>
+                <p class="field-title__sub" data-collapsed-only>요청 없이 저장해도 돼요.</p>
+
+                <div class="request-panel" id="request-panel" hidden>
+                    <div class="card choice-list">
+                        <label class="choice-list__item">
+                            <input type="checkbox" class="checkbox" name="request" value="slow-explain">
+                            <span class="choice-list__title">천천히 설명해 주세요</span>
+                        </label>
+                        <label class="choice-list__item">
+                            <input type="checkbox" class="checkbox" name="request" value="text-guide">
+                            <span class="choice-list__title">글로 안내해 주세요</span>
+                        </label>
+                        <label class="choice-list__item">
+                            <input type="checkbox" class="checkbox" name="request" value="tell-before-help">
+                            <span class="choice-list__title">도와주시기 전에 먼저 말씀해 주세요</span>
+                        </label>
+                        <label class="choice-list__item">
+                            <input type="checkbox" class="checkbox" name="request" value="wait-answer">
+                            <span class="choice-list__title">답변을 조금 기다려 주세요</span>
+                        </label>
+                    </div>
+
+                    <div class="text-area">
+                        <label for="request-etc" class="text-area__label">그 밖에 미리 알려주세요</label>
+                        <div class="text-area__box">
+                            <textarea id="request-etc" class="text-area__input" maxlength="200" rows="3" placeholder="예: 휠체어를 움직이기 전에 말씀해 주세요."></textarea>
+                            <div class="text-area__foot">
+                                <button type="button" class="voice-input">
+                                    <span class="icon icon--xs icon--microphone" aria-hidden="true"></span>
+                                    음성으로 입력
+                                </button>
+                                <span class="text-area__count"><span data-count>0</span> / 200</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="bottom-action">
+            <a href="ride-info-done.html" class="btn btn--primary" data-return data-save-contact>탑승 정보 저장</a>
+        </div>
+    </div>
+
+    <script>
+        // "요청이 있어요" 펼침/접힘
+        var toggle = document.querySelector('.toggle-row');
+        var panel = document.getElementById('request-panel');
+        var collapsedOnly = document.querySelector('[data-collapsed-only]');
+        function setOpen(open) {
+            toggle.setAttribute('aria-expanded', open);
+            panel.hidden = !open;
+            collapsedOnly.hidden = open;
+        }
+        toggle.addEventListener('click', function () {
+            setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+        });
+
+        // 글자 수
+        var textarea = document.getElementById('request-etc');
+        function updateCount() {
+            document.querySelector('[data-count]').textContent = textarea.value.length;
+        }
+        textarea.addEventListener('input', updateCount);
+
+        // 저장해 둔 값이 있으면 채워 넣고 (요청이 있으면 펼친 상태로), 저장 누를 때 저장
+        RideInfo.fillContact();
+        updateCount();
+        if (panel.querySelector('input:checked') || textarea.value) setOpen(true);
+        document.querySelector('[data-save-contact]').addEventListener('click', RideInfo.saveContact);
+    </script>
+</body>
+</html>
