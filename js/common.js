@@ -59,19 +59,16 @@ var SheetDrag = (function () {
         var wrap = sheet.parentNode;
         var action = sheet.nextElementSibling;
         if (action && !action.classList.contains('bottom-action')) action = null;
-        var locate = map.querySelector('.btn-float--locate');
         var OVERLAP = 16;    // 시트가 지도를 덮는 높이 (--sheet-overlap)
 
         // 기본 높이는 처음 끌 때 잼 (처음에 숨겨진 시트도 있어서)
         var base = 0;
         var sheetBase = 0;
-        var locateTop = 0;
         var startHeight = 0;
         function limits() {
             if (!base) {
                 base = map.offsetHeight;
                 sheetBase = sheet.offsetHeight;
-                if (locate) locateTop = locate.offsetTop;
             }
             return { min: MAP_MIN, base: base, max: Math.max(base, wrap.clientHeight - PEEK) };
         }
@@ -85,11 +82,6 @@ var SheetDrag = (function () {
             var room = wrap.clientHeight - h - (action ? action.offsetHeight : 0) + OVERLAP;
             sheet.style.flex = 'none';
             sheet.style.height = Math.max(sheetBase, room) + 'px';
-            // 내 위치 버튼은 지도 크기와 상관없이 처음 자리에 그대로
-            if (locate) {
-                locate.style.top = locateTop + 'px';
-                locate.style.bottom = 'auto';
-            }
             sheet.dataset.state = h <= MAP_MIN + 1 ? 'expanded' : (h >= l.max - 1 ? 'collapsed' : 'default');
             if (animate) setTimeout(relayoutMaps, 260);
             else relayoutMaps();
