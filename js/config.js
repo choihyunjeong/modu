@@ -2,7 +2,7 @@
 window.APP_CONFIG = {
     // 카카오 지도 JavaScript 키 (developers.kakao.com → 내 애플리케이션 → 앱 키 → JavaScript 키)
     // 비워 두면 지도 자리에 디자인의 정적 지도 이미지가 보여요.
-    kakaoMapKey: '5d75fa93437d11cffe744bb937276570',
+    kakaoMapKey: '6eac755619f2fa466bd16134f219f4f5',
 
     // 예시 좌표 (실제 서비스에선 검색·호출 데이터로 바뀜)
     places: {
