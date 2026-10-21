@@ -50,8 +50,66 @@ var Trip = (function () {
         };
     }
 
-    // 직선거리 × 1.3 을 도로 거리로 봄 (실제 길찾기 아님)
+    // 도로 경로 (OSRM 무료 길찾기 서버 · 키 없음 · 시연용)
+    //  받은 경로는 출발·도착 좌표별로 sessionStorage에 저장해 다시 부르지 않음
+    //  route = { path: [[lat, lng], ...], km, min }
+    var ROUTES_KEY = 'routes';
+
+    function routeKey(from, to) {
+        return [from.lat, from.lng, to.lat, to.lng].map(function (n) { return n.toFixed(5); }).join(',');
+    }
+
+    function savedRoutes() {
+        try {
+            return JSON.parse(sessionStorage.getItem(ROUTES_KEY)) || {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function cachedRoute(from, to) {
+        return savedRoutes()[routeKey(from, to)] || null;
+    }
+
+    // 경로를 받아 callback(route) · 실패하면 callback(null) (그때는 직선으로 보여줌)
+    function fetchRoute(from, to, callback) {
+        var hit = cachedRoute(from, to);
+        if (hit) return callback(hit);
+        var url = 'https://router.project-osrm.org/route/v1/driving/' +
+            from.lng + ',' + from.lat + ';' + to.lng + ',' + to.lat + '?overview=full&geometries=geojson';
+        fetch(url).then(function (res) { return res.json(); }).then(function (data) {
+            var best = data.routes && data.routes[0];
+            if (!best) return callback(null);
+            var route = {
+                path: best.geometry.coordinates.map(function (c) { return [+c[1].toFixed(5), +c[0].toFixed(5)]; }),
+                km: best.distance / 1000,
+                // 길찾기 시간은 막힘 없는 기준이라 × 1.4 + 승하차 3분
+                min: Math.max(5, Math.round(best.duration / 60 * 1.4 + 3))
+            };
+            var all = savedRoutes();
+            all[routeKey(from, to)] = route;
+            try { sessionStorage.setItem(ROUTES_KEY, JSON.stringify(all)); } catch (e) {}
+            callback(route);
+        }).catch(function () { callback(null); });
+    }
+
+    // 이번 호출(탑승 위치 → 목적지) 경로 · 받으면 화면 글자(시간·거리)도 다시 채움
+    function route() {
+        var p = places();
+        return cachedRoute(p.pickup, p.destination);
+    }
+
+    function ensureRoute(callback) {
+        var p = places();
+        fetchRoute(p.pickup, p.destination, function (r) {
+            if (r) bind(document);
+            if (callback) callback(r);
+        });
+    }
+
+    // 도로 경로가 있으면 그 거리, 없으면 직선거리 × 1.3
     function rideKm() {
+        if (route()) return route().km;
         var p = places();
         var rad = Math.PI / 180;
         var dLat = (p.destination.lat - p.pickup.lat) * rad;
@@ -61,8 +119,9 @@ var Trip = (function () {
         return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1.3;
     }
 
-    // 평균 시속 30km + 승하차 3분
+    // 도로 경로 시간, 없으면 평균 시속 30km + 승하차 3분
     function rideMinutes() {
+        if (route()) return route().min;
         return Math.max(5, Math.round(rideKm() / 30 * 60 + 3));
     }
 
@@ -140,5 +199,8 @@ var Trip = (function () {
         document.querySelectorAll('template').forEach(function (tpl) { bind(tpl.content); });
     });
 
-    return { get: load, set: set, start: start, places: places, bind: bind };
+    return {
+        get: load, set: set, start: start, places: places, bind: bind,
+        route: route, ensureRoute: ensureRoute, fetchRoute: fetchRoute
+    };
 })();

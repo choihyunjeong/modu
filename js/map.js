@@ -6,14 +6,18 @@
 //     <div class="map-pin" data-static-pos data-place="pickup">  핀 (정적: --x/--y, 카카오: places 좌표)
 // </div>
 //
+// data-route="pickup,destination" : 탑승 위치 → 목적지 도로 경로를 그림 (받기 전·실패 시 직선)
+// data-fit="car,pickup"           : 선 없이 그 장소들이 모두 보이게만 맞춤
 // data-gps (map-view)    : 지도를 띄우기 전에 실제 내 위치를 받아 내 위치·탑승 위치로 씀
-// data-move-to="pickup"  : 표시를 그 장소 쪽으로 움직임 (차량 다가오기 · 이동 중)
-//   data-move-range="0,0.7" 출발~도착 사이 어느 구간을 움직일지 (0 = 처음 자리, 1 = 도착)
+// data-move-to="pickup"  : 표시를 그 장소 쪽으로 움직임 (차량 다가오기)
+// data-move-path="route" : 표시를 이번 호출 도로 경로를 따라 움직임 (이동 중)
+//   data-move-range="0,0.7" 어느 구간을 움직일지 (0 = 처음, 1 = 끝)
 //   data-move-ms="8000"     움직이는 시간
 var MapKit = (function () {
     var config = window.APP_CONFIG || {};
     var callbacks = null;
     var mounted = [];   // 띄운 지도와 장소 표시 { map, overlays: { 장소이름: [overlay] } }
+    var ROUTE_STYLE = { strokeWeight: 5, strokeColor: '#0b5ed7', strokeOpacity: 0.9 };
 
     // 카카오 지도 SDK 불러오기 (장소 검색 services 포함 · 한 번만)
     function load(callback) {
@@ -34,27 +38,68 @@ var MapKit = (function () {
         return window.Trip ? Trip.places() : (config.places || {});
     }
 
-    function toLatLng(name) {
-        var p = places()[name];
-        return p ? new kakao.maps.LatLng(p.lat, p.lng) : null;
+    function latLng(p) {
+        return new kakao.maps.LatLng(p.lat, p.lng);
     }
 
-    // 표시를 from → to 로 부드럽게 움직임
-    function move(overlay, from, to, el) {
+    function toLatLng(name) {
+        var p = places()[name];
+        return p ? latLng(p) : null;
+    }
+
+    // [[lat, lng], ...] → 카카오 좌표 목록
+    function toPath(points) {
+        return points.map(function (p) { return new kakao.maps.LatLng(p[0], p[1]); });
+    }
+
+    // 여백: 위는 핀 글자 자리, 아래는 시트가 덮는 자리만큼
+    function fit(map, path, pad) {
+        var bounds = new kakao.maps.LatLngBounds();
+        path.forEach(function (p) { bounds.extend(p); });
+        if (pad != null) map.setBounds(bounds, pad, pad, pad + 16, pad);
+        else map.setBounds(bounds, 56, 24, 32, 24);
+    }
+
+    // 경로 위 비율(0~1) 지점의 좌표 (구간 길이 비율로 계산)
+    function pointAt(path, ratio) {
+        var lengths = [0];
+        for (var i = 1; i < path.length; i++) {
+            var dLat = path[i].getLat() - path[i - 1].getLat();
+            var dLng = path[i].getLng() - path[i - 1].getLng();
+            lengths.push(lengths[i - 1] + Math.sqrt(dLat * dLat + dLng * dLng));
+        }
+        var target = lengths[lengths.length - 1] * ratio;
+        for (var j = 1; j < path.length; j++) {
+            if (lengths[j] >= target) {
+                var part = lengths[j] - lengths[j - 1];
+                var r = part ? (target - lengths[j - 1]) / part : 0;
+                return new kakao.maps.LatLng(
+                    path[j - 1].getLat() + (path[j].getLat() - path[j - 1].getLat()) * r,
+                    path[j - 1].getLng() + (path[j].getLng() - path[j - 1].getLng()) * r
+                );
+            }
+        }
+        return path[path.length - 1];
+    }
+
+    // 표시를 경로를 따라 부드럽게 움직임
+    function move(overlay, path, el) {
         var range = (el.dataset.moveRange || '0,1').split(',').map(Number);
         var duration = Number(el.dataset.moveMs || 8000);
         var startTime = null;
         function step(now) {
             if (!startTime) startTime = now;
             var t = Math.min(1, (now - startTime) / duration);
-            var r = range[0] + (range[1] - range[0]) * t;
-            overlay.setPosition(new kakao.maps.LatLng(
-                from.getLat() + (to.getLat() - from.getLat()) * r,
-                from.getLng() + (to.getLng() - from.getLng()) * r
-            ));
+            overlay.setPosition(pointAt(path, range[0] + (range[1] - range[0]) * t));
             if (t < 1) requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
+    }
+
+    // 이번 호출 도로 경로 받기 (Trip이 없거나 실패하면 null)
+    function withRoute(callback) {
+        if (!window.Trip) return callback(null);
+        Trip.ensureRoute(callback);
     }
 
     function mountKakao(view) {
@@ -69,25 +114,21 @@ var MapKit = (function () {
         view.classList.add('is-kakao');
         var overlays = {};
         mounted.push({ map: map, overlays: overlays });
+        var pad = view.dataset.fitPad ? Number(view.dataset.fitPad) : null;
 
-        // 경로: 지정한 장소들을 잇는 선 (실제 길찾기 경로는 아님)
-        //  data-fit: 선 없이 그 장소들이 모두 보이게만 맞춤 (차량 배정 · 도착 임박)
-        var fitNames = view.dataset.route || view.dataset.fit;
-        if (fitNames) {
-            var path = fitNames.split(',').map(toLatLng).filter(Boolean);
-            if (view.dataset.route) {
-                new kakao.maps.Polyline({
-                    map: map, path: path,
-                    strokeWeight: 3, strokeColor: '#1f2124', strokeOpacity: 1
-                });
-            }
-            var bounds = new kakao.maps.LatLngBounds();
-            path.forEach(function (p) { bounds.extend(p); });
-            // 여백: 위는 핀 글자 자리, 아래는 시트가 덮는 자리만큼
-            //  data-fit-pad: 작은 지도(도착 임박)는 여백을 줄여 너무 멀어지지 않게
-            var pad = view.dataset.fitPad ? Number(view.dataset.fitPad) : null;
-            if (pad != null) map.setBounds(bounds, pad, pad, pad + 16, pad);
-            else map.setBounds(bounds, 56, 24, 32, 24);
+        // 경로: 먼저 직선으로 그리고, 도로 경로를 받으면 그 길로 바꿈
+        if (view.dataset.route) {
+            var straight = view.dataset.route.split(',').map(toLatLng).filter(Boolean);
+            var line = new kakao.maps.Polyline(Object.assign({ map: map, path: straight }, ROUTE_STYLE));
+            fit(map, straight, pad);
+            withRoute(function (route) {
+                if (!route) return;
+                var road = toPath(route.path);
+                line.setPath(road);
+                fit(map, road, pad);
+            });
+        } else if (view.dataset.fit) {
+            fit(map, view.dataset.fit.split(',').map(toLatLng).filter(Boolean), pad);
         }
 
         // 핀·내 위치 표시를 지도 좌표에 붙임 (점이 좌표에 오도록 아래 끝 기준)
@@ -99,8 +140,14 @@ var MapKit = (function () {
                 yAnchor: el.classList.contains('map-pin') ? 1 : 0.5
             });
             (overlays[el.dataset.place] = overlays[el.dataset.place] || []).push(overlay);
-            var target = el.dataset.moveTo && toLatLng(el.dataset.moveTo);
-            if (target) move(overlay, position, target, el);
+
+            if (el.dataset.movePath === 'route') {
+                withRoute(function (route) {
+                    move(overlay, route ? toPath(route.path) : [toLatLng('pickup'), toLatLng('destination')], el);
+                });
+            } else if (el.dataset.moveTo && toLatLng(el.dataset.moveTo)) {
+                move(overlay, [position, toLatLng(el.dataset.moveTo)], el);
+            }
         });
 
         // 내 위치 버튼: 실제 위치로 지도를 옮기고 내 위치 표시도 그 자리로
@@ -139,33 +186,43 @@ var MapKit = (function () {
     //  아직 지도를 띄우기 전이면 아무것도 안 함 (띄울 때 Trip 좌표를 씀)
     function setPlace(name, pos) {
         if (!window.kakao || !kakao.maps || !kakao.maps.LatLng) return;
-        var latLng = new kakao.maps.LatLng(pos.lat, pos.lng);
         mounted.forEach(function (m) {
-            (m.overlays[name] || []).forEach(function (overlay) { overlay.setPosition(latLng); });
-            m.map.panTo(latLng);
+            (m.overlays[name] || []).forEach(function (overlay) { overlay.setPosition(latLng(pos)); });
+            m.map.panTo(latLng(pos));
         });
     }
 
-    // 장소 한 곳을 지도로 보여줌 (목적지 고르기 화면 · 열 때마다 새 장소로)
+    // 출발 → 목적지를 지도로 보여줌 (목적지 고르기 화면 · 열 때마다 새 장소로)
+    //  도로 경로를 받으면 그 길을 그리고 onRoute(route)를 부름 (실패하면 직선 · onRoute(null))
     //  view는 화면에 보이는 상태에서 불러야 지도 크기가 맞음
-    function preview(view, pos, pinEl) {
+    function preview(view, from, to, fromPin, toPin, onRoute) {
         load(function () {
-            var latLng = new kakao.maps.LatLng(pos.lat, pos.lng);
             if (!view.kakaoMap) {
                 var canvas = document.createElement('div');
                 canvas.className = 'map-view__canvas';
                 view.prepend(canvas);
-                view.kakaoMap = new kakao.maps.Map(canvas, { center: latLng, level: 3 });
-                view.kakaoPin = new kakao.maps.CustomOverlay({
-                    map: view.kakaoMap, position: latLng, content: pinEl, yAnchor: 1
-                });
+                view.kakaoMap = new kakao.maps.Map(canvas, { center: latLng(to), level: 3 });
+                view.kakaoFrom = new kakao.maps.CustomOverlay({ map: view.kakaoMap, position: latLng(from), content: fromPin, yAnchor: 1 });
+                view.kakaoTo = new kakao.maps.CustomOverlay({ map: view.kakaoMap, position: latLng(to), content: toPin, yAnchor: 1 });
+                view.kakaoLine = new kakao.maps.Polyline(Object.assign({ map: view.kakaoMap, path: [] }, ROUTE_STYLE));
                 view.classList.add('is-kakao');
-            } else {
-                view.kakaoMap.relayout();
-                view.kakaoMap.setLevel(3);
-                view.kakaoMap.setCenter(latLng);
-                view.kakaoPin.setPosition(latLng);
             }
+            var map = view.kakaoMap;
+            map.relayout();
+            view.kakaoFrom.setPosition(latLng(from));
+            view.kakaoTo.setPosition(latLng(to));
+            var straight = [latLng(from), latLng(to)];
+            view.kakaoLine.setPath(straight);
+            fit(map, straight);
+            if (!window.Trip) return;
+            Trip.fetchRoute(from, to, function (route) {
+                if (route) {
+                    var road = toPath(route.path);
+                    view.kakaoLine.setPath(road);
+                    fit(map, road);
+                }
+                if (onRoute) onRoute(route);
+            });
         });
     }
 

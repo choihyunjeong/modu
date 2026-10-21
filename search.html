@@ -128,6 +128,14 @@
     <!-- 고른 장소 지도로 확인 (목록을 누르면 열림 → "여기로 갈게요"면 탑승 위치 확인으로) -->
     <div class="dest-preview" id="dest-preview" role="dialog" aria-modal="true" aria-labelledby="dest-preview-name" hidden>
         <div class="map-view dest-preview__map" data-preview-map>
+            <div class="map-pin map-pin--start dest-preview__start" data-preview-start>
+                <span class="map-pin__label">
+                    <span class="icon icon--xs icon--user" aria-hidden="true"></span>
+                    출발
+                </span>
+                <span class="map-pin__stem"></span>
+                <span class="map-pin__dot"></span>
+            </div>
             <div class="map-pin map-pin--destination dest-preview__pin" data-preview-pin>
                 <span class="map-pin__label">도착</span>
                 <span class="map-pin__stem"></span>
@@ -143,6 +151,7 @@
                 <h2 class="sheet-title" id="dest-preview-name"></h2>
                 <p class="sheet-desc" data-preview-addr></p>
             </div>
+            <p class="dest-preview__route" data-preview-route hidden></p>
             <p class="dest-preview__note" data-preview-note hidden>지금 계신 곳이에요. 다른 목적지를 골라 주세요.</p>
             <button type="button" class="btn btn--primary" data-confirm-dest>여기로 갈게요</button>
         </section>
@@ -153,6 +162,8 @@
         var preview = document.getElementById('dest-preview');
         var previewMap = preview.querySelector('[data-preview-map]');
         var previewPin = preview.querySelector('[data-preview-pin]');
+        var previewStart = preview.querySelector('[data-preview-start]');
+        var routeText = preview.querySelector('[data-preview-route]');
         var confirmBtn = preview.querySelector('[data-confirm-dest]');
         var chosen = null;
         var lastOpener = null;
@@ -169,7 +180,14 @@
             confirmBtn.disabled = same;
             preview.hidden = false;
             document.body.classList.add('is-modal-open');
-            MapKit.preview(previewMap, chosen, previewPin);
+            // 출발지 → 이곳 도로 경로와 걸리는 시간
+            routeText.hidden = true;
+            if (!same) MapKit.preview(previewMap, start, chosen, previewStart, previewPin, function (route) {
+                if (!route) return;
+                routeText.textContent = '집에서 차로 약 ' + route.min + '분 · ' + route.km.toFixed(1) + 'km';
+                routeText.hidden = false;
+            });
+            else MapKit.preview(previewMap, chosen, chosen, previewStart, previewPin);
             preview.querySelector('[data-close-preview]').focus();
         }
         function closePreview() {

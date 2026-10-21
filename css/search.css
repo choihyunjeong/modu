@@ -262,3 +262,14 @@
     line-height: 1.4;
     color: var(--color-text-secondary);
 }
+
+/* 집에서 걸리는 시간 · 거리 */
+.dest-preview__route {
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+    color: var(--color-primary);
+}
+
+/* 카카오 지도가 없을 때 출발 핀은 숨김 */
+.dest-preview__map:not(.is-kakao) .dest-preview__start { display: none; }
