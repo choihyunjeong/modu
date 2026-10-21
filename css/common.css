@@ -826,3 +826,31 @@ body.is-modal-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
     .push-banner { animation: none; }
 }
+
+/* =========================================================
+   바텀시트 끌기 손잡이 (common.js SheetDrag가 시트 맨 위에 넣음)
+   ========================================================= */
+.sheet__handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    height: 28px;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.sheet__handle:active { cursor: grabbing; }
+
+/* 시트를 끌면 지도 높이가 바뀜 (끄는 동안은 바로, 놓으면 부드럽게) */
+.map-view { transition: height 0.25s ease; }
+.map-view.is-resizing { transition: none; }
+
+.modal-sheet__panel {
+    position: relative;
+    transition: transform 0.2s ease;
+}

@@ -205,6 +205,7 @@ var MapKit = (function () {
                 view.kakaoFrom = new kakao.maps.CustomOverlay({ map: view.kakaoMap, position: latLng(from), content: fromPin, yAnchor: 1 });
                 view.kakaoTo = new kakao.maps.CustomOverlay({ map: view.kakaoMap, position: latLng(to), content: toPin, yAnchor: 1 });
                 view.kakaoLine = new kakao.maps.Polyline(Object.assign({ map: view.kakaoMap, path: [] }, ROUTE_STYLE));
+                mounted.push({ map: view.kakaoMap, overlays: {} });
                 view.classList.add('is-kakao');
             }
             var map = view.kakaoMap;
@@ -226,5 +227,10 @@ var MapKit = (function () {
         });
     }
 
-    return { load: load, setPlace: setPlace, preview: preview };
+    // 지도 칸 크기가 바뀐 뒤 다시 그림 (바텀시트를 끌어 올리고 내릴 때)
+    function relayout() {
+        mounted.forEach(function (m) { m.map.relayout(); });
+    }
+
+    return { load: load, setPlace: setPlace, preview: preview, relayout: relayout };
 })();
