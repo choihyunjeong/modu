@@ -146,5 +146,28 @@ var MapKit = (function () {
         });
     }
 
-    return { load: load, setPlace: setPlace };
+    // 장소 한 곳을 지도로 보여줌 (목적지 고르기 화면 · 열 때마다 새 장소로)
+    //  view는 화면에 보이는 상태에서 불러야 지도 크기가 맞음
+    function preview(view, pos, pinEl) {
+        load(function () {
+            var latLng = new kakao.maps.LatLng(pos.lat, pos.lng);
+            if (!view.kakaoMap) {
+                var canvas = document.createElement('div');
+                canvas.className = 'map-view__canvas';
+                view.prepend(canvas);
+                view.kakaoMap = new kakao.maps.Map(canvas, { center: latLng, level: 3 });
+                view.kakaoPin = new kakao.maps.CustomOverlay({
+                    map: view.kakaoMap, position: latLng, content: pinEl, yAnchor: 1
+                });
+                view.classList.add('is-kakao');
+            } else {
+                view.kakaoMap.relayout();
+                view.kakaoMap.setLevel(3);
+                view.kakaoMap.setCenter(latLng);
+                view.kakaoPin.setPosition(latLng);
+            }
+        });
+    }
+
+    return { load: load, setPlace: setPlace, preview: preview };
 })();
