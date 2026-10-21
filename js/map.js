@@ -79,7 +79,8 @@ var MapKit = (function () {
             });
             var bounds = new kakao.maps.LatLngBounds();
             path.forEach(function (p) { bounds.extend(p); });
-            map.setBounds(bounds, 80, 40, 40, 40);
+            // 여백: 위는 핀 글자 자리, 아래는 시트가 덮는 자리만큼
+            map.setBounds(bounds, 56, 24, 32, 24);
         }
 
         // 핀·내 위치 표시를 지도 좌표에 붙임 (점이 좌표에 오도록 아래 끝 기준)
