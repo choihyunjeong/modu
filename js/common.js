@@ -53,32 +53,44 @@ var SheetDrag = (function () {
         handle.setAttribute('aria-label', '시트 접기·펼치기');
         sheet.prepend(handle);
 
+        // 화면은 높이가 고정(.map-page)이라 페이지는 스크롤되지 않음
+        //  시트를 내리면 시트와 아래 버튼(.bottom-action)이 함께 화면 밖으로 내려가 가려지고,
+        //  올리면 시트가 늘어나 남은 자리를 채움 (시트 안 내용은 시트 안에서 스크롤)
+        var wrap = sheet.parentNode;
+        var action = sheet.nextElementSibling;
+        if (action && !action.classList.contains('bottom-action')) action = null;
+        var locate = map.querySelector('.btn-float--locate');
+        var OVERLAP = 16;    // 시트가 지도를 덮는 높이 (--sheet-overlap)
+
         // 기본 높이는 처음 끌 때 잼 (처음에 숨겨진 시트도 있어서)
-        //  시트 높이도 그때 재 두고, 내려갈 때 줄어들지 않게 고정 (아래 버튼과 사이가 벌어지지 않게)
         var base = 0;
         var sheetBase = 0;
+        var locateTop = 0;
         var startHeight = 0;
         function limits() {
             if (!base) {
                 base = map.offsetHeight;
                 sheetBase = sheet.offsetHeight;
+                if (locate) locateTop = locate.offsetTop;
             }
-            return { min: MAP_MIN, base: base, max: Math.max(base, window.innerHeight - PEEK) };
+            return { min: MAP_MIN, base: base, max: Math.max(base, wrap.clientHeight - PEEK) };
         }
-        // 시트 아래 고정 버튼(.bottom-action)은 시트가 내려간 만큼 같이 내려감 (올릴 때는 제자리)
-        var action = sheet.nextElementSibling;
-        if (action && !action.classList.contains('bottom-action')) action = null;
 
         function setHeight(h, animate) {
+            var l = limits();
             map.classList.toggle('is-resizing', !animate);
-            map.style.flex = 'none';
+            sheet.classList.toggle('is-resizing', !animate);
             map.style.height = h + 'px';
-            sheet.style.minHeight = sheetBase + 'px';
-            if (action) {
-                action.classList.toggle('is-resizing', !animate);
-                action.style.transform = 'translateY(' + Math.max(0, h - limits().base) + 'px)';
+            // 시트는 기본 높이보다 작아지지 않음 → 내리면 버튼과 함께 아래로 밀려 내려감
+            var room = wrap.clientHeight - h - (action ? action.offsetHeight : 0) + OVERLAP;
+            sheet.style.flex = 'none';
+            sheet.style.height = Math.max(sheetBase, room) + 'px';
+            // 내 위치 버튼은 지도 크기와 상관없이 처음 자리에 그대로
+            if (locate) {
+                locate.style.top = locateTop + 'px';
+                locate.style.bottom = 'auto';
             }
-            sheet.dataset.state = h <= MAP_MIN + 1 ? 'expanded' : (h >= limits().max - 1 ? 'collapsed' : 'default');
+            sheet.dataset.state = h <= MAP_MIN + 1 ? 'expanded' : (h >= l.max - 1 ? 'collapsed' : 'default');
             if (animate) setTimeout(relayoutMaps, 260);
             else relayoutMaps();
         }
