@@ -102,7 +102,9 @@ var Trip = (function () {
             return t.destination ? '목적지까지 약 ' + rideMinutes() + '분 · ' + rideKm().toFixed(1) + 'km (차에 탄 뒤 기준)' : null;
         },
         'ride-pin': function (t) { return t.destination ? '목적지까지 이동 약 ' + rideMinutes() + '분' : null; },
-        'ride-left': function (t) { return t.destination ? '약 ' + rideMinutes() + '분 남음' : null; },
+        // 탑승 중: 목적지를 안 골랐어도 예시 좌표로 계산해 도착 예상 시각과 맞춤
+        'ride-left': function () { return '약 ' + rideMinutes() + '분 남음'; },
+        'ride-arrive-pin': function () { return '도착 · 약 ' + rideMinutes() + '분'; },
         'fare': function (t) { return t.destination ? fare().toLocaleString('ko-KR') + '원' : null; },
         'called-status': function (t) {
             if (!t.calledAt) return null;

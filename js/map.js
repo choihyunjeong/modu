@@ -71,16 +71,23 @@ var MapKit = (function () {
         mounted.push({ map: map, overlays: overlays });
 
         // 경로: 지정한 장소들을 잇는 선 (실제 길찾기 경로는 아님)
-        if (view.dataset.route) {
-            var path = view.dataset.route.split(',').map(toLatLng).filter(Boolean);
-            new kakao.maps.Polyline({
-                map: map, path: path,
-                strokeWeight: 3, strokeColor: '#1f2124', strokeOpacity: 1
-            });
+        //  data-fit: 선 없이 그 장소들이 모두 보이게만 맞춤 (차량 배정 · 도착 임박)
+        var fitNames = view.dataset.route || view.dataset.fit;
+        if (fitNames) {
+            var path = fitNames.split(',').map(toLatLng).filter(Boolean);
+            if (view.dataset.route) {
+                new kakao.maps.Polyline({
+                    map: map, path: path,
+                    strokeWeight: 3, strokeColor: '#1f2124', strokeOpacity: 1
+                });
+            }
             var bounds = new kakao.maps.LatLngBounds();
             path.forEach(function (p) { bounds.extend(p); });
             // 여백: 위는 핀 글자 자리, 아래는 시트가 덮는 자리만큼
-            map.setBounds(bounds, 56, 24, 32, 24);
+            //  data-fit-pad: 작은 지도(도착 임박)는 여백을 줄여 너무 멀어지지 않게
+            var pad = view.dataset.fitPad ? Number(view.dataset.fitPad) : null;
+            if (pad != null) map.setBounds(bounds, pad, pad, pad + 16, pad);
+            else map.setBounds(bounds, 56, 24, 32, 24);
         }
 
         // 핀·내 위치 표시를 지도 좌표에 붙임 (점이 좌표에 오도록 아래 끝 기준)
