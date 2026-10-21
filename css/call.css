@@ -111,16 +111,28 @@
     color: var(--color-text-sub);
 }
 
-/* ---------- 호출 전 확인 ---------- */
-.sheet--confirm { gap: var(--space-20); }
+/* ---------- 호출 전 확인 (E3b) ---------- */
+.sheet--confirm {
+    gap: var(--space-12);
+    padding-bottom: var(--space-20);
+}
 
+.confirm-label {
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+}
+
+/* 차량 카드 (파란 테두리) */
 .vehicle-card {
     display: flex;
     align-items: center;
     gap: var(--space-12);
     padding: var(--space-14);
+    border: 2px solid var(--color-primary);
     border-radius: var(--radius-lg);
-    background: var(--color-primary-bg);
+    background: var(--color-bg);
 }
 
 .vehicle-card__img {
@@ -137,22 +149,16 @@
     min-width: 0;
 }
 
-.vehicle-card__wait {
-    display: flex;
-    align-items: center;
-    gap: var(--space-6);
-    font-size: var(--fs-14);
+.vehicle-card__name {
+    font-size: var(--fs-17);
     font-weight: var(--font-weight-bold);
     line-height: 1.4;
-    white-space: nowrap;
 }
 
-.vehicle-card__wait-time { font-size: var(--fs-20); }
-
-.vehicle-card__desc {
-    font-size: var(--fs-14);
+.vehicle-card__wait {
+    font-size: var(--fs-15);
     line-height: var(--lh-21);
-    color: var(--color-text-sub);
+    color: var(--color-primary);
 }
 
 .vehicle-card__fare {
@@ -171,59 +177,27 @@
     color: var(--color-text-secondary);
 }
 
-/* 경로 (출발 → 도착) + 이동 시간 */
-.confirm-trip {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
+.confirm-status {
+    padding-left: var(--space-4);
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-text-secondary);
 }
 
+/* 경로 줄 (출발 → 도착) + 이동 시간 */
 .confirm-route {
-    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-}
-
-.confirm-route__item {
-    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-10);
-}
-
-.confirm-route__dot {
-    flex-shrink: 0;
-    width: 10px;
-    height: 10px;
-    border-radius: var(--radius-full);
-    background: var(--color-text);
-}
-
-.confirm-route__item--start .confirm-route__dot { background: var(--color-primary); }
-
-/* 두 점을 잇는 점선 */
-.confirm-route__line {
-    position: absolute;
-    top: 19px;
-    left: 4px;
-    width: 2px;
-    height: 14px;
-}
-
-.confirm-route__label {
-    flex-shrink: 0;
+    gap: var(--space-6);
     font-size: var(--fs-14);
     font-weight: var(--font-weight-medium);
-    line-height: var(--lh-20);
-    color: var(--color-text-sub);
+    line-height: 1.4;
 }
 
-.confirm-route__place {
-    flex: 1;
-    min-width: 0;
-    font-size: var(--fs-16);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--lh-22);
+.confirm-route__arrow {
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-placeholder);
 }
 
 .confirm-time {
@@ -240,7 +214,6 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-8);
-    padding: var(--space-10) var(--space-10) var(--space-10) 0;
 }
 
 .summary-list__row + .summary-list__row { border-top: 1px solid var(--color-divider); }
@@ -251,6 +224,7 @@
     flex-direction: column;
     gap: var(--space-2);
     min-width: 0;
+    padding: var(--space-10) 0;
 }
 
 .summary-list__title {
@@ -265,51 +239,78 @@
     color: var(--color-text-sub);
 }
 
-.summary-list__value--medium { font-weight: var(--font-weight-medium); }
+/* 탑승 인원 값은 진하게 */
+.summary-list__value--strong {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+}
 
 .summary-list__edit {
     flex-shrink: 0;
-    min-height: var(--touch-size);
     display: flex;
     align-items: center;
+    min-height: var(--touch-size);
     font-size: var(--fs-14);
     font-weight: var(--font-weight-medium);
     line-height: var(--lh-20);
     color: var(--color-primary);
 }
 
-.summary-list__row:has(.summary-list__edit) { padding-block: 0; }
-.summary-list__row:has(.summary-list__edit) .summary-list__text { padding: var(--space-10) 0; }
-
-/* 탑승 정보 라벨 (보조기기 · 폭 · UD 가능) */
-.ride-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-6);
-}
-
-.ride-chip {
-    padding: 3px 7px;
-    border: 1px solid var(--color-border-strong);
-    border-radius: 3px;
-    background: var(--color-bg);
-    font-size: var(--fs-12);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--lh-17);
-    white-space: nowrap;
-    color: var(--color-text-secondary);
-}
-
-.ride-chip--primary {
-    border-color: var(--color-primary-soft);
-    background: var(--color-primary-soft);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-primary);
-}
-
+/* 하단 고정 호출 버튼 (위에 구분선) */
 .bottom-action--call {
     padding-top: var(--space-16);
     padding-bottom: var(--space-20);
+    border-top: 1px solid var(--color-border);
+}
+
+.btn--call {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-medium);
+}
+
+/* ---------- 탑승 정보 · 연락 방법 수정 시트 ---------- */
+.modal-sheet__panel--edit {
+    gap: var(--space-20);
+    padding-bottom: 34px;
+}
+
+.edit-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.edit-group__title {
+    margin-bottom: var(--space-8);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.edit-group__sub {
+    margin-left: var(--space-4);
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-sub);
+}
+
+.edit-foot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.edit-foot .btn { align-self: stretch; }
+
+.edit-foot__link {
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-size);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    text-decoration: underline;
 }
 
 /* ---------- E3a 탑승 인원 시트 ---------- */

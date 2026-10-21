@@ -192,45 +192,10 @@ var MapKit = (function () {
         });
     }
 
-    // 출발 → 목적지를 지도로 보여줌 (목적지 고르기 화면 · 열 때마다 새 장소로)
-    //  도로 경로를 받으면 그 길을 그리고 onRoute(route)를 부름 (실패하면 직선 · onRoute(null))
-    //  view는 화면에 보이는 상태에서 불러야 지도 크기가 맞음
-    function preview(view, from, to, fromPin, toPin, onRoute) {
-        load(function () {
-            if (!view.kakaoMap) {
-                var canvas = document.createElement('div');
-                canvas.className = 'map-view__canvas';
-                view.prepend(canvas);
-                view.kakaoMap = new kakao.maps.Map(canvas, { center: latLng(to), level: 3 });
-                view.kakaoFrom = new kakao.maps.CustomOverlay({ map: view.kakaoMap, position: latLng(from), content: fromPin, yAnchor: 1 });
-                view.kakaoTo = new kakao.maps.CustomOverlay({ map: view.kakaoMap, position: latLng(to), content: toPin, yAnchor: 1 });
-                view.kakaoLine = new kakao.maps.Polyline(Object.assign({ map: view.kakaoMap, path: [] }, ROUTE_STYLE));
-                mounted.push({ map: view.kakaoMap, overlays: {} });
-                view.classList.add('is-kakao');
-            }
-            var map = view.kakaoMap;
-            map.relayout();
-            view.kakaoFrom.setPosition(latLng(from));
-            view.kakaoTo.setPosition(latLng(to));
-            var straight = [latLng(from), latLng(to)];
-            view.kakaoLine.setPath(straight);
-            fit(map, straight);
-            if (!window.Trip) return;
-            Trip.fetchRoute(from, to, function (route) {
-                if (route) {
-                    var road = toPath(route.path);
-                    view.kakaoLine.setPath(road);
-                    fit(map, road);
-                }
-                if (onRoute) onRoute(route);
-            });
-        });
-    }
-
     // 지도 칸 크기가 바뀐 뒤 다시 그림 (바텀시트를 끌어 올리고 내릴 때)
     function relayout() {
         mounted.forEach(function (m) { m.map.relayout(); });
     }
 
-    return { load: load, setPlace: setPlace, preview: preview, relayout: relayout };
+    return { load: load, setPlace: setPlace, relayout: relayout };
 })();

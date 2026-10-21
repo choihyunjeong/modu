@@ -58,12 +58,20 @@ var SheetDrag = (function () {
         var startHeight = 0;
         function limits() {
             if (!base) base = map.offsetHeight;
-            return { min: MAP_MIN, max: Math.max(base, window.innerHeight - PEEK) };
+            return { min: MAP_MIN, base: base, max: Math.max(base, window.innerHeight - PEEK) };
         }
+        // 시트 아래 고정 버튼(.bottom-action)은 시트가 내려간 만큼 같이 내려감 (올릴 때는 제자리)
+        var action = sheet.nextElementSibling;
+        if (action && !action.classList.contains('bottom-action')) action = null;
+
         function setHeight(h, animate) {
             map.classList.toggle('is-resizing', !animate);
             map.style.flex = 'none';
             map.style.height = h + 'px';
+            if (action) {
+                action.classList.toggle('is-resizing', !animate);
+                action.style.transform = 'translateY(' + Math.max(0, h - limits().base) + 'px)';
+            }
             sheet.dataset.state = h <= MAP_MIN + 1 ? 'expanded' : (h >= limits().max - 1 ? 'collapsed' : 'default');
             if (animate) setTimeout(relayoutMaps, 260);
             else relayoutMaps();

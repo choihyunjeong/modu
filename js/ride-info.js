@@ -107,6 +107,8 @@ var RideInfo = (function () {
     }
 
     return {
+        load: load,
+        save: save,
         fillDevice: fillDevice,
         saveDevice: saveDevice,
         fillContact: fillContact,

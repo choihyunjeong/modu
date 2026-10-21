@@ -850,6 +850,13 @@ body.is-modal-open { overflow: hidden; }
 .map-view { transition: height 0.25s ease; }
 .map-view.is-resizing { transition: none; }
 
+/* 시트 아래 고정 버튼도 시트와 같은 속도로 따라 내려감 */
+.bottom-action {
+    z-index: 4;
+    transition: transform 0.25s ease;
+}
+.bottom-action.is-resizing { transition: none; }
+
 .modal-sheet__panel {
     position: relative;
     transition: transform 0.2s ease;

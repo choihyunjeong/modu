@@ -125,83 +125,19 @@
         </div>
     </div>
 
-    <!-- 고른 장소 지도로 확인 (목록을 누르면 열림 → "여기로 갈게요"면 탑승 위치 확인으로) -->
-    <div class="dest-preview" id="dest-preview" role="dialog" aria-modal="true" aria-labelledby="dest-preview-name" hidden>
-        <div class="map-view dest-preview__map" data-preview-map>
-            <div class="map-pin map-pin--start dest-preview__start" data-preview-start>
-                <span class="map-pin__label">
-                    <span class="icon icon--xs icon--user" aria-hidden="true"></span>
-                    출발
-                </span>
-                <span class="map-pin__stem"></span>
-                <span class="map-pin__dot"></span>
-            </div>
-            <div class="map-pin map-pin--destination dest-preview__pin" data-preview-pin>
-                <span class="map-pin__label">도착</span>
-                <span class="map-pin__stem"></span>
-                <span class="map-pin__dot"></span>
-            </div>
-            <button type="button" class="btn-float btn-float--back" data-close-preview aria-label="목록으로">
-                <span class="icon icon--arrow-left" aria-hidden="true"></span>
-            </button>
-        </div>
-        <section class="sheet dest-preview__sheet">
-            <span class="sheet__grabber" aria-hidden="true"></span>
-            <div class="sheet-head">
-                <h2 class="sheet-title" id="dest-preview-name"></h2>
-                <p class="sheet-desc" data-preview-addr></p>
-            </div>
-            <p class="dest-preview__route" data-preview-route hidden></p>
-            <p class="dest-preview__note" data-preview-note hidden>지금 계신 곳이에요. 다른 목적지를 골라 주세요.</p>
-            <button type="button" class="btn btn--primary" data-confirm-dest>여기로 갈게요</button>
-        </section>
-    </div>
-
     <script>
-        // 목록에서 장소를 고르면 지도로 먼저 보여주고, "여기로 갈게요"면 목적지로 저장 → 탑승 위치 확인
-        var preview = document.getElementById('dest-preview');
-        var previewMap = preview.querySelector('[data-preview-map]');
-        var previewPin = preview.querySelector('[data-preview-pin]');
-        var previewStart = preview.querySelector('[data-preview-start]');
-        var routeText = preview.querySelector('[data-preview-route]');
-        var confirmBtn = preview.querySelector('[data-confirm-dest]');
-        var chosen = null;
-        var lastOpener = null;
-
-        function chooseDest(name, addr, lat, lng, opener) {
-            chosen = { name: name, addr: addr, lat: Number(lat), lng: Number(lng) };
-            lastOpener = opener || null;
-            preview.querySelector('#dest-preview-name').textContent = name;
-            preview.querySelector('[data-preview-addr]').textContent = addr;
-            // 출발지(집)와 같은 곳이면 고를 수 없음
+        // 목적지 고르기: 이번 호출의 목적지로 저장하고 호출 전 확인(E3b)으로
+        //  출발지(집)와 같은 곳은 고를 수 없음
+        function chooseDest(name, addr, lat, lng) {
+            var chosen = { name: name, addr: addr, lat: Number(lat), lng: Number(lng) };
             var start = Trip.places().pickup;
-            var same = Math.abs(start.lat - chosen.lat) < 0.0005 && Math.abs(start.lng - chosen.lng) < 0.0005;
-            preview.querySelector('[data-preview-note]').hidden = !same;
-            confirmBtn.disabled = same;
-            preview.hidden = false;
-            document.body.classList.add('is-modal-open');
-            // 출발지 → 이곳 도로 경로와 걸리는 시간
-            routeText.hidden = true;
-            if (!same) MapKit.preview(previewMap, start, chosen, previewStart, previewPin, function (route) {
-                if (!route) return;
-                routeText.textContent = '집에서 차로 약 ' + route.min + '분 · ' + route.km.toFixed(1) + 'km';
-                routeText.hidden = false;
-            });
-            else MapKit.preview(previewMap, chosen, chosen, previewStart, previewPin);
-            preview.querySelector('[data-close-preview]').focus();
-        }
-        function closePreview() {
-            preview.hidden = true;
-            document.body.classList.remove('is-modal-open');
-            if (lastOpener) lastOpener.focus();
-        }
-
-        confirmBtn.addEventListener('click', function () {
+            if (Math.abs(start.lat - chosen.lat) < 0.0005 && Math.abs(start.lng - chosen.lng) < 0.0005) {
+                alert('지금 계신 곳이에요. 다른 목적지를 골라 주세요.');
+                return;
+            }
             Trip.start(chosen);
-            location.href = 'pickup.html';
-        });
-        preview.querySelector('[data-close-preview]').addEventListener('click', closePreview);
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !preview.hidden) closePreview(); });
+            location.href = 'confirm.html';
+        }
 
         function addrOf(a) {
             var el = a.querySelector('.place-list__addr');
@@ -210,12 +146,12 @@
         document.querySelectorAll('[data-dest]').forEach(function (a) {
             a.addEventListener('click', function (e) {
                 e.preventDefault();
-                chooseDest(a.dataset.dest, addrOf(a), a.dataset.lat, a.dataset.lng, a);
+                chooseDest(a.dataset.dest, addrOf(a), a.dataset.lat, a.dataset.lng);
             });
-            // 최근 목적지의 지도 버튼도 같은 지도 화면을 염
+            // 최근 목적지의 지도 버튼도 같은 곳으로 (호출 전 확인 지도에서 보여줌)
             var mapBtn = a.parentNode.querySelector('.place-list__map');
             if (mapBtn) mapBtn.addEventListener('click', function () {
-                chooseDest(a.dataset.dest, addrOf(a), a.dataset.lat, a.dataset.lng, mapBtn);
+                chooseDest(a.dataset.dest, addrOf(a), a.dataset.lat, a.dataset.lng);
             });
         });
 
@@ -246,7 +182,7 @@
                 a.appendChild(addr);
                 a.addEventListener('click', function (e) {
                     e.preventDefault();
-                    chooseDest(place.place_name, addr.textContent, place.y, place.x, a);
+                    chooseDest(place.place_name, addr.textContent, place.y, place.x);
                 });
                 li.appendChild(a);
                 list.appendChild(li);

@@ -13,8 +13,9 @@
     <script src="js/map.js"></script>
 </head>
 <body>
+    <!-- E3b 호출 전 확인 (목적지를 고르면 바로 이 화면) -->
     <div id="wrap" class="map-page">
-        <div class="map-view" style="--map-height: 215px; --map-img-top: -235px;" data-map data-center="destination" data-route="pickup,destination">
+        <div class="map-view" style="--map-height: 244px; --map-img-top: -235px;" data-map data-center="destination" data-route="pickup,destination">
             <img class="map-view__static" src="image/map-static.png" alt="">
             <img class="map-view__route" src="image/map-route.svg" alt="" style="--x: 120px; --y: 122px;" data-static-pos>
 
@@ -30,12 +31,12 @@
                 <span class="map-pin__dot"></span>
             </div>
             <div class="map-pin map-pin--destination" data-static-pos data-place="destination" style="--x: 189px; --y: 72px;">
-                <span class="map-pin__label" data-trip="ride-pin">목적지까지 이동 약 13분</span>
+                <span class="map-pin__label" data-trip="ride-pin">목적지까지 이동 약 14분</span>
                 <span class="map-pin__stem"></span>
                 <span class="map-pin__dot"></span>
             </div>
 
-            <a href="pickup.html" class="btn-float btn-float--back" data-history-back aria-label="뒤로">
+            <a href="search.html" class="btn-float btn-float--back" data-history-back aria-label="뒤로">
                 <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
             <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
@@ -45,16 +46,13 @@
 
         <section class="sheet sheet--confirm">
             <span class="sheet__grabber" aria-hidden="true"></span>
-            <h1 class="blind">호출 정보</h1>
+            <h1 class="confirm-label">호출 정보</h1>
 
             <div class="vehicle-card">
-                <img class="vehicle-card__img" src="image/ud-taxi.png" alt="UD택시">
+                <img class="vehicle-card__img" src="image/ud-taxi.png" alt="">
                 <div class="vehicle-card__text">
-                    <p class="vehicle-card__wait">
-                        <span>예상 대기</span>
-                        <strong class="vehicle-card__wait-time">30~45분</strong>
-                    </p>
-                    <p class="vehicle-card__desc">탑승정보에 맞는 차를 배정해요</p>
+                    <p class="vehicle-card__name">UD택시</p>
+                    <p class="vehicle-card__wait">탑승까지 보통 25~40분</p>
                 </div>
                 <div class="vehicle-card__fare">
                     <p class="vehicle-card__price" data-trip="fare">1,500원</p>
@@ -62,55 +60,43 @@
                 </div>
             </div>
 
-            <div class="confirm-trip">
-                <div class="confirm-route">
-                    <p class="confirm-route__item confirm-route__item--start">
-                        <span class="confirm-route__dot" aria-hidden="true"></span>
-                        <span class="confirm-route__label">출발</span>
-                        <span class="confirm-route__place" data-trip="pickup-name">래미안베라힐즈 정문</span>
-                    </p>
-                    <p class="confirm-route__item">
-                        <span class="confirm-route__dot" aria-hidden="true"></span>
-                        <span class="confirm-route__label">도착</span>
-                        <span class="confirm-route__place" data-trip="dest-name">은평성모병원</span>
-                    </p>
-                    <img class="confirm-route__line" src="image/route-connector.svg" alt="">
-                </div>
-                <p class="confirm-time" data-trip="ride-time">목적지까지 약 13분 · 4.9km (차에 탄 뒤 기준)</p>
-            </div>
+            <p class="confirm-status">주변 차량과 접수 상황을 확인하고 있어요</p>
+
+            <p class="confirm-route">
+                <span data-trip="pickup-name">래미안베라힐즈 정문</span>
+                <span class="confirm-route__arrow" aria-hidden="true">→</span>
+                <span data-trip="dest-name">은평성모병원</span>
+            </p>
+            <p class="confirm-time" data-trip="ride-time">목적지까지 약 14분 · 4.5km (차에 탄 뒤 기준)</p>
 
             <ul class="card summary-list">
                 <li class="summary-list__row">
                     <div class="summary-list__text">
                         <p class="summary-list__title">탑승 인원</p>
-                        <p class="summary-list__value summary-list__value--medium" data-riders-text data-trip="riders-confirm">본인 1명 · 동승자 없음</p>
+                        <p class="summary-list__value summary-list__value--strong" data-riders-text data-trip="riders-confirm">본인 1명 · 동승자 없음</p>
                     </div>
-                    <button type="button" class="summary-list__edit" data-open-riders>변경</button>
+                    <button type="button" class="summary-list__edit" data-open-riders aria-haspopup="dialog">변경</button>
                 </li>
                 <li class="summary-list__row">
                     <div class="summary-list__text">
                         <p class="summary-list__title">탑승 정보 · 함께 전달</p>
-                        <div class="ride-chips" data-ride-chips>
-                            <span class="ride-chip">수동 휠체어</span>
-                            <span class="ride-chip">폭 65cm</span>
-                            <span class="ride-chip ride-chip--primary">UD 가능</span>
-                        </div>
-                        <p class="summary-list__value" data-ride-requests>미리 전할 요청 · 천천히 출발해 주세요</p>
+                        <p class="summary-list__value" data-ride-device>수동 휠체어 · 앉은 채 탑승 · 폭 65cm</p>
+                        <p class="summary-list__value" data-ride-requests>미리 전할 요청 · 천천히 설명해 주세요</p>
                     </div>
-                    <a href="ride-info.html?from=confirm" class="summary-list__edit">수정</a>
+                    <button type="button" class="summary-list__edit" data-open-ride aria-haspopup="dialog">수정</button>
                 </li>
                 <li class="summary-list__row">
                     <div class="summary-list__text">
                         <p class="summary-list__title">연락 방법</p>
                         <p class="summary-list__value" data-ride-contact>문자·앱 메시지로 연락</p>
                     </div>
-                    <a href="ride-info-contact.html?from=confirm" class="summary-list__edit">수정</a>
+                    <button type="button" class="summary-list__edit" data-open-contact aria-haspopup="dialog">수정</button>
                 </li>
             </ul>
         </section>
 
         <div class="bottom-action bottom-action--call">
-            <a href="waiting.html" class="btn btn--primary" data-call>호출하기</a>
+            <a href="waiting.html" class="btn btn--primary btn--call" data-call>UD택시 호출하기</a>
         </div>
     </div>
 
@@ -150,62 +136,169 @@
         </div>
     </div>
 
+    <!-- 탑승 정보 수정 시트 (이동 보조기기 · 미리 전할 요청 · 적용하면 저장되고 기사님께 함께 전달) -->
+    <div class="modal-sheet" id="ride-sheet" role="dialog" aria-modal="true" aria-labelledby="ride-title" hidden>
+        <div class="modal-sheet__panel modal-sheet__panel--edit">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div>
+                <h2 class="modal-sheet__title" id="ride-title">탑승 정보 수정</h2>
+                <p class="modal-sheet__desc">이번 호출과 다음 호출에 함께 전달돼요.</p>
+            </div>
+            <fieldset class="edit-group">
+                <legend class="edit-group__title">이동 보조기기</legend>
+                <div class="card choice-list">
+                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="manual-wheelchair" checked><span class="choice-list__title">수동 휠체어</span></label>
+                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="power-wheelchair"><span class="choice-list__title">전동 휠체어</span></label>
+                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="walker"><span class="choice-list__title">보행기</span></label>
+                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="cane"><span class="choice-list__title">지팡이·목발</span></label>
+                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="other"><span class="choice-list__title">다른 이동 보조기기</span></label>
+                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="none"><span class="choice-list__title">이동 보조기기 없음</span></label>
+                </div>
+            </fieldset>
+            <fieldset class="edit-group">
+                <legend class="edit-group__title">기사님께 미리 전할 요청 <span class="edit-group__sub">선택 사항</span></legend>
+                <div class="card choice-list">
+                    <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="slow-explain" checked><span class="choice-list__title">천천히 설명해 주세요</span></label>
+                    <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="text-guide"><span class="choice-list__title">글로 안내해 주세요</span></label>
+                    <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="tell-before-help"><span class="choice-list__title">도와주시기 전에 먼저 말씀해 주세요</span></label>
+                    <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="wait-answer"><span class="choice-list__title">답변을 조금 기다려 주세요</span></label>
+                </div>
+            </fieldset>
+            <div class="edit-foot">
+                <button type="button" class="btn btn--primary" data-apply-ride>이 정보로 적용</button>
+                <a href="ride-info.html?from=confirm" class="edit-foot__link">휠체어 크기까지 자세히 등록하기</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 연락 방법 수정 시트 -->
+    <div class="modal-sheet" id="contact-sheet" role="dialog" aria-modal="true" aria-labelledby="contact-title" hidden>
+        <div class="modal-sheet__panel modal-sheet__panel--edit">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div>
+                <h2 class="modal-sheet__title" id="contact-title">연락은 어떻게 받으시겠어요?</h2>
+                <p class="modal-sheet__desc">기사님이 이 방법으로 연락드려요.</p>
+            </div>
+            <fieldset class="edit-group">
+                <legend class="blind">연락받을 방법</legend>
+                <div class="card choice-list">
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="contact" value="message">
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">문자·앱 메시지</span>
+                            <span class="choice-list__desc">전화도 받을 수 있어요</span>
+                        </span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="contact" value="message-only" checked>
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">문자·앱 메시지만</span>
+                            <span class="choice-list__desc">통화가 어려워요 · 위치를 바꿀 때도 문자로</span>
+                        </span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="contact" value="phone">
+                        <span class="choice-list__title">전화</span>
+                    </label>
+                </div>
+            </fieldset>
+            <button type="button" class="btn btn--primary" data-apply-contact>이 방법으로 적용</button>
+        </div>
+    </div>
+
     <script>
-        // 저장한 탑승 정보·연락 방법이 있으면 요약 문구를 바꿈 (없으면 기본 문구 그대로)
-        var ride = RideInfo.describe();
-        if (ride) {
-            // 보조기기 문구(" · "로 이어짐)를 라벨로 나눠 보여줌
-            if (ride.device) {
-                var chips = document.querySelector('[data-ride-chips]');
-                chips.innerHTML = '';
-                ride.device.split(' · ').forEach(function (text) {
-                    var chip = document.createElement('span');
-                    chip.className = 'ride-chip';
-                    chip.textContent = text;
-                    chips.appendChild(chip);
-                });
+        // 바텀시트 열고 닫기 공통 (바깥 누르기 · Esc · 아래로 끌기로 닫힘 · 닫으면 연 버튼으로 포커스)
+        function setupSheet(sheet, opener, onOpen) {
+            function open() {
+                if (onOpen) onOpen();
+                sheet.hidden = false;
+                document.body.classList.add('is-modal-open');
+                var first = sheet.querySelector('input:checked') || sheet.querySelector('button');
+                if (first) first.focus();
             }
+            function close() {
+                sheet.hidden = true;
+                document.body.classList.remove('is-modal-open');
+                opener.focus();
+            }
+            opener.addEventListener('click', open);
+            sheet.addEventListener('click', function (e) { if (e.target === sheet) close(); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) close(); });
+            return close;
+        }
+
+        function check(sheet, name, value) {
+            var input = sheet.querySelector('input[name="' + name + '"][value="' + value + '"]');
+            if (input) input.checked = true;
+        }
+
+        // 저장한 탑승 정보·연락 방법이 있으면 요약 문구를 바꿈 (없으면 기본 문구 그대로)
+        function renderRide() {
+            var ride = RideInfo.describe();
+            if (!ride) return;
+            if (ride.device) document.querySelector('[data-ride-device]').textContent = ride.device;
             document.querySelector('[data-ride-requests]').textContent = ride.requests;
             document.querySelector('[data-ride-requests]').hidden = !ride.requests;
             if (ride.contact) document.querySelector('[data-ride-contact]').textContent = ride.contact;
         }
+        renderRide();
 
         // 탑승 인원: "변경" → 시트에서 고르고 "적용"하면 행 문구만 바뀜 (닫으면 기존 인원 유지)
-        var sheet = document.getElementById('riders-sheet');
+        var ridersSheet = document.getElementById('riders-sheet');
         var applied = Trip.get().riders || 0;
 
-        function selected() {
-            return Number(sheet.querySelector('input[name="riders"]:checked').value);
+        function selectedRiders() {
+            return Number(ridersSheet.querySelector('input[name="riders"]:checked').value);
         }
         function updateTotal() {
-            var n = selected();
-            sheet.querySelector('[data-riders-total]').textContent = '총 탑승 인원 ' + (n + 1) + '명';
-            sheet.querySelector('[data-riders-detail]').textContent =
+            var n = selectedRiders();
+            ridersSheet.querySelector('[data-riders-total]').textContent = '총 탑승 인원 ' + (n + 1) + '명';
+            ridersSheet.querySelector('[data-riders-detail]').textContent =
                 '본인 1명' + (n ? ' + 동승자 ' + n + '명' : '') + ' · 좌석 확보에 쓰여요';
         }
-        function openSheet() {
-            sheet.querySelector('input[value="' + applied + '"]').checked = true;
+        var closeRiders = setupSheet(ridersSheet, document.querySelector('[data-open-riders]'), function () {
+            check(ridersSheet, 'riders', applied);
             updateTotal();
-            sheet.hidden = false;
-            document.body.classList.add('is-modal-open');
-            sheet.querySelector('input:checked').focus();
-        }
-        function closeSheet() {
-            sheet.hidden = true;
-            document.body.classList.remove('is-modal-open');
-            document.querySelector('[data-open-riders]').focus();
-        }
-
-        document.querySelector('[data-open-riders]').addEventListener('click', openSheet);
-        sheet.addEventListener('change', updateTotal);
-        sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
-        sheet.querySelector('[data-apply-riders]').addEventListener('click', function () {
-            applied = selected();
+        });
+        ridersSheet.addEventListener('change', updateTotal);
+        ridersSheet.querySelector('[data-apply-riders]').addEventListener('click', function () {
+            applied = selectedRiders();
             Trip.set({ riders: applied });
             document.querySelector('[data-riders-text]').textContent =
                 '본인 1명 · ' + (applied ? '동승자 ' + applied + '명' : '동승자 없음');
-            closeSheet();
+            closeRiders();
+        });
+
+        // 탑승 정보: 저장된 값으로 채워 열고, 적용하면 저장 (다른 항목은 그대로 둠)
+        var rideSheet = document.getElementById('ride-sheet');
+        var closeRide = setupSheet(rideSheet, document.querySelector('[data-open-ride]'), function () {
+            var data = RideInfo.load() || {};
+            if (data.device) check(rideSheet, 'device', data.device);
+            if (data.requests) {
+                rideSheet.querySelectorAll('input[name="request"]').forEach(function (input) {
+                    input.checked = data.requests.indexOf(input.value) > -1;
+                });
+            }
+        });
+        rideSheet.querySelector('[data-apply-ride]').addEventListener('click', function () {
+            RideInfo.save({
+                device: rideSheet.querySelector('input[name="device"]:checked').value,
+                requests: Array.prototype.map.call(rideSheet.querySelectorAll('input[name="request"]:checked'), function (input) { return input.value; })
+            });
+            renderRide();
+            closeRide();
+        });
+
+        // 연락 방법
+        var contactSheet = document.getElementById('contact-sheet');
+        var closeContact = setupSheet(contactSheet, document.querySelector('[data-open-contact]'), function () {
+            var data = RideInfo.load() || {};
+            if (data.contact) check(contactSheet, 'contact', data.contact);
+        });
+        contactSheet.querySelector('[data-apply-contact]').addEventListener('click', function () {
+            RideInfo.save({ contact: contactSheet.querySelector('input[name="contact"]:checked').value });
+            renderRide();
+            closeContact();
         });
 
         // 호출하기: 접수 시각과 인원을 저장하고 진행 화면으로
