@@ -83,7 +83,8 @@ var Trip = (function () {
             var route = {
                 path: best.geometry.coordinates.map(function (c) { return [+c[1].toFixed(5), +c[0].toFixed(5)]; }),
                 km: best.distance / 1000,
-                // 길찾기 시간은 막힘 없는 기준이라 × 1.4 + 승하차 3분
+                // 길찾기 시간은 막힘 없는 기준이라 × 1.4 (drive) · 이동 시간은 + 승하차 3분 (min)
+                drive: Math.max(1, Math.round(best.duration / 60 * 1.4)),
                 min: Math.max(5, Math.round(best.duration / 60 * 1.4 + 3))
             };
             var all = savedRoutes();
@@ -104,6 +105,36 @@ var Trip = (function () {
         fetchRoute(p.pickup, p.destination, function (r) {
             if (r) bind(document);
             if (callback) callback(r);
+        });
+    }
+
+    // 배정된 차 → 탑승 위치 도로 경로 (차가 오는 길 · 도착까지 남은 시간)
+    function approachRoute(callback) {
+        var p = places();
+        fetchRoute(p.car, p.pickup, callback);
+    }
+
+    // 차가 오는 데 걸리는 분 (예전에 저장된 경로는 drive가 없어서 min - 3)
+    function driveMinutes(r) {
+        return r.drive || Math.max(1, r.min - 3);
+    }
+
+    // <span data-eta="title">: 도착까지 남은 시간 글자
+    //  data-eta-at="0.6" 이면 차가 길의 60% 왔을 때 기준 (알림 미리보기처럼 고정된 시점)
+    //  없으면 지도에서 차가 움직이는 대로 ratio를 받아 바뀜
+    var ETA_TEXTS = {
+        title: '약 {n}분 후 도착 예정',
+        chip: '약 {n}분',
+        push: '약 {n}분 후 도착 예정이에요.',
+        soon: 'UD택시가 약 {n}분 후 도착해요'
+    };
+
+    function fillEta(root, drive, ratio) {
+        root.querySelectorAll('[data-eta]').forEach(function (el) {
+            var at = el.dataset.etaAt != null ? Number(el.dataset.etaAt) : ratio;
+            if (at == null || !ETA_TEXTS[el.dataset.eta]) return;
+            var text = ETA_TEXTS[el.dataset.eta].replace('{n}', Math.max(1, Math.ceil(drive * (1 - at))));
+            if (el.textContent !== text) el.textContent = text;
         });
     }
 
@@ -197,10 +228,18 @@ var Trip = (function () {
         bind(document);
         // 알림 미리보기(template) 안의 글자도 바꿈
         document.querySelectorAll('template').forEach(function (tpl) { bind(tpl.content); });
+        // 고정 시점 남은 시간(data-eta-at)은 차가 오는 길을 받아 채움
+        var roots = [document].concat(Array.prototype.map.call(document.querySelectorAll('template'), function (t) { return t.content; }));
+        var needs = roots.some(function (r) { return r.querySelector('[data-eta-at]'); });
+        if (needs) approachRoute(function (r) {
+            if (!r) return;
+            roots.forEach(function (root) { fillEta(root, driveMinutes(r), null); });
+        });
     });
 
     return {
         get: load, set: set, start: start, places: places, bind: bind,
-        route: route, ensureRoute: ensureRoute, fetchRoute: fetchRoute
+        route: route, ensureRoute: ensureRoute, fetchRoute: fetchRoute,
+        approachRoute: approachRoute, driveMinutes: driveMinutes, fillEta: fillEta
     };
 })();

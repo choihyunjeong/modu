@@ -29,30 +29,41 @@
 }
 
 /* ---------- 차량 찾는 중 ---------- */
+/* 탑승 위치에서 연한 파란 원 3겹이 가운데에서 차례로 퍼져 나감 (크기 0 상자 · 가운데가 탑승 위치) */
 .map-pulse {
+    position: relative;
+    width: 0;
+    height: 0;
     pointer-events: none;
 }
 
 .map-pulse img {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 220px;
     max-width: none;
-    transform: translate(-50%, -50%);
-    animation: pulse 2.4s ease-out infinite;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+    animation: pulse 3.6s ease-out infinite;
 }
 
-.map-pulse img:nth-child(1) { width: 220px; height: 220px; }
-.map-pulse img:nth-child(2) { width: 150px; height: 150px; animation-delay: 0.4s; }
-.map-pulse img:nth-child(3) { width: 84px; height: 84px; animation-delay: 0.8s; }
+.map-pulse img:nth-child(2) { animation-delay: 1.2s; }
+.map-pulse img:nth-child(3) { animation-delay: 2.4s; }
 
 @keyframes pulse {
-    0% { transform: translate(-50%, -50%) scale(0.85); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.4; }
+    0% { transform: translate(-50%, -50%) scale(0.1); opacity: 1; }
+    70% { opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
 }
 
+/* 움직임 줄이기 설정이면 3겹을 겹쳐 멈춘 채로 보여줌 */
 @media (prefers-reduced-motion: reduce) {
-    .map-pulse img { animation: none; }
+    .map-pulse img { animation: none; opacity: 1; }
+    .map-pulse img:nth-child(1) { transform: translate(-50%, -50%); }
+    .map-pulse img:nth-child(2) { transform: translate(-50%, -50%) scale(0.68); }
+    .map-pulse img:nth-child(3) { transform: translate(-50%, -50%) scale(0.38); }
 }
 
 /* 탑승 위치 핀 (말풍선 + 점) */

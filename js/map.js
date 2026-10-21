@@ -61,6 +61,21 @@ var MapKit = (function () {
         else map.setBounds(bounds, 56, 24, 32, 24);
     }
 
+    // 경로 위 비율(0~1) 지점부터 끝까지 남은 길 (첫 점이 그 지점)
+    function restFrom(path, ratio) {
+        var lengths = [0];
+        for (var i = 1; i < path.length; i++) {
+            var dLat = path[i].getLat() - path[i - 1].getLat();
+            var dLng = path[i].getLng() - path[i - 1].getLng();
+            lengths.push(lengths[i - 1] + Math.sqrt(dLat * dLat + dLng * dLng));
+        }
+        var target = lengths[lengths.length - 1] * ratio;
+        for (var j = 1; j < path.length; j++) {
+            if (lengths[j] >= target) return [pointAt(path, ratio)].concat(path.slice(j));
+        }
+        return [path[path.length - 1]];
+    }
+
     // 경로 위 비율(0~1) 지점의 좌표 (구간 길이 비율로 계산)
     function pointAt(path, ratio) {
         var lengths = [0];
@@ -83,15 +98,17 @@ var MapKit = (function () {
         return path[path.length - 1];
     }
 
-    // 표시를 경로를 따라 부드럽게 움직임
-    function move(overlay, path, el) {
+    // 표시를 경로를 따라 부드럽게 움직임 · onStep(지금 비율)이 있으면 매번 부름
+    function move(overlay, path, el, onStep) {
         var range = (el.dataset.moveRange || '0,1').split(',').map(Number);
         var duration = Number(el.dataset.moveMs || 8000) * (config.demoScale || 1);
         var startTime = null;
         function step(now) {
             if (!startTime) startTime = now;
             var t = Math.min(1, (now - startTime) / duration);
-            overlay.setPosition(pointAt(path, range[0] + (range[1] - range[0]) * t));
+            var ratio = range[0] + (range[1] - range[0]) * t;
+            overlay.setPosition(pointAt(path, ratio));
+            if (onStep) onStep(ratio);
             if (t < 1) requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
@@ -138,7 +155,9 @@ var MapKit = (function () {
             if (!position) return;
             var overlay = new kakao.maps.CustomOverlay({
                 map: map, position: position, content: el,
-                yAnchor: el.classList.contains('map-pin') ? 1 : 0.5
+                yAnchor: el.classList.contains('map-pin') ? 1 : 0.5,
+                // 퍼지는 원은 핀·차 아래에 깔림
+                zIndex: el.classList.contains('map-pulse') ? 0 : 1
             });
             (overlays[el.dataset.place] = overlays[el.dataset.place] || []).push(overlay);
 
@@ -147,12 +166,17 @@ var MapKit = (function () {
                     move(overlay, route ? toPath(route.path) : [toLatLng('pickup'), toLatLng('destination')], el);
                 });
             } else if (el.dataset.movePath === 'approach' && window.Trip) {
-                var p = places();
-                Trip.fetchRoute(p.car, p.pickup, function (route) {
+                Trip.approachRoute(function (route) {
                     var road = route ? toPath(route.path) : [toLatLng('car'), toLatLng('pickup')];
+                    var drive = route ? Trip.driveMinutes(route) : null;
                     // 차가 오는 길 전체가 보이게 (data-fit 장소들과 함께)
                     if (view.dataset.fit) fit(map, road.concat(view.dataset.fit.split(',').map(toLatLng).filter(Boolean)), pad);
-                    move(overlay, road, el);
+                    // 남은 길만 그림 (차가 지나간 길은 지워짐) · 도착까지 남은 시간도 같이 바뀜
+                    var line = new kakao.maps.Polyline(Object.assign({ map: map, path: road }, ROUTE_STYLE));
+                    move(overlay, road, el, function (ratio) {
+                        line.setPath(restFrom(road, ratio));
+                        if (drive) Trip.fillEta(document, drive, ratio);
+                    });
                 });
             } else if (el.dataset.moveTo && toLatLng(el.dataset.moveTo)) {
                 move(overlay, [position, toLatLng(el.dataset.moveTo)], el);
