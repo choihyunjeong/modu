@@ -4,6 +4,8 @@
 // 2) 알림 없이 바뀌는 상태(도착 → 탑승 중 → 이동 완료): [data-auto-next]의 화면으로 넘어감
 //    <div id="wrap" data-auto-next="riding.html" data-delay="8000">
 document.addEventListener('DOMContentLoaded', function () {
+    // 시간은 APP_CONFIG.demoScale만큼 늘림 (config.js에서 한 번에 조절)
+    var scale = (window.APP_CONFIG && APP_CONFIG.demoScale) || 1;
     var auto = document.querySelector('[data-auto-next]');
     if (auto) {
         var next = function () {
@@ -12,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // replace: 자동으로 바뀐 상태는 뒤로 가기 기록에 남기지 않음
             location.replace(auto.dataset.autoNext);
         };
-        setTimeout(next, Number(auto.dataset.delay || 8000));
+        setTimeout(next, Number(auto.dataset.delay || 8000) * scale);
     }
 
     document.querySelectorAll('template[data-push]').forEach(function (tpl) {
@@ -22,6 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
             banner.setAttribute('role', 'status');
             banner.appendChild(tpl.content.cloneNode(true));
             document.body.appendChild(banner);
-        }, Number(tpl.dataset.delay || 5000));
+        }, Number(tpl.dataset.delay || 5000) * scale);
     });
 });

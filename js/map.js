@@ -12,7 +12,8 @@
 // data-move-to="pickup"  : 표시를 그 장소 쪽으로 움직임 (차량 다가오기)
 // data-move-path="route" : 표시를 이번 호출 도로 경로를 따라 움직임 (이동 중)
 //   data-move-range="0,0.7" 어느 구간을 움직일지 (0 = 처음, 1 = 끝)
-//   data-move-ms="8000"     움직이는 시간
+//   data-move-ms="8000"     움직이는 시간 (APP_CONFIG.demoScale을 곱함)
+// data-move-path="approach" : 배정된 차가 도로를 따라 탑승 위치로 다가옴 (차량 배정 · 도착 임박)
 var MapKit = (function () {
     var config = window.APP_CONFIG || {};
     var callbacks = null;
@@ -85,7 +86,7 @@ var MapKit = (function () {
     // 표시를 경로를 따라 부드럽게 움직임
     function move(overlay, path, el) {
         var range = (el.dataset.moveRange || '0,1').split(',').map(Number);
-        var duration = Number(el.dataset.moveMs || 8000);
+        var duration = Number(el.dataset.moveMs || 8000) * (config.demoScale || 1);
         var startTime = null;
         function step(now) {
             if (!startTime) startTime = now;
@@ -144,6 +145,11 @@ var MapKit = (function () {
             if (el.dataset.movePath === 'route') {
                 withRoute(function (route) {
                     move(overlay, route ? toPath(route.path) : [toLatLng('pickup'), toLatLng('destination')], el);
+                });
+            } else if (el.dataset.movePath === 'approach' && window.Trip) {
+                var p = places();
+                Trip.fetchRoute(p.car, p.pickup, function (route) {
+                    move(overlay, route ? toPath(route.path) : [toLatLng('car'), toLatLng('pickup')], el);
                 });
             } else if (el.dataset.moveTo && toLatLng(el.dataset.moveTo)) {
                 move(overlay, [position, toLatLng(el.dataset.moveTo)], el);
