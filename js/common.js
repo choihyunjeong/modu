@@ -8,7 +8,7 @@
 
 // 바텀시트 끌어 올리기·내리기
 // 1) 지도 아래 시트(.sheet): 손잡이를 위아래로 끌면 지도 높이가 바뀌어 시트가 올라가거나 내려감
-//    세 단계(펼침 · 기본 · 접힘)에 가까운 쪽으로 붙음 · 손잡이를 누르면 기본 ↔ 접힘
+//    놓은 자리에 그대로 멈춤 (맨 위·맨 아래까지만) · 손잡이를 누르면 기본 ↔ 접힘
 // 2) 화면 위로 열린 시트(.modal-sheet__panel): 아래로 끌어 내리면 닫힘
 var SheetDrag = (function () {
     var PEEK = 150;      // 접혔을 때 보이는 시트 높이
@@ -54,10 +54,15 @@ var SheetDrag = (function () {
         sheet.prepend(handle);
 
         // 기본 높이는 처음 끌 때 잼 (처음에 숨겨진 시트도 있어서)
+        //  시트 높이도 그때 재 두고, 내려갈 때 줄어들지 않게 고정 (아래 버튼과 사이가 벌어지지 않게)
         var base = 0;
+        var sheetBase = 0;
         var startHeight = 0;
         function limits() {
-            if (!base) base = map.offsetHeight;
+            if (!base) {
+                base = map.offsetHeight;
+                sheetBase = sheet.offsetHeight;
+            }
             return { min: MAP_MIN, base: base, max: Math.max(base, window.innerHeight - PEEK) };
         }
         // 시트 아래 고정 버튼(.bottom-action)은 시트가 내려간 만큼 같이 내려감 (올릴 때는 제자리)
@@ -68,6 +73,7 @@ var SheetDrag = (function () {
             map.classList.toggle('is-resizing', !animate);
             map.style.flex = 'none';
             map.style.height = h + 'px';
+            sheet.style.minHeight = sheetBase + 'px';
             if (action) {
                 action.classList.toggle('is-resizing', !animate);
                 action.style.transform = 'translateY(' + Math.max(0, h - limits().base) + 'px)';
@@ -88,11 +94,8 @@ var SheetDrag = (function () {
                 // 누르기: 접혀 있으면 기본으로, 아니면 접기
                 return setHeight(sheet.dataset.state === 'collapsed' ? base : l.max, true);
             }
-            // 놓은 자리에서 가장 가까운 단계로
-            var h = startHeight + dy;
-            var snaps = [l.min, base, l.max];
-            var nearest = snaps.reduce(function (a, b) { return Math.abs(b - h) < Math.abs(a - h) ? b : a; });
-            setHeight(nearest, true);
+            // 놓은 자리에 그대로 멈춤 (맨 위·맨 아래 넘지 않게만)
+            setHeight(Math.min(l.max, Math.max(l.min, startHeight + dy)), true);
         });
     }
 
