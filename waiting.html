@@ -12,6 +12,7 @@
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
     <script src="js/actions.js"></script>
+    <script src="js/stats.js"></script>
 </head>
 <body>
     <div id="wrap" class="map-page" data-auto-next="assigned.html" data-delay="8000" data-next-notice="UD택시가 배정됐어요" data-cancel-stage="before">
@@ -58,13 +59,13 @@
 
                 <div class="wait-card">
                     <div class="wait-card__head">
-                        <p class="wait-card__label">차량 배정까지 예상</p>
+                        <p class="wait-card__label">승차까지 예상</p>
                         <span class="live-badge">
                             <img src="image/live-dot.svg" alt="">
                             실시간
                         </span>
                     </div>
-                    <p class="wait-card__minutes">약 35분</p>
+                    <p class="wait-card__minutes">약 <span data-stat="avg">32</span>분</p>
                     <div class="wait-card__foot">
                         <span class="wait-card__nearby">주변 대기 3명</span>
                         <button type="button" class="wait-card__more" data-open-wait aria-haspopup="dialog">
@@ -121,9 +122,9 @@
             <div class="wait-detail">
                 <h2 class="modal-sheet__title" id="wait-title">현재 대기 현황</h2>
                 <div class="wait-detail__main">
-                    <p class="wait-detail__label">차량 배정까지 예상</p>
-                    <p class="wait-detail__minutes">약 35분</p>
-                    <p class="wait-detail__note">현재 배차 상황을 바탕으로 한 예상이에요.</p>
+                    <p class="wait-detail__label">승차까지 예상</p>
+                    <p class="wait-detail__minutes">약 <span data-stat="avg">32</span>분</p>
+                    <p class="wait-detail__note"><span data-stat="basis">은평구 · 2026년 1월 같은 요일 평균</span>이에요. 같은 요일엔 보통 <span data-stat="range">30~36</span>분 기다렸어요.</p>
                 </div>
             </div>
             <div class="wait-detail wait-detail--status">

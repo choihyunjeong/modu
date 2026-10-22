@@ -43,7 +43,7 @@
     line-height: 1.5;
 }
 
-.now__title span { display: block; }
+.now__title > span { display: block; }
 
 .now__nearby {
     display: flex;
@@ -92,6 +92,25 @@
     font-weight: var(--font-weight-bold);
     line-height: 18px;
     color: var(--color-text-sub);
+}
+
+/* 평균 대기 기준 안내 시트 */
+.basis-sheet { padding-bottom: var(--space-24); }
+
+.basis-sheet__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding: var(--space-14) var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-gray);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+}
+
+.basis-sheet__list b {
+    display: block;
+    font-weight: var(--font-weight-bold);
 }
 
 /* 부르기 */
