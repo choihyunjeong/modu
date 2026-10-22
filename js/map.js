@@ -192,12 +192,12 @@ var MapKit = (function () {
         // 경로: 먼저 직선으로 그리고, 도로 경로를 받으면 그 길로 바꿈
         if (view.dataset.route) {
             var straight = view.dataset.route.split(',').map(toLatLng).filter(Boolean);
-            var line = new kakao.maps.Polyline(Object.assign({ map: map, path: straight }, ROUTE_STYLE));
+            var routeLine = new kakao.maps.Polyline(Object.assign({ map: map, path: straight }, ROUTE_STYLE));
             fit(map, straight, pad);
             withRoute(function (route) {
                 if (!route) return;
                 var road = toPath(route.path);
-                line.setPath(road);
+                routeLine.setPath(road);
                 fit(map, road, pad);
             });
         } else if (view.dataset.fit) {
@@ -217,8 +217,12 @@ var MapKit = (function () {
             (overlays[el.dataset.place] = overlays[el.dataset.place] || []).push(overlay);
 
             if (el.dataset.movePath === 'route') {
+                // 탑승 중: 차가 지나온 길은 지우고 남은 길만 그림
                 withRoute(function (route) {
-                    move(overlay, route ? toPath(route.path) : [toLatLng('pickup'), toLatLng('destination')], el);
+                    var path = route ? toPath(route.path) : [toLatLng('pickup'), toLatLng('destination')];
+                    move(overlay, path, el, function (ratio) {
+                        if (routeLine) routeLine.setPath(restFrom(path, ratio));
+                    });
                 });
             } else if (el.dataset.movePath === 'approach' && window.Trip) {
                 Trip.approachRoute(function (route) {

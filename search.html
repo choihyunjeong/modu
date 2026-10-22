@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>목적지 검색 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221306">
-    <link rel="stylesheet" href="css/search.css?v=2610221306">
-    <script src="js/common.js?v=2610221306"></script>
-    <script src="js/config.js?v=2610221306"></script>
-    <script src="js/trip.js?v=2610221306"></script>
-    <script src="js/map.js?v=2610221306"></script>
-    <script src="js/places.js?v=2610221306"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221309">
+    <link rel="stylesheet" href="css/search.css?v=2610221309">
+    <script src="js/common.js?v=2610221309"></script>
+    <script src="js/config.js?v=2610221309"></script>
+    <script src="js/trip.js?v=2610221309"></script>
+    <script src="js/map.js?v=2610221309"></script>
+    <script src="js/places.js?v=2610221309"></script>
 </head>
 <body>
     <div id="wrap">
@@ -23,7 +23,7 @@
                 <form class="search-box" role="search" onsubmit="return false;">
                     <span class="icon icon--search" aria-hidden="true"></span>
                     <label for="destination" class="blind">목적지</label>
-                    <input type="search" id="destination" class="search-box__input" placeholder="어디로 가세요?" autocomplete="off">
+                    <input type="search" id="destination" class="search-box__input" placeholder="어디로 가세요?" autocomplete="off" enterkeyhint="search">
                     <button type="button" class="search-box__voice" aria-label="말로 목적지 입력" data-voice-for="destination">
                         <span class="icon icon--microphone" aria-hidden="true"></span>
                     </button>
@@ -216,24 +216,52 @@
         });
 
         // 장소 검색 (js/places.js · 카카오 → 못 쓰면 OpenStreetMap)
+        //  가장 마지막에 요청한 검색의 결과만 보여 줌 (휴대폰 한글 조합 중 글자 차이로 결과를 버리지 않게)
+        //  6초가 넘게 걸리면 안내
+        var lastQuery = '';
+        var slowTimer = null;
         function search(query) {
+            lastQuery = query;
+            clearTimeout(slowTimer);
+            slowTimer = setTimeout(function () {
+                if (lastQuery === query && !loading.hidden) loading.textContent = '검색이 오래 걸리고 있어요. 인터넷 연결을 확인해 주세요…';
+            }, 6000);
             Places.search(query, function (items) {
-                if (input.value.trim() === query) render(items);
+                if (query !== lastQuery) return;
+                clearTimeout(slowTimer);
+                loading.textContent = '찾고 있어요…';
+                render(items);
             });
         }
 
-        input.addEventListener('input', function () {
+        function onType() {
             var query = input.value.trim();
             clearTimeout(timer);
             results.hidden = !query;
             defaults.hidden = !!query;
-            if (!query) return;
+            if (!query) { lastQuery = ''; return; }
+            if (query === lastQuery && list.children.length) return;
             list.innerHTML = '';
             empty.hidden = true;
             empty.textContent = '검색 결과가 없어요. 다른 이름으로 찾아보세요.';
             loading.hidden = false;
-            timer = setTimeout(function () { search(query); }, 400);
+            timer = setTimeout(function () { search(query); }, 250);
+        }
+        input.addEventListener('input', onType);
+        // 휴대폰 한글 키보드: 글자 조합이 끝났을 때도 다시 찾음
+        input.addEventListener('compositionend', onType);
+        // 키보드의 "검색" 버튼: 기다리지 않고 바로
+        input.form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var query = input.value.trim();
+            if (!query) return;
+            clearTimeout(timer);
+            input.blur();
+            search(query);
         });
+
+        // 검색 화면을 열자마자 카카오 장소 검색을 미리 불러 둠 (첫 검색이 느리지 않게)
+        MapKit.load(function () {}, function () {});
 
         // 음성으로 부르기에서 "목적지를 글자로 고치기"로 들어오면 들은 말을 넣어 바로 찾음
         var preset = new URLSearchParams(location.search).get('q');
