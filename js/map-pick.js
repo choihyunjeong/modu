@@ -48,12 +48,13 @@
         noteEl.hidden = true;
     }
 
-    // 가까운 도로 (OSRM nearest · 이름 있는 도로 우선 = 단지 안 길보다 바깥 큰길)
+    // 가까운 도로 (OSRM nearest · 이름 있는 도로 우선)
+    //  아파트 단지 안 길은 이름이 없어서, 후보를 넉넉히(30개) 받아 250m 안의 이름 있는 도로(바깥 큰길)를 고름
     function nearestRoad(lat, lng, cb) {
-        fetch('https://router.project-osrm.org/nearest/v1/driving/' + lng + ',' + lat + '?number=3')
+        fetch('https://router.project-osrm.org/nearest/v1/driving/' + lng + ',' + lat + '?number=30')
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                var list = (data.waypoints || []).filter(function (w) { return w.distance < 200; });
+                var list = (data.waypoints || []).filter(function (w) { return w.distance < 250; });
                 var best = list.filter(function (w) { return w.name; })[0] || list[0];
                 cb(best ? { lat: best.location[1], lng: best.location[0], road: best.name || '', moved: best.distance } : null);
             })
@@ -67,10 +68,10 @@
             if (status !== kakao.maps.services.Status.OK || !result[0]) return cb(null);
             var road = result[0].road_address;
             var jibun = result[0].address;
-            cb({
-                name: (road && road.building_name) || (road && road.address_name) || (jibun && jibun.address_name) || '',
-                addr: road && road.building_name ? road.address_name : (jibun ? jibun.address_name : '')
-            });
+            // 이름과 아래 주소가 같은 글자로 두 번 나오지 않게
+            var name = (road && road.building_name) || (road && road.address_name) || (jibun && jibun.address_name) || '';
+            var addr = road && road.building_name ? road.address_name : (road && jibun ? jibun.address_name : '');
+            cb({ name: name, addr: addr === name ? '' : addr });
         });
     }
 
