@@ -226,6 +226,10 @@ button {
 .icon--xs { --icon-size: var(--icon-xs); }
 .icon--sm { --icon-size: var(--icon-sm); }
 
+/* 여러 화면에서 쓰는 아이콘 (화면 전용 css에만 있으면 그 css가 없는 화면에서 빈칸이 됨) */
+.icon--help { --icon-url: url("../image/help.svg"); }
+.icon--user-multiple { --icon-url: url("../image/user--multiple.svg"); }
+.icon--warning-alt { --icon-url: url("../image/warning--alt.svg"); }
 .icon--home { --icon-url: url("../image/home.svg"); }
 .icon--calendar { --icon-url: url("../image/calendar.svg"); }
 .icon--time { --icon-url: url("../image/time.svg"); }
