@@ -828,6 +828,51 @@ body.is-modal-open { overflow: hidden; }
 }
 
 /* =========================================================
+   앱 안 짧은 안내 (common.js Toast) · 아래 / 위(상태가 바뀔 때)
+   ========================================================= */
+.app-toast {
+    position: fixed;
+    bottom: var(--space-24);
+    left: 50%;
+    z-index: 300;
+    width: max-content;
+    max-width: calc(min(100vw, var(--app-width)) - 40px);
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-md);
+    background: var(--color-text);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-22);
+    color: var(--color-text-inverse);
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.app-toast--top {
+    top: var(--space-12);
+    bottom: auto;
+    background: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+    transform: translate(-50%, -12px);
+}
+
+.app-toast.is-shown {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* 화면이 다음 상태로 바뀔 때 부드럽게 겹쳐 바뀜 (지원하는 브라우저만) */
+@view-transition { navigation: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+    .app-toast { transition: none; }
+    @view-transition { navigation: none; }
+}
+
+/* =========================================================
    바텀시트 끌기 손잡이 (common.js SheetDrag가 시트 맨 위에 넣음)
    ========================================================= */
 .sheet__handle {

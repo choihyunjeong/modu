@@ -11,9 +11,11 @@
     <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
+    <script src="js/actions.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-auto-next="arriving.html" data-delay="8000">
+    <div id="wrap" class="map-page" data-auto-next="arriving.html" data-delay="8000" data-next-notice="UD택시가 곧 도착해요"
+        data-share-status="UD택시 배정 · 33바 5521 흰색 PV5 · 탑승 위치로 오는 중" data-cancel-desc="배정된 차가 오고 있어요. 취소하면 기사님께 바로 알려드려요.">
         <div class="map-view" style="--map-height: 304px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2" data-fit="car,pickup,me">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
@@ -45,7 +47,8 @@
                         <p class="assigned-desc">차량이 배정됐어요</p>
                     </div>
                     <!-- 더보기: 보호자 공유 · 접수 취소 -->
-                    <button type="button" class="btn-icon-round" aria-label="더보기">
+                    <button type="button" class="btn-icon-round" aria-label="더보기" aria-haspopup="dialog"
+                        data-action="menu" data-title="더보기" data-options="guardian,call-center,cancel">
                         <span class="icon icon--more" aria-hidden="true"></span>
                     </button>
                 </div>
@@ -88,17 +91,18 @@
             <!-- 연락 · 메시지 · 전화 · 도움 -->
             <div class="assigned-group assigned-group--contact">
                 <div class="btn-line-row">
-                    <button type="button" class="btn-line" data-open-msg aria-haspopup="dialog">
+                    <button type="button" class="btn-line" data-action="msg" aria-haspopup="dialog">
                         <span class="icon icon--chat" aria-hidden="true"></span>
                         메시지
                     </button>
-                    <button type="button" class="btn-line">
+                    <button type="button" class="btn-line" data-action="call-driver">
                         <span class="icon icon--phone" aria-hidden="true"></span>
                         전화
                     </button>
                 </div>
                 <div class="help-row">
-                    <button type="button" class="btn-help">
+                    <button type="button" class="btn-help" aria-haspopup="dialog"
+                        data-action="menu" data-title="도움이 필요하세요?" data-desc="필요한 도움을 골라 주세요" data-options="call-center,call-driver,guardian">
                         <span class="icon icon--sm icon--help" aria-hidden="true"></span>
                         도움이 필요해요
                     </button>
@@ -106,80 +110,5 @@
             </div>
         </section>
     </div>
-
-    <!-- 기사님께 메시지 시트 (메시지 버튼에서 열림 · 자주 쓰는 말) -->
-    <div class="modal-sheet modal-sheet--dim" id="msg-sheet" role="dialog" aria-modal="true" aria-labelledby="msg-title" hidden>
-        <div class="modal-sheet__panel modal-sheet__panel--msg">
-            <span class="sheet__grabber" aria-hidden="true"></span>
-            <div class="msg-sheet__head">
-                <h2 class="msg-sheet__title" id="msg-title">기사님께 메시지</h2>
-                <p class="msg-sheet__desc">강○○ 기사님 · 33바 5521</p>
-            </div>
-
-            <div class="msg-sheet__group">
-                <p class="msg-sheet__caption">자주 쓰는 말 · 누르면 바로 보내져요</p>
-                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
-                    탑승 준비에 시간이 필요해요
-                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
-                    <span><span data-trip="pickup-short">정문</span>에 있어요</span>
-                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
-                    5분 정도 늦게 나가요
-                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="quick-msg__btn quick-msg__btn--sheet" data-send-msg>
-                    짐이 조금 있어요
-                    <span class="icon icon--sm icon--send" aria-hidden="true"></span>
-                </button>
-            </div>
-
-            <div class="msg-sheet__group">
-                <div class="msg-input">
-                    <input class="msg-input__field" id="msg-input" type="text" placeholder="직접 입력하기" aria-label="기사님께 보낼 메시지 직접 입력">
-                    <button type="button" class="msg-input__mic" aria-label="말로 입력하기">
-                        <span class="icon icon--sm icon--microphone" aria-hidden="true"></span>
-                    </button>
-                </div>
-                <p class="msg-sheet__hint">보내면 기사님 앱에 바로 떠요</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- N2 곧 도착 알림 (미리보기 · 누르면 도착 임박 화면) -->
-    <template data-push data-delay="5000">
-        <a href="arriving.html" class="push-card">
-            <span class="push-card__head">
-                <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
-                <span>10:13</span>
-            </span>
-            <span class="push-card__title" data-eta="soon" data-eta-at="0.6">UD택시가 약 3분 후 도착해요</span>
-            <span class="push-card__body">33바 5521 · 흰색 PV5<br>탑승 위치: <span data-trip="pickup-spot">정문 · 경사로 쪽</span></span>
-        </a>
-    </template>
-
-    <script>
-        // 기사님께 메시지 시트 열기/닫기 (스크림 누르기 · Esc · 자주 쓰는 말 보내면 닫힘)
-        var msgSheet = document.getElementById('msg-sheet');
-        var msgOpener = document.querySelector('[data-open-msg]');
-        function openMsgSheet() {
-            msgSheet.hidden = false;
-            document.body.classList.add('is-modal-open');
-            msgSheet.querySelector('[data-send-msg]').focus();
-        }
-        function closeMsgSheet() {
-            msgSheet.hidden = true;
-            document.body.classList.remove('is-modal-open');
-            msgOpener.focus();
-        }
-        msgOpener.addEventListener('click', openMsgSheet);
-        msgSheet.querySelectorAll('[data-send-msg]').forEach(function (btn) {
-            btn.addEventListener('click', closeMsgSheet);
-        });
-        msgSheet.addEventListener('click', function (e) { if (e.target === msgSheet) closeMsgSheet(); });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !msgSheet.hidden) closeMsgSheet(); });
-    </script>
 </body>
 </html>

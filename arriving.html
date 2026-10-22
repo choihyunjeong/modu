@@ -11,9 +11,11 @@
     <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
+    <script src="js/actions.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-auto-next="arrived.html" data-delay="5000">
+    <div id="wrap" class="map-page" data-auto-next="arrived.html" data-delay="5000" data-next-notice="차량이 도착했어요"
+        data-share-status="UD택시가 곧 도착해요 · 33바 5521 흰색 PV5" data-cancel-desc="차가 거의 다 왔어요. 취소하면 기사님께 바로 알려드려요.">
         <div class="map-view" style="--map-height: 129px; --map-img-top: -248px;" data-map data-center="pickup" data-level="4">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
@@ -70,11 +72,11 @@
             <div class="contact-block">
                 <h2 class="contact-block__title">기사님께 연락</h2>
                 <div class="btn-line-row">
-                    <button type="button" class="btn-line">
+                    <button type="button" class="btn-line" data-action="msg" aria-haspopup="dialog">
                         <span class="icon icon--chat" aria-hidden="true"></span>
                         메시지
                     </button>
-                    <button type="button" class="btn-line">
+                    <button type="button" class="btn-line" data-action="call-driver">
                         <span class="icon icon--phone" aria-hidden="true"></span>
                         전화
                     </button>
@@ -84,11 +86,11 @@
                     <p class="quick-msg__desc">누르면 기사님께 바로 전송돼요.</p>
                 </div>
                 <div class="quick-msg__list">
-                    <button type="button" class="btn-line quick-msg__btn">
+                    <button type="button" class="btn-line quick-msg__btn" data-action="send-msg">
                         탑승 위치에서 기다리고 있어요
                         <span class="icon icon--sm icon--send" aria-hidden="true"></span>
                     </button>
-                    <button type="button" class="btn-line quick-msg__btn">
+                    <button type="button" class="btn-line quick-msg__btn" data-action="send-msg">
                         탑승 준비에 시간이 필요해요
                         <span class="icon icon--sm icon--send" aria-hidden="true"></span>
                     </button>
@@ -98,11 +100,13 @@
             <hr class="divider-line">
 
             <div class="btn-line-row">
-                <button type="button" class="btn-line">
+                <button type="button" class="btn-line" aria-haspopup="dialog"
+                    data-action="menu" data-title="도움이 필요하세요?" data-desc="필요한 도움을 골라 주세요" data-options="call-center,call-driver,guardian">
                     <span class="icon icon--sm icon--hand" aria-hidden="true"></span>
                     도움 요청
                 </button>
-                <button type="button" class="btn-line btn-line--more">
+                <button type="button" class="btn-line btn-line--more" aria-haspopup="dialog"
+                    data-action="menu" data-title="더보기" data-options="guardian,call-center,cancel">
                     <span class="icon icon--more" aria-hidden="true"></span>
                     더보기
                 </button>

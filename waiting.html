@@ -11,9 +11,11 @@
     <script src="js/trip.js"></script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
+    <script src="js/actions.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-auto-next="assigned.html" data-delay="8000">
+    <div id="wrap" class="map-page" data-auto-next="assigned.html" data-delay="8000" data-next-notice="UD택시가 배정됐어요"
+        data-share-status="차량을 찾고 있어요 (접수번호 1125)" data-cancel-desc="지금 취소하면 기다린 순서가 없어져요. 다시 부르면 처음부터 기다려야 해요.">
         <div class="map-view" style="--map-height: 244px; --map-img-top: -235px;" data-map data-center="pickup">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
@@ -39,7 +41,7 @@
             <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
                 <span class="icon icon--location-current" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn-pill-float">호출 취소</button>
+            <button type="button" class="btn-pill-float" data-action="cancel">호출 취소</button>
         </div>
 
         <section class="sheet sheet--progress">
@@ -102,12 +104,12 @@
             <div class="progress-group">
                 <p class="notice-line">
                     <span class="icon icon--xs icon--notification" aria-hidden="true"></span>
-                    차량이 배정되면 알림으로 알려드려요
+                    앱을 닫아도 차량이 배정되면 알림으로 알려드려요
                 </p>
 
                 <div class="btn-row">
-                    <button type="button" class="btn btn--outline">보호자에게 알리기</button>
-                    <button type="button" class="btn btn--outline">콜센터 문의</button>
+                    <button type="button" class="btn btn--outline" data-action="guardian" aria-haspopup="dialog">보호자에게 알리기</button>
+                    <button type="button" class="btn btn--outline" data-action="call-center">콜센터 문의</button>
                 </div>
             </div>
         </section>
@@ -142,18 +144,6 @@
             <button type="button" class="btn btn--close" data-close-wait>닫기</button>
         </div>
     </div>
-
-    <!-- N1 차량 배정 알림 (미리보기 · 누르면 차량 배정 화면) -->
-    <template data-push data-delay="5000">
-        <a href="assigned.html" class="push-card">
-            <span class="push-card__head">
-                <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
-                <span>지금</span>
-            </span>
-            <span class="push-card__title">UD택시가 배정됐어요</span>
-            <span class="push-card__body"><span data-eta="push" data-eta-at="0">약 8분 후 도착 예정이에요.</span><br>33바 5521 · 흰색 PV5<br>탑승 위치: <span data-trip="pickup-spot">정문 · 경사로 쪽</span></span>
-        </a>
-    </template>
 
     <script>
         // 대기 현황 시트 열기/닫기 (#detail로 들어오면 바로 열림 · N3 알림에서)

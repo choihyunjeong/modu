@@ -127,11 +127,58 @@ var SheetDrag = (function () {
         document.querySelectorAll('.modal-sheet__panel').forEach(modalPanel);
     }
 
-    return { init: init };
+    return { init: init, panel: modalPanel };
+})();
+
+// 앱 안 짧은 안내 (보냈어요 · 배정됐어요 등) · 하나씩만 보이고 잠시 뒤 사라짐
+//  Toast.show('기사님께 보냈어요')  ·  Toast.show('UD택시가 배정됐어요', { top: true })
+var Toast = (function () {
+    var el = null;
+    var timer = null;
+    function show(text, opts) {
+        opts = opts || {};
+        if (!el) {
+            el = document.createElement('p');
+            el.className = 'app-toast';
+            el.setAttribute('role', 'status');
+            el.setAttribute('aria-live', 'polite');
+            document.body.appendChild(el);
+        }
+        el.textContent = text;
+        el.classList.toggle('app-toast--top', !!opts.top);
+        // 다시 보여 줄 때도 나타나는 움직임이 나오게
+        el.classList.remove('is-shown');
+        void el.offsetWidth;
+        el.classList.add('is-shown');
+        clearTimeout(timer);
+        timer = setTimeout(function () { el.classList.remove('is-shown'); }, opts.duration || 2500);
+    }
+    return { show: show };
+})();
+
+// 화면이 다음 상태로 바뀔 때 남긴 안내를 새 화면에서 보여 줌 (push.js · 호출 취소)
+var StateNotice = (function () {
+    var KEY = 'stateNotice';
+    function leave(text) {
+        try { sessionStorage.setItem(KEY, text); } catch (e) {}
+    }
+    function show() {
+        var text = null;
+        try {
+            text = sessionStorage.getItem(KEY);
+            sessionStorage.removeItem(KEY);
+        } catch (e) {}
+        if (!text) return;
+        Toast.show(text, { top: true, duration: 3500 });
+        // 휴대폰이면 짧게 진동 (지원할 때만)
+        if (navigator.vibrate) navigator.vibrate(120);
+    }
+    return { leave: leave, show: show };
 })();
 
 document.addEventListener('DOMContentLoaded', function () {
     SheetDrag.init();
+    StateNotice.show();
 
     // 다른 화면에서 수정하러 들어온 경우(?from=confirm): 저장 후 그 화면으로 돌아감
     //  [data-keep-from] 다음 단계 링크에도 from을 이어 붙임

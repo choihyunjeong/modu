@@ -15,9 +15,11 @@
     </script>
     <script src="js/map.js"></script>
     <script src="js/push.js"></script>
+    <script src="js/actions.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-auto-next="trip-done.html" data-delay="8000">
+    <div id="wrap" class="map-page" data-auto-next="trip-done.html" data-delay="8000" data-next-notice="목적지에 도착했어요"
+        data-share-status="UD택시를 타고 목적지로 이동 중 · 33바 5521 흰색 PV5">
         <div class="map-view" style="--map-height: 485px; --map-img-top: -121px;" data-map data-center="riding" data-route="pickup,destination">
             <img class="map-view__static" src="image/map-static.png" alt="">
             <img class="map-view__route map-view__route--long" src="image/map-route-long.svg" alt="" style="--x: 119px; --y: 181px;" data-static-pos>
@@ -60,11 +62,13 @@
             </div>
 
             <div class="btn-line-row">
-                <button type="button" class="btn-line">
+                <button type="button" class="btn-line" data-action="msg" aria-haspopup="dialog"
+                    data-msgs="조금 천천히 가 주세요|잠깐 세워 주실 수 있나요?|내릴 때 도와주세요|에어컨·히터를 조절해 주세요">
                     <span class="icon icon--chat" aria-hidden="true"></span>
                     기사님과 대화
                 </button>
-                <button type="button" class="btn-line">
+                <button type="button" class="btn-line" aria-haspopup="dialog"
+                    data-action="menu" data-title="도움이 필요하세요?" data-desc="필요한 도움을 골라 주세요" data-options="call-center,guardian,call-driver">
                     <img class="icon-img icon-img--22" src="image/help-octagon.svg" alt="">
                     도움 요청
                 </button>

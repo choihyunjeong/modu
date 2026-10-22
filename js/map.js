@@ -98,18 +98,46 @@ var MapKit = (function () {
         return path[path.length - 1];
     }
 
+    // 경로 위 비율 지점에서 가는 방향 (0 = 위쪽(북), 시계 방향 각도) · 앞뒤 조금씩 떨어진 두 점으로 잼
+    function headingAt(path, ratio) {
+        var a = pointAt(path, Math.max(0, ratio - 0.01));
+        var b = pointAt(path, Math.min(1, ratio + 0.01));
+        var dLat = b.getLat() - a.getLat();
+        var dLng = (b.getLng() - a.getLng()) * Math.cos(a.getLat() * Math.PI / 180);
+        if (!dLat && !dLng) return null;
+        return Math.atan2(dLng, dLat) * 180 / Math.PI;
+    }
+
+    // 차 그림을 가는 방향으로 돌림 (차 그림은 앞이 위쪽)
+    function turnCar(el, deg) {
+        var img = el.querySelector('img');
+        if (img) img.style.transform = 'rotate(' + deg + 'deg)';
+    }
+
     // 표시를 경로를 따라 부드럽게 움직임 · onStep(지금 비율)이 있으면 매번 부름
+    //  차(.map-car)는 길 방향을 따라 앞을 보며 돌고, 다 오면 그 방향을 저장 (차량 도착 화면에서 이어 씀)
     function move(overlay, path, el, onStep) {
         var range = (el.dataset.moveRange || '0,1').split(',').map(Number);
         var duration = Number(el.dataset.moveMs || 8000) * (config.demoScale || 1);
+        var isCar = el.classList.contains('map-car');
+        var heading = null;
         var startTime = null;
         function step(now) {
             if (!startTime) startTime = now;
             var t = Math.min(1, (now - startTime) / duration);
             var ratio = range[0] + (range[1] - range[0]) * t;
             overlay.setPosition(pointAt(path, ratio));
+            if (isCar) {
+                var target = headingAt(path, ratio);
+                if (target != null) {
+                    // 짧은 쪽으로 조금씩 돌아 모퉁이에서 휙 꺾이지 않게
+                    heading = heading == null ? target : heading + (((target - heading + 540) % 360) - 180) * 0.15;
+                    turnCar(el, heading);
+                }
+            }
             if (onStep) onStep(ratio);
             if (t < 1) requestAnimationFrame(step);
+            else if (isCar && heading != null && window.Trip) Trip.set({ carHeading: heading });
         }
         requestAnimationFrame(step);
     }
@@ -180,6 +208,9 @@ var MapKit = (function () {
                 });
             } else if (el.dataset.moveTo && toLatLng(el.dataset.moveTo)) {
                 move(overlay, [position, toLatLng(el.dataset.moveTo)], el);
+            } else if (el.classList.contains('map-car') && window.Trip && Trip.get().carHeading != null) {
+                // 멈춰 있는 차: 오던 방향 그대로
+                turnCar(el, Trip.get().carHeading);
             }
         });
 
