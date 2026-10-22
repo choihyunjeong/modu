@@ -902,7 +902,18 @@ body.is-modal-open { overflow: hidden; }
     overflow: hidden;
 }
 
-.map-page .map-view { flex: none; }
+/* 처음엔 지도가 화면의 55% · 바텀시트는 반보다 조금 덜(약 45%) 보임
+   (사용자가 손잡이를 끌어 올리거나 내리면 그 높이로 바뀜 · common.js SheetDrag) */
+.map-page .map-view {
+    flex: none;
+    height: calc(55vh + var(--sheet-overlap, 16px));
+    height: calc(55dvh + var(--sheet-overlap, 16px));
+    /* 정적 지도(카카오 지도를 못 불러올 때): 디자인 높이보다 늘어난 만큼 그림·핀을 함께 내려 가운데 맞춤 */
+    --static-shift: max(0px, calc((55dvh + var(--sheet-overlap, 16px) - var(--map-height, 330px)) / 2));
+}
+
+.map-page .map-view__static { top: calc(var(--map-img-top, -200px) + var(--static-shift)); }
+.map-page .map-view:not(.is-kakao) [data-static-pos] { top: calc(var(--y) + var(--static-shift)); }
 
 .map-page .sheet {
     min-height: 0;

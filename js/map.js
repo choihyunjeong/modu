@@ -54,11 +54,22 @@ var MapKit = (function () {
     }
 
     // 여백: 위는 핀 글자 자리, 아래는 시트가 덮는 자리만큼
-    function fit(map, path, pad) {
+    //  center(내 위치)가 있으면 그 점이 지도 한가운데 오면서 다른 장소도 모두 보이게
+    //  (각 장소를 내 위치 반대편으로 뒤집은 점까지 넣어 맞춘 뒤 내 위치로 옮김)
+    function fit(map, path, pad, center) {
         var bounds = new kakao.maps.LatLngBounds();
-        path.forEach(function (p) { bounds.extend(p); });
+        path.forEach(function (p) {
+            bounds.extend(p);
+            if (center) {
+                bounds.extend(new kakao.maps.LatLng(
+                    center.getLat() * 2 - p.getLat(),
+                    center.getLng() * 2 - p.getLng()
+                ));
+            }
+        });
         if (pad != null) map.setBounds(bounds, pad, pad, pad + 16, pad);
         else map.setBounds(bounds, 56, 24, 32, 24);
+        if (center) map.setCenter(center);
     }
 
     // 경로 위 비율(0~1) 지점부터 끝까지 남은 길 (첫 점이 그 지점)
@@ -153,28 +164,30 @@ var MapKit = (function () {
         canvas.className = 'map-view__canvas';
         view.prepend(canvas);
 
+        // 내 위치 표시가 있는 화면은 내 위치가 지도 한가운데
+        var me = view.querySelector('[data-place="me"]') ? toLatLng('me') : null;
         var map = new kakao.maps.Map(canvas, {
-            center: toLatLng(view.dataset.center || 'pickup'),
+            center: me || toLatLng(view.dataset.center || 'pickup'),
             level: Number(view.dataset.level || 3)
         });
         view.classList.add('is-kakao');
         var overlays = {};
-        mounted.push({ map: map, overlays: overlays });
+        mounted.push({ map: map, overlays: overlays, me: me });
         var pad = view.dataset.fitPad ? Number(view.dataset.fitPad) : null;
 
         // 경로: 먼저 직선으로 그리고, 도로 경로를 받으면 그 길로 바꿈
         if (view.dataset.route) {
             var straight = view.dataset.route.split(',').map(toLatLng).filter(Boolean);
             var line = new kakao.maps.Polyline(Object.assign({ map: map, path: straight }, ROUTE_STYLE));
-            fit(map, straight, pad);
+            fit(map, straight, pad, me);
             withRoute(function (route) {
                 if (!route) return;
                 var road = toPath(route.path);
                 line.setPath(road);
-                fit(map, road, pad);
+                fit(map, road, pad, me);
             });
         } else if (view.dataset.fit) {
-            fit(map, view.dataset.fit.split(',').map(toLatLng).filter(Boolean), pad);
+            fit(map, view.dataset.fit.split(',').map(toLatLng).filter(Boolean), pad, me);
         }
 
         // 핀·내 위치 표시를 지도 좌표에 붙임 (점이 좌표에 오도록 아래 끝 기준)
@@ -198,7 +211,7 @@ var MapKit = (function () {
                     var road = route ? toPath(route.path) : [toLatLng('car'), toLatLng('pickup')];
                     var drive = route ? Trip.driveMinutes(route) : null;
                     // 차가 오는 길 전체가 보이게 (data-fit 장소들과 함께)
-                    if (view.dataset.fit) fit(map, road.concat(view.dataset.fit.split(',').map(toLatLng).filter(Boolean)), pad);
+                    if (view.dataset.fit) fit(map, road.concat(view.dataset.fit.split(',').map(toLatLng).filter(Boolean)), pad, me);
                     // 남은 길만 그림 (차가 지나간 길은 지워짐) · 도착까지 남은 시간도 같이 바뀜
                     var line = new kakao.maps.Polyline(Object.assign({ map: map, path: road }, ROUTE_STYLE));
                     move(overlay, road, el, function (ratio) {
