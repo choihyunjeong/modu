@@ -915,23 +915,34 @@ body.is-modal-open { overflow: hidden; }
 .map-page .map-view__static { top: calc(var(--map-img-top, -200px) + var(--static-shift)); }
 .map-page .map-view:not(.is-kakao) [data-static-pos] { top: calc(var(--y) + var(--static-shift)); }
 
+/* 시트는 그대로 두고 안쪽 내용 칸(.sheet__scroll · common.js가 감쌈)만 스크롤
+   → 그래버(끌기 손잡이)는 늘 시트 맨 위 · 내용이 손잡이 위로 비치지 않음 */
 .map-page .sheet {
     min-height: 0;
-    overflow-y: auto;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-/* 시트 안 내용을 스크롤해도 그래버(끌기 손잡이)는 시트 맨 위에 그대로 보임
-   (common.js SheetDrag가 넣는 손잡이 버튼이 그래버를 그림 · 원래 그래버는 숨김) */
 .map-page .sheet > .sheet__grabber { display: none; }
 
 .map-page .sheet > .sheet__handle {
-    position: sticky;
-    top: 0;
+    position: relative;
     flex: none;
     height: 24px;
-    margin: calc(var(--space-10) * -1) calc(var(--page-padding) * -1) 0;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    background: var(--color-bg);
+    margin: 0 calc(var(--page-padding) * -1);
+}
+
+.sheet__scroll {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: inherit;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 0 calc(var(--page-padding) * -1);
+    padding: 0 var(--page-padding) var(--space-12);
+    overscroll-behavior: contain;
 }
 
 .map-page .sheet > .sheet__handle::before {

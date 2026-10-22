@@ -141,8 +141,11 @@ var MapKit = (function () {
         var isCar = el.classList.contains('map-car');
         var heading = null;
         var startTime = null;
+        // 이 단계가 시작된 뒤 지난 시간만큼 앞에서 출발 (다른 화면에 갔다 와도 차가 처음으로 돌아가지 않게)
+        var stageAt = window.Trip && Trip.get().stageAt;
+        var already = stageAt ? Math.min(duration, Math.max(0, Date.now() - stageAt)) : 0;
         function step(now) {
-            if (!startTime) startTime = now;
+            if (!startTime) startTime = now - already;
             var t = Math.min(1, (now - startTime) / duration);
             var ratio = range[0] + (range[1] - range[0]) * t;
             overlay.setPosition(pointAt(path, ratio));

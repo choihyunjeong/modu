@@ -57,6 +57,15 @@ var SheetDrag = (function () {
         handle.type = 'button';
         handle.className = 'sheet__handle';
         handle.setAttribute('aria-label', '시트 접기·펼치기');
+
+        // 손잡이·그래버를 뺀 내용을 스크롤 칸으로 감쌈 (손잡이는 늘 맨 위에 보이게)
+        var scroller = document.createElement('div');
+        scroller.className = 'sheet__scroll';
+        Array.prototype.slice.call(sheet.childNodes).forEach(function (node) {
+            if (node.nodeType === 1 && node.classList.contains('sheet__grabber')) return;
+            scroller.appendChild(node);
+        });
+        sheet.appendChild(scroller);
         sheet.prepend(handle);
 
         // 화면은 높이가 고정(.map-page)이라 페이지는 스크롤되지 않음

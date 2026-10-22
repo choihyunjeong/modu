@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221232">
-    <link rel="stylesheet" href="css/home.css?v=2610221232">
-    <script src="js/common.js?v=2610221232"></script>
-    <script src="js/config.js?v=2610221232"></script>
-    <script src="js/ride-info.js?v=2610221232"></script>
-    <script src="js/stats.js?v=2610221232"></script>
-    <script src="js/reader.js?v=2610221232"></script>
-    <script src="js/trip.js?v=2610221232"></script>
-    <script src="js/actions.js?v=2610221232"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221237">
+    <link rel="stylesheet" href="css/home.css?v=2610221237">
+    <script src="js/common.js?v=2610221237"></script>
+    <script src="js/config.js?v=2610221237"></script>
+    <script src="js/ride-info.js?v=2610221237"></script>
+    <script src="js/stats.js?v=2610221237"></script>
+    <script src="js/reader.js?v=2610221237"></script>
+    <script src="js/trip.js?v=2610221237"></script>
+    <script src="js/actions.js?v=2610221237"></script>
+    <script src="js/push.js?v=2610221237"></script>
 </head>
 <body>
     <div id="wrap">
@@ -246,6 +247,14 @@
 
         // 현재 호출: 진행 중인 호출이 있으면 지금 상황·부르기 대신 카드로 (누르면 그 진행 화면으로)
         (function () {
+            // 홈에 있는 동안에도 호출은 진행 (js/push.js) · 단계가 바뀌면 카드도 새로
+            if (window.Progress) {
+                var shown = Progress.sync();
+                setInterval(function () {
+                    var now = Progress.sync();
+                    if ((now && now.stage) !== (shown && shown.stage)) location.reload();
+                }, 2000);
+            }
             var trip = Trip.get();
             var STAGES = {
                 waiting: { badge: '차를 찾는 중', tone: 'wait', title: '차량을 찾고 있어요', go: '대기 현황 보기', url: 'waiting.html', cancel: 'before' },

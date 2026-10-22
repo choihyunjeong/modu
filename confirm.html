@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>호출 전 확인 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221232">
-    <link rel="stylesheet" href="css/call.css?v=2610221232">
-    <script src="js/common.js?v=2610221232"></script>
-    <script src="js/ride-info.js?v=2610221232"></script>
-    <script src="js/config.js?v=2610221232"></script>
-    <script src="js/trip.js?v=2610221232"></script>
-    <script src="js/map.js?v=2610221232"></script>
-    <script src="js/stats.js?v=2610221232"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221237">
+    <link rel="stylesheet" href="css/call.css?v=2610221237">
+    <script src="js/common.js?v=2610221237"></script>
+    <script src="js/ride-info.js?v=2610221237"></script>
+    <script src="js/config.js?v=2610221237"></script>
+    <script src="js/trip.js?v=2610221237"></script>
+    <script src="js/map.js?v=2610221237"></script>
+    <script src="js/stats.js?v=2610221237"></script>
 </head>
 <body>
     <!-- E3b 호출 전 확인 (목적지를 고르면 바로 이 화면) -->
@@ -337,7 +337,7 @@
         // 호출하기: 접수 시각과 인원을 저장하고 진행 화면으로
         document.querySelector('[data-call]').addEventListener('click', function () {
             // 새 호출: 지난 호출의 대화·도움 요청·보호자 공유·차 방향은 지움
-            Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting',
+            Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting', stageAt: Date.now(),
                 // 저장한 탑승 정보를 이번 접수에 담음 (차량 찾는 중 화면에 그대로 보임)
                 ride: RideInfo.tags() });
         });

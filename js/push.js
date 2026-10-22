@@ -1,42 +1,121 @@
-// 시연용 상태 진행 (차량 찾는 중 → 배정 → 도착 임박 → 도착 → 탑승 중 → 이동 완료)
-//  앱을 보고 있는 동안에는 알림 배너를 띄우지 않고, 화면이 그 자리에서 다음 상태로 바뀜
-//  바뀐 화면 위쪽에 짧은 안내를 잠깐 보여 줌 (휴대폰 알림은 앱 밖에서 받는 것 · notifications.html 참고)
+// 호출 진행 (시연용) · 차량 찾는 중 → 배정 → 도착 임박 → 도착 → 탑승 중 → 이동 완료
+//  진행은 시간 기준: 단계가 시작된 시각(stageAt)부터 정해진 시간이 지나면 다음 단계
+//  → 대화 화면·홈 등 다른 화면에 있어도 호출은 계속 진행되고, 진행 화면으로 돌아오면 지금 단계의 화면이 보임
+//  앱을 보고 있는 동안에는 알림 배너 대신 화면이 그 자리에서 바뀌고 위쪽에 짧은 안내 (휴대폰 알림은 notifications.html)
 //
-//  <div id="wrap" data-auto-next="assigned.html" data-delay="8000" data-next-notice="UD택시가 배정됐어요">
-//    data-next-notice : 다음 화면에서 보여 줄 안내 (없으면 안내 없이 바뀜)
-document.addEventListener('DOMContentLoaded', function () {
-    // 지금 진행 단계를 기록 (홈의 "현재 호출" 카드가 이 화면으로 돌아오게)
-    var page = location.pathname.split('/').pop();
-    var STAGES = { 'waiting.html': 'waiting', 'assigned.html': 'assigned', 'arriving.html': 'arriving', 'arrived.html': 'arrived', 'riding.html': 'riding' };
-    if (STAGES[page] && window.Trip && Trip.get().calledAt) Trip.set({ stage: STAGES[page] });
-
-    // 시간은 APP_CONFIG.demoScale만큼 늘림 (config.js에서 한 번에 조절)
+//  진행 화면: <div id="wrap" data-progress-stage="assigned"> (data-next-on-arrive: 지도 위 차가 닿으면 바로)
+var Progress = (function () {
     var scale = (window.APP_CONFIG && APP_CONFIG.demoScale) || 1;
-    var auto = document.querySelector('[data-auto-next]');
-    if (!auto) return;
+    // ms: 이 단계에 머무는 시간 (demoScale을 곱함) · notice: 다음 단계로 넘어갈 때 안내
+    var FLOW = [
+        { stage: 'waiting', url: 'waiting.html', ms: 4000, notice: 'UD택시가 배정됐어요' },
+        { stage: 'assigned', url: 'assigned.html', ms: 8000, notice: 'UD택시가 곧 도착해요' },
+        { stage: 'arriving', url: 'arriving.html', ms: 6000, notice: '차량이 도착했어요' },
+        { stage: 'arrived', url: 'arrived.html', ms: 5000, notice: '탑승했어요 · 목적지로 출발해요' },
+        { stage: 'riding', url: 'riding.html', ms: 8000, notice: '목적지에 도착했어요' },
+        { stage: 'done', url: 'trip-done.html' }
+    ];
+
+    function index(stage) {
+        for (var i = 0; i < FLOW.length; i++) if (FLOW[i].stage === stage) return i;
+        return -1;
+    }
+
+    function trip() { return window.Trip ? Trip.get() : {}; }
+
+    // 시간이 지난 만큼 단계를 앞으로 · 지금 단계 정보를 돌려줌 (진행 중인 호출이 없으면 null)
+    function sync() {
+        var t = trip();
+        var i = index(t.stage);
+        if (!t.calledAt || i < 0) return null;
+        var at = t.stageAt || Date.now();
+        var start = i;
+        while (FLOW[i].ms && Date.now() - at >= FLOW[i].ms * scale) {
+            at += FLOW[i].ms * scale;
+            i++;
+        }
+        if (i !== start) {
+            var patch = { stage: FLOW[i].stage, stageAt: at };
+            if (FLOW[i].stage === 'riding' && !t.boardedAt) patch.boardedAt = at;
+            if (index('riding') < i && !t.boardedAt) patch.boardedAt = at - FLOW[index('riding')].ms * scale;
+            Trip.set(patch);
+            if (FLOW[i].stage === 'done') Trip.recordDone();
+        }
+        return FLOW[i];
+    }
+
+    // 지금 단계에서 다음으로 넘어가기까지 남은 시간 (ms)
+    function remaining() {
+        var t = trip();
+        var step = FLOW[index(t.stage)];
+        if (!step || !step.ms) return Infinity;
+        return Math.max(0, step.ms * scale - (Date.now() - (t.stageAt || Date.now())));
+    }
+
+    // 다음 단계로 (진행 화면에서)
+    function advance() {
+        var step = FLOW[index(trip().stage)];
+        if (!step) return null;
+        var next = FLOW[index(step.stage) + 1];
+        var patch = { stage: next.stage, stageAt: Date.now() };
+        if (next.stage === 'riding' && !trip().boardedAt) patch.boardedAt = Date.now();
+        Trip.set(patch);
+        return { step: step, next: next };
+    }
+
+    function previousNotice(stage) {
+        var i = index(stage);
+        return i > 0 ? FLOW[i - 1].notice : '';
+    }
+
+    return { FLOW: FLOW, index: index, sync: sync, remaining: remaining, advance: advance, previousNotice: previousNotice };
+})();
+
+document.addEventListener('DOMContentLoaded', function () {
+    var wrap = document.querySelector('[data-progress-stage]');
+    if (!wrap || !window.Trip) return;
+    var stage = wrap.dataset.progressStage;
+    var t = Trip.get();
+    if (t.calledAt && !t.stageAt) Trip.set({ stageAt: Date.now() });
+
+    // 진행 중인 호출이 없거나(화면을 바로 연 경우) 이 화면보다 앞 단계면 → 이 단계부터 시작
+    var current = Progress.sync();
+    if (!current || Progress.index(current.stage) < Progress.index(stage)) {
+        Trip.set({ calledAt: t.calledAt || Date.now(), stage: stage, stageAt: Date.now() });
+    } else if (current.stage !== stage) {
+        // 다른 화면에 있는 동안 진행됐으면 지금 단계 화면으로
+        StateNotice.leave(Progress.previousNotice(current.stage));
+        return location.replace(current.url);
+    }
+
     var started = false;
     var told = false;
-    var next = function () {
+    function go() {
         // 시트·메뉴를 보고 있으면 닫을 때까지 조금씩 미룸 · 왜 멈췄는지 한 번 알려 줌
         if (document.body.classList.contains('is-modal-open')) {
-            if (!told && auto.dataset.nextNotice) {
+            var step = Progress.FLOW[Progress.index(stage)];
+            if (!told && step && step.notice) {
                 told = true;
-                Toast.show(auto.dataset.nextNotice + ' · 창을 닫으면 다음 화면으로 넘어가요', { top: true, duration: 4000 });
+                Toast.show(step.notice + ' · 창을 닫으면 다음 화면으로 넘어가요', { top: true, duration: 4000 });
             }
-            return setTimeout(next, 1500);
+            return setTimeout(go, 1500);
         }
-        if (auto.dataset.nextNotice) StateNotice.leave(auto.dataset.nextNotice);
-        // replace: 자동으로 바뀐 상태는 뒤로 가기 기록에 남기지 않음
-        location.replace(auto.dataset.autoNext);
-    };
-    function go() {
         if (started) return;
         started = true;
-        next();
+        // 그 사이 다른 화면에서 이미 다음 단계로 갔으면 그 화면으로 (단계를 건너뛰지 않게)
+        var now = Progress.sync();
+        if (now && now.stage !== stage) return location.replace(now.url);
+        var moved = Progress.advance();
+        if (!moved) return;
+        if (moved.step.notice) StateNotice.leave(moved.step.notice);
+        // replace: 자동으로 바뀐 상태는 뒤로 가기 기록에 남기지 않음
+        location.replace(moved.next.url);
     }
-    setTimeout(go, Number(auto.dataset.delay || 8000) * scale);
-    // data-next-on-arrive: 지도 위 차가 탑승 위치에 닿으면 바로 (지도를 못 쓰면 위 시간대로)
-    if (auto.hasAttribute('data-next-on-arrive')) {
+    setTimeout(go, Progress.remaining());
+    // 뒤로 가기로 돌아왔을 때 브라우저가 예전 화면을 그대로 보여 주면 새로 열어 지금 단계를 맞춤
+    window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
+    // 지도 위 차가 탑승 위치에 닿으면 바로 (지도를 못 쓰면 위 시간대로)
+    if (wrap.hasAttribute('data-next-on-arrive')) {
         document.addEventListener('mapkit:car-arrived', function () { setTimeout(go, 1200); });
     }
 });
