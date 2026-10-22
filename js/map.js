@@ -190,6 +190,7 @@ var MapKit = (function () {
             level: Number(view.dataset.level || 3)
         });
         view.classList.add('is-kakao');
+        tidyCopyright(canvas);
         var overlays = {};
         mounted.push({ map: map, overlays: overlays });
         var pad = view.dataset.fitPad ? Number(view.dataset.fitPad) : null;
@@ -306,6 +307,24 @@ var MapKit = (function () {
     // 지도 칸 크기가 바뀐 뒤 다시 그림 (바텀시트를 끌어 올리고 내릴 때)
     function relayout() {
         mounted.forEach(function (m) { m.map.relayout(); });
+    }
+
+    // 지도 왼쪽 아래 축척 막대·카카오 로고가 바텀시트에 반쯤 가려 모서리로 검은 선이 비침
+    //  → 축척 막대는 숨기고, 로고(약관상 지우지 않음)는 시트 위로 올려 온전히 보이게
+    function tidyCopyright(canvas, tries) {
+        tries = tries || 0;
+        var logo = canvas.querySelector('img[src*="m_bi"]');
+        if (!logo) {
+            if (tries < 20) setTimeout(function () { tidyCopyright(canvas, tries + 1); }, 150);
+            return;
+        }
+        var box = logo;
+        while (box.parentNode && box.parentNode !== canvas && box.style.bottom !== '0px') box = box.parentNode;
+        box.style.bottom = 'calc(var(--sheet-overlap, 16px) + 6px)';
+        // 축척: 로고 묶음 앞의 칸들 (테두리 선 · "2km")
+        Array.prototype.forEach.call(box.children, function (child) {
+            if (!child.contains(logo)) child.style.display = 'none';
+        });
     }
 
     return { load: load, setPlace: setPlace, relayout: relayout };
