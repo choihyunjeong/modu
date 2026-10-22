@@ -147,6 +147,7 @@
     <!-- 평균 대기 기준 안내 팝업 (지금 상황의 ? 에서 열림 · 가운데 창) -->
     <div class="popup" id="basis-sheet" role="dialog" aria-modal="true" aria-labelledby="basis-title" hidden>
         <div class="popup__box basis-sheet">
+            <button type="button" class="popup-x" data-popup-x aria-label="닫기"><span class="icon icon--close" aria-hidden="true"></span></button>
             <div>
                 <h2 class="modal-sheet__title" id="basis-title">평균 대기 시간은 이렇게 계산했어요</h2>
                 <p class="modal-sheet__desc">실제 기다리는 시간은 그날 차량·접수 상황에 따라 달라질 수 있어요.</p>
@@ -211,6 +212,7 @@
             basisSheet.querySelector('[data-close-basis]').focus();
         });
         basisSheet.querySelector('[data-close-basis]').addEventListener('click', closeBasis);
+        basisSheet.querySelector('[data-popup-x]').addEventListener('click', closeBasis);
         basisSheet.addEventListener('click', function (e) { if (e.target === basisSheet) closeBasis(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !basisSheet.hidden) closeBasis(); });
     </script>

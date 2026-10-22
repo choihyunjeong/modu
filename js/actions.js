@@ -42,7 +42,9 @@ var Actions = (function () {
         layer.setAttribute('role', kind === 'dialog' ? 'alertdialog' : 'dialog');
         layer.setAttribute('aria-modal', 'true');
         layer.innerHTML = kind === 'dialog'
-            ? '<div class="confirm-dialog__box">' + html + '</div>'
+            // 가운데 확인 창은 오른쪽 위에 닫기(X) · 누르면 바깥을 누른 것과 같음 (계속 기다리기·계속 쓰기)
+            ? '<div class="confirm-dialog__box"><button type="button" class="popup-x" data-layer-x aria-label="닫기">' +
+                '<span class="icon icon--close" aria-hidden="true"></span></button>' + html + '</div>'
             : '<div class="modal-sheet__panel action-sheet"><span class="sheet__grabber" aria-hidden="true"></span>' + html + '</div>';
         var panel = layer.firstChild;
         var title = panel.querySelector('h2');
@@ -69,6 +71,8 @@ var Actions = (function () {
             if (e.key === 'Escape' && layer === lastLayer()) dismiss();
         }
         layer.addEventListener('click', function (e) { if (e.target === layer) dismiss(); });
+        var x = panel.querySelector('[data-layer-x]');
+        if (x) x.addEventListener('click', function () { dismiss(); });
         document.addEventListener('keydown', onKey);
         bind(panel, close);
         // 처음 초점: 지정한 칸 → 없으면 시트 제목 (버튼이 미리 골라진 것처럼 보이지 않게)

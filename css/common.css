@@ -1077,3 +1077,29 @@ body.is-modal-open { overflow: hidden; }
     line-height: var(--lh-22);
     color: var(--color-text-secondary);
 }
+
+/* 팝업 오른쪽 위 닫기 (X) · 가운데 팝업·확인 창 공통 */
+.icon--close { --icon-url: url("../image/close.svg"); }
+
+.popup__box,
+.confirm-dialog__box { position: relative; }
+
+.popup-x {
+    position: absolute;
+    top: var(--space-8);
+    right: var(--space-8);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    color: var(--color-text-sub);
+}
+
+.popup-x:active { background: var(--color-bg-gray); }
+
+/* 제목이 X와 겹치지 않게 */
+.popup__box > :first-child:not(.popup-x),
+.popup__box > .popup-x + * { padding-right: 36px; }
