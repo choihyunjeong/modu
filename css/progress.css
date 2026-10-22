@@ -79,7 +79,7 @@
 .map-pin--wait .map-pin__dot {
     width: 16px;
     height: 16px;
-    margin: 0;
+    margin: 0 0 -8px;
     background: var(--color-primary);
 }
 

@@ -644,6 +644,8 @@ fieldset {
     width: 14px;
     height: 14px;
     margin-top: -3px;
+    /* 핀 아래 끝 = 점 한가운데 → 지도 좌표에 점 한가운데가 놓임 (퍼지는 원도 점 중앙에서) */
+    margin-bottom: -7px;
     border: 3px solid var(--color-bg);
     border-radius: var(--radius-full);
     background: var(--color-text);
