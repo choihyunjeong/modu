@@ -12,15 +12,15 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>음성으로 부르기 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610222024">
-    <link rel="stylesheet" href="css/voice.css?v=2610222024">
-    <script src="js/common.js?v=2610222024"></script>
-    <script src="js/config.js?v=2610222024"></script>
-    <script src="js/trip.js?v=2610222024"></script>
-    <script src="js/map.js?v=2610222024"></script>
-    <script src="js/places.js?v=2610222024"></script>
-    <script src="js/ride-info.js?v=2610222024"></script>
-    <script src="js/stats.js?v=2610222024"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610222028">
+    <link rel="stylesheet" href="css/voice.css?v=2610222028">
+    <script src="js/common.js?v=2610222028"></script>
+    <script src="js/config.js?v=2610222028"></script>
+    <script src="js/trip.js?v=2610222028"></script>
+    <script src="js/map.js?v=2610222028"></script>
+    <script src="js/places.js?v=2610222028"></script>
+    <script src="js/ride-info.js?v=2610222028"></script>
+    <script src="js/stats.js?v=2610222028"></script>
 </head>
 <body>
     <div id="wrap" class="voice-page">
@@ -84,6 +84,12 @@
                 <button type="button" class="btn btn--primary voice-confirm__yes" data-confirm-yes>네, 부르기</button>
                 <button type="button" class="btn btn--outline" data-confirm-no>아니요, 다시 말할게요</button>
             </div>
+            <!-- 말로 대답 받는 상태 (읽어 주는 중 · 듣는 중 · 못 알아들음) -->
+            <div class="voice-hear" data-voice-hear role="status" aria-live="polite" hidden>
+                <span class="voice-hear__dot" aria-hidden="true"></span>
+                <p class="voice-hear__text" data-hear-text></p>
+                <button type="button" class="voice-hear__again" data-hear-again hidden>다시 듣기</button>
+            </div>
             <p class="voice-confirm__note">
                 <span class="icon icon--speak" aria-hidden="true"></span>
                 질문을 소리로도 읽어드려요. "네"라고 말하면 바로 부르고, "아니요"라고 말하면 다시 들어요.
@@ -122,6 +128,12 @@
                 <button type="button" class="btn btn--primary voice-confirm__yes" data-check-yes>이대로 부르기</button>
                 <button type="button" class="btn btn--outline" data-check-edit>정보 바꾸고 부르기</button>
             </div>
+            <!-- 말로 대답 받는 상태 (읽어 주는 중 · 듣는 중 · 못 알아들음) -->
+            <div class="voice-hear" data-voice-hear role="status" aria-live="polite" hidden>
+                <span class="voice-hear__dot" aria-hidden="true"></span>
+                <p class="voice-hear__text" data-hear-text></p>
+                <button type="button" class="voice-hear__again" data-hear-again hidden>다시 듣기</button>
+            </div>
             <p class="voice-confirm__note" data-check-note>
                 <span class="icon icon--speak" aria-hidden="true"></span>
                 "네"라고 말하면 부르고, "바꿀게요"라고 말하면 정보를 바꾸는 화면으로 가요. 함께 타는 분이 있으면 "한 명"처럼 말해 주세요.
@@ -129,6 +141,6 @@
         </section>
     </div>
 
-    <script src="js/voice.js?v=2610222024"></script>
+    <script src="js/voice.js?v=2610222028"></script>
 </body>
 </html>

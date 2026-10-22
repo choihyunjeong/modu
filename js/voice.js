@@ -45,7 +45,8 @@
     }
 
     // onText(최종 문장) · 듣는 동안 들린 말은 화면에 바로 보여 줌
-    function listen(onText) {
+    //  onMiss: 아무 말도 못 알아듣고 끝났을 때 (버튼을 눌러 일부러 멈춘 경우는 부르지 않음)
+    function listen(onText, onMiss) {
         if (!Recognition) {
             showListen('이 기기에서는 말로 부를 수 없어요', '아래 예시를 누르거나 키보드로 입력해 주세요.');
             return;
@@ -55,6 +56,7 @@
         rec.lang = 'ko-KR';
         rec.interimResults = true;
         var finalText = '';
+        var mine = rec;
         rec.onresult = function (e) {
             var text = '';
             for (var i = 0; i < e.results.length; i++) {
@@ -75,16 +77,47 @@
         };
         rec.onend = function () {
             setListening(false);
-            rec = null;
+            if (rec === mine) rec = null;
             if (finalText) onText(finalText.trim());
+            else if (onMiss && !mine.stopped) onMiss();
         };
         setListening(true);
         rec.start();
     }
 
     function stopListening() {
-        if (rec) rec.abort();
+        if (rec) {
+            rec.stopped = true;
+            rec.abort();
+        }
         setListening(false);
+        document.querySelectorAll('[data-voice-hear]').forEach(function (box) { box.hidden = true; });
+    }
+
+    // 확인 화면에서 말로 대답 받기: 질문을 읽어 주고 → 듣는 중 표시 → handle(대답)
+    //  handle이 false를 돌려주면(못 알아들은 말) "다시 듣기"를 보여 줌
+    function askAnswer(step, speech, hint, handle) {
+        var box = step.querySelector('[data-voice-hear]');
+        var text = box.querySelector('[data-hear-text]');
+        var again = box.querySelector('[data-hear-again]');
+        function state(name, message) {
+            box.hidden = false;
+            box.dataset.state = name;
+            text.textContent = message;
+            again.hidden = name !== 'miss';
+        }
+        function start() {
+            state('listening', '듣는 중이에요 · ' + hint);
+            listen(function (answer) {
+                if (handle(answer) === false) state('miss', '"' + answer + '"(이)라고 들었어요. 다시 말씀해 주시거나 버튼을 눌러 주세요.');
+                else if (!box.hidden && box.dataset.state === 'listening') box.hidden = true;
+            }, function () {
+                state('miss', '잘 못 들었어요. 다시 말씀해 주시거나 버튼을 눌러 주세요.');
+            });
+        }
+        again.onclick = start;
+        state('reading', '질문을 읽어 드리고 있어요');
+        speak(speech, start);
     }
 
     // ---------- 들은 말 이해하기 ----------
@@ -140,11 +173,10 @@
 
         // 말로 불렀을 때만: 질문을 읽어 주고, 다 읽으면 "네 / 아니요"를 들음
         if (!viaVoice) return;
-        speak(question + ' 네 또는 아니요로 말씀해 주세요.', function () {
-            listen(function (answer) {
-                if (/^(네|예|응|어|부르|불러|좋아|그래)/.test(answer)) showCheck();
-                else if (/아니|다시|취소/.test(answer)) retry();
-            });
+        askAnswer(confirmStep, question + ' 네 또는 아니요로 말씀해 주세요.', '"네" 또는 "아니요"라고 말씀해 주세요', function (answer) {
+            if (/^(네|예|응|어|부르|불러|좋아|그래)/.test(answer)) showCheck();
+            else if (/아니|다시|취소/.test(answer)) retry();
+            else return false;
         });
     }
 
@@ -187,14 +219,14 @@
     function askCheck() {
         var ride = document.querySelector('[data-check-ride]').textContent.replace(/\n/g, ', ');
         var contact = document.querySelector('[data-check-contact]').textContent;
-        speak(ridersWord(riders) + ' 타요. 탑승 정보는 ' + ride + '. 연락은 ' + contact + '. 이대로 부를까요? 네 또는 바꿀게요로 말씀해 주세요.', function () {
-            listen(function (answer) {
+        askAnswer(checkStep, ridersWord(riders) + ' 타요. 탑승 정보는 ' + ride + '. 연락은 ' + contact + '. 이대로 부를까요? 네 또는 바꿀게요로 말씀해 주세요.',
+            '"네" 또는 "바꿀게요"라고 말씀해 주세요', function (answer) {
                 var n = /없|혼자/.test(answer) ? 0 : /(한|1)\s*명/.test(answer) ? 1 : /(두|2)\s*명/.test(answer) ? 2 : null;
-                if (n !== null) { setRiders(n); return askCheck(); }
+                if (n !== null) { setRiders(n); askCheck(); return; }
                 if (/^(네|예|응|어|부르|불러|좋아|그래)/.test(answer)) call();
                 else if (/바꾸|바꿀|수정|고칠|아니/.test(answer)) editInfo();
+                else return false;
             });
-        });
     }
 
     function setRiders(n) {
@@ -237,16 +269,20 @@
     }
 
     // ---------- 읽어 주기 ----------
+    // 중간에 멈춘 읽기는 끝나도 다음(듣기)으로 넘어가지 않게 순번으로 구분
+    var speechId = 0;
     function speak(text, done) {
+        var id = ++speechId;
         if (!window.speechSynthesis) return done && done();
         speechSynthesis.cancel();
         var u = new SpeechSynthesisUtterance(text);
         u.lang = 'ko-KR';
-        u.onend = function () { if (done) done(); };
+        u.onend = function () { if (done && id === speechId) done(); };
         speechSynthesis.speak(u);
     }
 
     function stopSpeaking() {
+        speechId++;
         if (window.speechSynthesis) speechSynthesis.cancel();
     }
 
@@ -305,7 +341,11 @@
     document.querySelector('[data-check-yes]').addEventListener('click', call);
     document.querySelector('[data-check-edit]').addEventListener('click', editInfo);
     document.querySelectorAll('[data-riders]').forEach(function (btn) {
-        btn.addEventListener('click', function () { setRiders(Number(btn.dataset.riders)); });
+        btn.addEventListener('click', function () {
+            stopListening();
+            stopSpeaking();
+            setRiders(Number(btn.dataset.riders));
+        });
     });
     // 뒤로: 목적지 확인(B)으로
     document.querySelector('[data-check-back]').addEventListener('click', function () {

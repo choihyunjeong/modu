@@ -323,3 +323,58 @@
     font-weight: var(--font-weight-bold);
     color: var(--color-primary);
 }
+
+/* 말로 대답 받는 상태 (읽어 주는 중 · 듣는 중 · 못 알아들음) */
+.voice-hear {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8) var(--space-10);
+    padding: var(--space-12) var(--space-14);
+    border-radius: var(--radius-lg);
+    background: var(--color-primary-bg);
+}
+
+.voice-hear__dot {
+    flex-shrink: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background: var(--color-text-placeholder);
+}
+
+.voice-hear[data-state="listening"] .voice-hear__dot {
+    background: var(--color-primary);
+    animation: voice-hear-blink 1.2s ease-in-out infinite;
+}
+
+.voice-hear[data-state="miss"] { background: var(--color-warning-bg); }
+.voice-hear[data-state="miss"] .voice-hear__dot { background: var(--color-warning); }
+
+.voice-hear__text {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.voice-hear[data-state="listening"] .voice-hear__text { color: var(--color-primary); }
+
+.voice-hear__again {
+    min-height: var(--touch-size);
+    padding: 0 var(--space-16);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+}
+
+@keyframes voice-hear-blink {
+    50% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .voice-hear[data-state="listening"] .voice-hear__dot { animation: none; }
+}
