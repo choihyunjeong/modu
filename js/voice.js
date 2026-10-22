@@ -112,12 +112,8 @@
         Places.search(query, function (items) {
             if (items === null) return showListen('찾지 못했어요', '인터넷 연결을 확인하고 다시 말씀해 주세요.');
             if (!items.length) return showListen('"' + query + '"' + '을(를) 찾지 못했어요', '다른 이름으로 다시 말씀해 주세요.');
-            var place = items[0];
-            var start = Trip.places().pickup;
-            if (Math.abs(start.lat - place.lat) < 0.0005 && Math.abs(start.lng - place.lng) < 0.0005) {
-                return showListen('지금 계신 곳이에요', '다른 목적지를 말씀해 주세요.');
-            }
-            showConfirm(place, query);
+            // 출발지와 같은 곳이어도 그대로 진행 (거리 0m)
+            showConfirm(items[0], query);
         });
     }
 

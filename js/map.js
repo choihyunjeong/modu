@@ -75,7 +75,12 @@ var MapKit = (function () {
                 ));
             }
         });
-        if (pad != null) map.setBounds(bounds, pad, pad, pad + 16, pad);
+        // 모든 점이 거의 같은 곳이면(집에서 집 등) 너무 확대되지 않게 그 자리를 보통 크기로
+        var sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
+        if (Math.abs(ne.getLat() - sw.getLat()) < 0.0008 && Math.abs(ne.getLng() - sw.getLng()) < 0.0008) {
+            map.setLevel(3);
+            map.setCenter(new kakao.maps.LatLng((sw.getLat() + ne.getLat()) / 2, (sw.getLng() + ne.getLng()) / 2));
+        } else if (pad != null) map.setBounds(bounds, pad, pad, pad + 16, pad);
         else map.setBounds(bounds, 56, 24, 32, 24);
         if (center) map.setCenter(center);
     }

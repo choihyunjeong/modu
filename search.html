@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>목적지 검색 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221315">
-    <link rel="stylesheet" href="css/search.css?v=2610221315">
-    <script src="js/common.js?v=2610221315"></script>
-    <script src="js/config.js?v=2610221315"></script>
-    <script src="js/trip.js?v=2610221315"></script>
-    <script src="js/map.js?v=2610221315"></script>
-    <script src="js/places.js?v=2610221315"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221327">
+    <link rel="stylesheet" href="css/search.css?v=2610221327">
+    <script src="js/common.js?v=2610221327"></script>
+    <script src="js/config.js?v=2610221327"></script>
+    <script src="js/trip.js?v=2610221327"></script>
+    <script src="js/map.js?v=2610221327"></script>
+    <script src="js/places.js?v=2610221327"></script>
 </head>
 <body>
     <div id="wrap">
@@ -130,14 +130,9 @@
 
     <script>
         // 목적지 고르기: 이번 호출의 목적지로 저장하고 호출 전 확인(E3b)으로
-        //  출발지(집)와 같은 곳은 고를 수 없음
+        //  출발지와 같은 곳(집에서 집)이어도 막지 않고 그대로 진행 (일반 택시 앱처럼 · 거리 0m)
         function chooseDest(name, addr, lat, lng) {
             var chosen = { name: name, addr: addr, lat: Number(lat), lng: Number(lng) };
-            var start = Trip.places().pickup;
-            if (Math.abs(start.lat - chosen.lat) < 0.0005 && Math.abs(start.lng - chosen.lng) < 0.0005) {
-                Toast.show('지금 계신 곳이에요. 다른 목적지를 골라 주세요.');
-                return;
-            }
             Trip.start(chosen);
             location.href = 'confirm.html';
         }

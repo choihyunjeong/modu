@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>이용내역 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221315">
-    <link rel="stylesheet" href="css/tabs.css?v=2610221315">
-    <script src="js/common.js?v=2610221315"></script>
-    <script src="js/config.js?v=2610221315"></script>
-    <script src="js/trip.js?v=2610221315"></script>
-    <script src="js/push.js?v=2610221315"></script>
-    <script src="js/stats.js?v=2610221315"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221327">
+    <link rel="stylesheet" href="css/tabs.css?v=2610221327">
+    <script src="js/common.js?v=2610221327"></script>
+    <script src="js/config.js?v=2610221327"></script>
+    <script src="js/trip.js?v=2610221327"></script>
+    <script src="js/push.js?v=2610221327"></script>
+    <script src="js/stats.js?v=2610221327"></script>
 </head>
 <body>
     <!-- 이용내역 (이동 완료 화면에서 남긴 기록 · 누르면 자세히) -->
@@ -137,7 +137,7 @@
                 '<button type="button" class="history-item__head" aria-expanded="false" aria-controls="history-' + i + '">' +
                     '<span class="history-item__date">' + day(r.doneAt) + ' · 이동 완료</span>' +
                     '<span class="history-item__route">' + esc(r.pickup) + ' <span aria-hidden="true">→</span><span class="blind">에서</span> ' + esc(r.dest) + '</span>' +
-                    '<span class="history-item__meta">' + times + ' · ' + r.km + 'km</span>' +
+                    '<span class="history-item__meta">' + times + ' · ' + (r.km < 1 ? Math.round(r.km * 100) * 10 + 'm' : r.km + 'km') + '</span>' +
                     '<span class="history-item__fare">' + r.fare.toLocaleString('ko-KR') + '원 <span class="history-item__fare-note">예상 · 바우처</span></span>' +
                     '<span class="icon icon--sm icon--chevron-down history-item__arrow" aria-hidden="true"></span>' +
                 '</button>' +

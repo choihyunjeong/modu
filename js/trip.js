@@ -150,6 +150,12 @@ var Trip = (function () {
         return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1.3;
     }
 
+    // 거리 글자: 1km 미만은 m (집에서 집이면 0m), 그 이상은 km
+    function distText() {
+        var km = rideKm();
+        return km < 1 ? Math.round(km * 1000 / 10) * 10 + 'm' : km.toFixed(1) + 'km';
+    }
+
     // 도로 경로 시간, 없으면 평균 시속 30km + 승하차 3분
     function rideMinutes() {
         if (route()) return route().min;
@@ -189,7 +195,7 @@ var Trip = (function () {
             return t.riders != null ? '본인 1명 · ' + (t.riders ? '동승자 ' + t.riders + '명' : '동승자 없음') : null;
         },
         'ride-time': function (t) {
-            return t.destination ? '목적지까지 약 ' + rideMinutes() + '분 · ' + rideKm().toFixed(1) + 'km (차에 탄 뒤 기준)' : null;
+            return t.destination ? '목적지까지 약 ' + rideMinutes() + '분 · ' + distText() + ' (차에 탄 뒤 기준)' : null;
         },
         'ride-pin': function (t) { return t.destination ? '목적지까지 이동 약 ' + rideMinutes() + '분' : null; },
         // 탑승 중: 목적지를 안 골랐어도 예시 좌표로 계산해 도착 예상 시각과 맞춤
@@ -209,7 +215,7 @@ var Trip = (function () {
         },
         'done-meta': function (t) {
             if (!t.boardedAt) return null;
-            return clock24(t.boardedAt) + ' 탑승 · ' + clock24(t.boardedAt + rideMinutes() * 60000) + ' 하차 · ' + rideKm().toFixed(1) + 'km';
+            return clock24(t.boardedAt) + ' 탑승 · ' + clock24(t.boardedAt + rideMinutes() * 60000) + ' 하차 · ' + distText();
         },
         'done-route': function (t) {
             return t.destination ? (t.pickupName || '출발지') + '  →  ' + t.destination.name : null;
