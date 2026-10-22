@@ -268,3 +268,58 @@
     color: var(--color-primary);
     text-align: center;
 }
+
+/* C · 부르기 전 확인 (함께 타는 분 · 탑승 정보 · 연락 방법) */
+.voice-confirm__top--back { justify-content: flex-start; }
+
+.voice-check {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    border-top: 1px solid var(--color-divider);
+}
+
+.voice-check__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-12) 0;
+    border-bottom: 1px solid var(--color-divider);
+}
+
+.voice-check__label {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-20);
+    color: var(--color-text-secondary);
+}
+
+.voice-check__value {
+    margin: 0;
+    font-size: var(--fs-16);
+    line-height: var(--lh-22);
+    white-space: pre-line;
+}
+
+.voice-riders {
+    display: flex;
+    gap: var(--space-8);
+    margin: 0;
+}
+
+.voice-riders__btn {
+    flex: 1;
+    min-height: var(--touch-size);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-medium);
+}
+
+.voice-riders__btn[aria-checked="true"] {
+    border: 2px solid var(--color-primary);
+    background: var(--color-primary-bg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}

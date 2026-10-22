@@ -1,11 +1,14 @@
 // 음성으로 부르기 (voice.html · 피그마 말로하기_v17 A 듣는 중 → B 확인)
 //  들은 말에서 목적지를 뽑아 장소 검색(js/places.js) → 첫 번째 결과로 "지금 부를까요?"
-//  "네, 부르기"(또는 "네"라고 말하기) → 이번 호출로 접수하고 차량 찾는 중 화면으로
+//  "네, 부르기"(또는 "네"라고 말하기) → C 부르기 전 확인 (함께 타는 분 · 탑승 정보 · 연락 방법)
+//  → "이대로 부르기"(또는 "네") 접수하고 차량 찾는 중 화면으로 · "정보 바꾸고 부르기"는 호출 전 확인 화면에서 고침
 //  예시 문구를 눌러도 같은 흐름 (마이크를 못 쓰는 기기·시연용)
 (function () {
     var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     var listenStep = document.querySelector('[data-voice-step="listen"]');
     var confirmStep = document.querySelector('[data-voice-step="confirm"]');
+    var checkStep = document.querySelector('[data-voice-step="check"]');
+    var riders = 0;        // 함께 타는 분 (본인 제외)
     var title = document.querySelector('[data-voice-title]');
     var desc = document.querySelector('[data-voice-desc]');
     var heardLine = document.querySelector('[data-voice-heard]');
@@ -139,21 +142,82 @@
         if (!viaVoice) return;
         speak(question + ' 네 또는 아니요로 말씀해 주세요.', function () {
             listen(function (answer) {
-                if (/^(네|예|응|어|부르|불러|좋아|그래)/.test(answer)) call();
+                if (/^(네|예|응|어|부르|불러|좋아|그래)/.test(answer)) showCheck();
                 else if (/아니|다시|취소/.test(answer)) retry();
             });
         });
     }
 
-    function call() {
+    // ---------- 부르기 전 확인 ----------
+    // 목적지를 이번 호출로 정하고, 함께 타는 분·탑승 정보·연락 방법을 보여 주고 읽어 줌
+    function showCheck() {
         if (!picked) return;
         stopListening();
         stopSpeaking();
         Trip.start({ name: picked.name, addr: picked.addr, lat: picked.lat, lng: picked.lng });
         // 출발지와 도착지가 너무 가까우면 부르지 않고 안내 시트
         if (Trip.tooClose()) return NearSheet.show();
-        // 저장한 탑승 정보로 바로 접수
-        Trip.set({ calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting', stageAt: Date.now(),
+        confirmStep.hidden = true;
+        checkStep.hidden = false;
+
+        var trip = Trip.get();
+        var ride = window.RideInfo ? RideInfo.describe() : null;
+        var device = ride && ride.device ? ride.device : '아직 등록하지 않았어요';
+        var requests = ride && ride.requests ? ride.requests : '';
+        var contact = ride && ride.contact ? ride.contact : '문자·앱 메시지로 연락';
+        document.querySelector('[data-check-route]').textContent = (trip.pickupName || '래미안베라힐즈 정문') + ' → ' + picked.name;
+        document.querySelector('[data-check-ride]').textContent = device + (requests ? '\n' + requests : '');
+        document.querySelector('[data-check-contact]').textContent = contact;
+        // 탑승 정보가 없으면 넣고 부르도록 안내
+        document.querySelector('[data-check-edit]').textContent = ride && ride.device ? '정보 바꾸고 부르기' : '탑승 정보 넣고 부르기';
+        setRiders(riders);
+        // 말로 했을 때만 대답 안내
+        document.querySelector('[data-check-note]').hidden = !viaVoice;
+        document.querySelector('[data-check-title]').focus();
+
+        if (!viaVoice) return;
+        askCheck();
+    }
+
+    function ridersWord(n) {
+        return n ? '본인과 함께 타는 분 ' + n + '명' : '본인 혼자';
+    }
+
+    // 확인 내용을 읽어 주고 대답을 들음 (네 → 부르기 · 바꿀게요 → 고치는 화면 · "한 명" → 인원 바꾸고 다시 물음)
+    function askCheck() {
+        var ride = document.querySelector('[data-check-ride]').textContent.replace(/\n/g, ', ');
+        var contact = document.querySelector('[data-check-contact]').textContent;
+        speak(ridersWord(riders) + ' 타요. 탑승 정보는 ' + ride + '. 연락은 ' + contact + '. 이대로 부를까요? 네 또는 바꿀게요로 말씀해 주세요.', function () {
+            listen(function (answer) {
+                var n = /없|혼자/.test(answer) ? 0 : /(한|1)\s*명/.test(answer) ? 1 : /(두|2)\s*명/.test(answer) ? 2 : null;
+                if (n !== null) { setRiders(n); return askCheck(); }
+                if (/^(네|예|응|어|부르|불러|좋아|그래)/.test(answer)) call();
+                else if (/바꾸|바꿀|수정|고칠|아니/.test(answer)) editInfo();
+            });
+        });
+    }
+
+    function setRiders(n) {
+        riders = n;
+        document.querySelectorAll('[data-riders]').forEach(function (btn) {
+            btn.setAttribute('aria-checked', Number(btn.dataset.riders) === n);
+        });
+    }
+
+    // 정보 바꾸고 부르기: 호출 전 확인 화면(탑승 인원·탑승 정보·연락 방법 시트)에서 고친 뒤 호출
+    function editInfo() {
+        stopListening();
+        stopSpeaking();
+        Trip.set({ riders: riders });
+        location.href = 'confirm.html';
+    }
+
+    function call() {
+        if (!picked) return;
+        stopListening();
+        stopSpeaking();
+        // 확인한 정보로 접수
+        Trip.set({ riders: riders, calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting', stageAt: Date.now(),
             ride: window.RideInfo ? RideInfo.tags() : null });
         StateNotice.leave(picked.name + ro(picked.name) + ' 호출했어요');
         location.href = 'waiting.html';
@@ -237,7 +301,20 @@
             understand(btn.textContent.replace(/"/g, ''));
         });
     });
-    document.querySelector('[data-confirm-yes]').addEventListener('click', call);
+    document.querySelector('[data-confirm-yes]').addEventListener('click', showCheck);
+    document.querySelector('[data-check-yes]').addEventListener('click', call);
+    document.querySelector('[data-check-edit]').addEventListener('click', editInfo);
+    document.querySelectorAll('[data-riders]').forEach(function (btn) {
+        btn.addEventListener('click', function () { setRiders(Number(btn.dataset.riders)); });
+    });
+    // 뒤로: 목적지 확인(B)으로
+    document.querySelector('[data-check-back]').addEventListener('click', function () {
+        stopListening();
+        stopSpeaking();
+        checkStep.hidden = true;
+        confirmStep.hidden = false;
+        document.querySelector('[data-confirm-yes]').focus();
+    });
     document.querySelector('[data-confirm-no]').addEventListener('click', retry);
     document.querySelector('[data-voice-close]').addEventListener('click', function () {
         stopListening();
