@@ -14,6 +14,7 @@
     var rec = null;
     var picked = null;   // 확인 중인 장소
     var heard = '';
+    var viaVoice = false;  // 말로 했으면 확인 질문에도 "네/아니요"를 말로 받음
 
     // 받침 있으면 "으로", 없거나 ㄹ 받침이면 "로"
     function ro(word) {
@@ -36,7 +37,7 @@
         confirmStep.hidden = true;
         listenStep.hidden = false;
         title.textContent = message || '어디로 갈까요?';
-        desc.textContent = sub || '말씀하신 내용을 확인한 뒤 진행해요.';
+        desc.textContent = sub || (typeForm && !typeForm.hidden ? '어디로 갈지 입력해 주세요.' : '가운데 마이크를 누르고 말씀해 주세요.');
         heardLine.hidden = true;
     }
 
@@ -129,13 +130,17 @@
         var question = place.name + ro(place.name) + ' 지금 부를까요?';
         var stats = WaitStats.forDay();
         document.querySelector('[data-confirm-heard]').textContent = '"' + heard + '"';
+        document.querySelector('.voice-confirm__heard-label').textContent = viaVoice ? '이렇게 들었어요' : '이렇게 입력했어요';
+        document.querySelector('[data-confirm-no]').textContent = viaVoice ? '아니요, 다시 말할게요' : '아니요, 다시 입력할게요';
+        document.querySelector('.voice-confirm__note').hidden = !viaVoice;
         document.querySelector('[data-confirm-question]').textContent = question;
         document.querySelector('[data-confirm-sub]').textContent =
             (trip.pickupName || '래미안베라힐즈 정문') + '에서 출발 · 보통 ' + stats.min + '~' + stats.max + '분 뒤 타요';
         document.querySelector('[data-confirm-edit]').href = 'search.html?q=' + encodeURIComponent(query);
         document.querySelector('[data-confirm-yes]').focus();
 
-        // 질문을 읽어 주고, 다 읽으면 "네 / 아니요"를 들음
+        // 말로 불렀을 때만: 질문을 읽어 주고, 다 읽으면 "네 / 아니요"를 들음
+        if (!viaVoice) return;
         speak(question + ' 네 또는 아니요로 말씀해 주세요.', function () {
             listen(function (answer) {
                 if (/^(네|예|응|어|부르|불러|좋아|그래)/.test(answer)) call();
@@ -154,10 +159,17 @@
         location.href = 'waiting.html';
     }
 
+    // 아니요: 말로 했으면 다시 듣고, 입력했으면 입력칸으로
     function retry() {
         picked = null;
         showListen();
-        listen(understand);
+        if (viaVoice) {
+            desc.textContent = '듣고 있어요. 어디로 갈지 말씀해 주세요.';
+            listen(understand);
+        } else {
+            setTyping(true);
+            typeInput.select();
+        }
     }
 
     // ---------- 읽어 주기 ----------
@@ -175,21 +187,47 @@
     }
 
     // ---------- 버튼 ----------
-    // 키보드: 듣기·읽기를 멈추고 목적지 검색으로 (들은 말이 있으면 검색창에 넣어 줌)
-    document.querySelector('[data-voice-keyboard]').addEventListener('click', function (e) {
+    // 키보드: 같은 화면에 입력칸을 열고 휴대폰 키보드를 올림 (다시 누르면 닫힘)
+    var keyboardBtn = document.querySelector('[data-voice-keyboard]');
+    var typeForm = document.querySelector('[data-voice-type]');
+    var typeInput = document.getElementById('voice-text');
+    var examples = document.querySelector('[data-voice-examples]');
+    function setTyping(on) {
+        typeForm.hidden = !on;
+        examples.hidden = on;
+        keyboardBtn.setAttribute('aria-pressed', on);
+        keyboardBtn.classList.toggle('is-on', on);
+        if (on) {
+            stopListening();
+            stopSpeaking();
+            desc.textContent = '어디로 갈지 입력해 주세요.';
+            var text = heardLine.hidden ? '' : heardLine.textContent.replace(/"/g, '');
+            if (text && !typeInput.value) typeInput.value = text;
+            typeInput.focus();
+        } else {
+            desc.textContent = '가운데 마이크를 누르고 말씀해 주세요.';
+        }
+    }
+    keyboardBtn.addEventListener('click', function () { setTyping(typeForm.hidden); });
+    typeForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        stopListening();
-        stopSpeaking();
-        var text = heardLine.hidden ? '' : heardLine.textContent.replace(/"/g, '');
-        location.href = 'search.html' + (text ? '?q=' + encodeURIComponent(text) : '');
+        var text = typeInput.value.trim();
+        if (!text) return typeInput.focus();
+        typeInput.blur();
+        viaVoice = false;
+        understand(text);
     });
     mic.addEventListener('click', function () {
-        if (rec) stopListening();
-        else listen(understand);
+        if (rec) return stopListening();
+        if (!typeForm.hidden) setTyping(false);
+        viaVoice = true;
+        desc.textContent = '듣고 있어요. 어디로 갈지 말씀해 주세요.';
+        listen(understand);
     });
     document.querySelectorAll('.voice-example').forEach(function (btn) {
         btn.addEventListener('click', function () {
             stopListening();
+            viaVoice = false;
             understand(btn.textContent.replace(/"/g, ''));
         });
     });
@@ -202,7 +240,6 @@
         else location.href = 'index.html';
     });
 
-    // 들어오면 바로 듣기 시작
-    if (Recognition) listen(understand);
-    else showListen('이 기기에서는 말로 부를 수 없어요', '아래 예시를 누르거나 키보드로 입력해 주세요.');
+    // 들어오면 기다림 · 가운데 마이크를 눌러야 듣기 시작
+    if (!Recognition) showListen('이 기기에서는 말로 부를 수 없어요', '아래 예시를 누르거나 키보드로 입력해 주세요.');
 })();

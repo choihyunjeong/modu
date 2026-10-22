@@ -71,6 +71,15 @@
         </nav>
     </div>
 
+    <!-- ? 안내 팝업 (전일접수 · 정기접수) -->
+    <div class="popup" id="info-popup" role="dialog" aria-modal="true" aria-labelledby="info-popup-title" hidden>
+        <div class="popup__box">
+            <h2 class="popup__title" id="info-popup-title"></h2>
+            <p class="popup__desc" data-popup-desc></p>
+            <button type="button" class="btn btn--primary" data-popup-close>확인</button>
+        </div>
+    </div>
+
     <!-- 안내 · 변경·취소 시트 (내용은 스크립트가 채움) -->
     <div class="modal-sheet" id="reserve-sheet" role="dialog" aria-modal="true" aria-labelledby="reserve-sheet-title" hidden>
         <div class="modal-sheet__panel reserve-sheet">
@@ -192,12 +201,28 @@
             'day-before': ['전일접수', '이용 전날 정해진 배차 시간(오전 7시·8시·10시) 중 하나를 골라 미리 신청해요. 시간대마다 선착순으로 받아요.'],
             'regular': ['정기접수', '같은 시각·같은 경로로 자주 이동할 때, 접수를 대신 반복해 드려요. 차량이나 시각이 확정되는 예약은 아니에요.']
         };
+        // ? 안내는 가운데 팝업으로
+        var popup = document.getElementById('info-popup');
+        var popupOpener = null;
+        function closePopup() {
+            popup.hidden = true;
+            document.body.classList.remove('is-modal-open');
+            if (popupOpener) popupOpener.focus();
+        }
         document.querySelectorAll('[data-open-info]').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var info = INFO[btn.dataset.openInfo];
-                openSheet(info[0], info[1], [{ label: '확인' }], btn);
+                popupOpener = btn;
+                popup.querySelector('#info-popup-title').textContent = info[0];
+                popup.querySelector('[data-popup-desc]').textContent = info[1];
+                popup.hidden = false;
+                document.body.classList.add('is-modal-open');
+                popup.querySelector('[data-popup-close]').focus();
             });
         });
+        popup.querySelector('[data-popup-close]').addEventListener('click', closePopup);
+        popup.addEventListener('click', function (e) { if (e.target === popup) closePopup(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !popup.hidden) closePopup(); });
 
         document.querySelector('[data-regular-apply]').addEventListener('click', function () {
             Toast.show('정기접수 신청 화면은 아직 준비 중이에요');

@@ -1029,3 +1029,51 @@ body.is-modal-open { overflow: hidden; }
 }
 
 .voice-input.is-listening { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* =========================================================
+   가운데 팝업 (? 안내 등 · 짧은 설명)
+   ========================================================= */
+.popup {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-20);
+    background: var(--color-scrim);
+}
+
+.popup__box {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+    width: 100%;
+    max-width: 360px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--space-24) var(--space-20) var(--space-20);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    animation: popup-in 0.18s ease-out;
+}
+
+@keyframes popup-in {
+    from { opacity: 0; transform: scale(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .popup__box { animation: none; }
+}
+
+.popup__title {
+    font-size: var(--fs-18);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-26);
+}
+
+.popup__desc {
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
+    color: var(--color-text-secondary);
+}

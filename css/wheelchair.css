@@ -6,6 +6,19 @@
 
 .wc { min-height: 100vh; min-height: 100dvh; }
 
+/* 머리글 오른쪽 · 취소 */
+.wc-cancel {
+    flex-shrink: 0;
+    min-width: 48px;
+    height: 48px;
+    padding: 0 var(--space-4);
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+
+.wc-cancel.is-off { visibility: hidden; }
+
 /* 화면이 바뀔 때 제목으로 옮긴 초점은 테두리 없이 (읽기 프로그램용) */
 .wc-step [tabindex="-1"]:focus { outline: none; }
 

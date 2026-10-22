@@ -35,6 +35,11 @@
         var step = document.querySelector('[data-step="' + stepKey + '"]');
         title.textContent = key === 'a1b' ? '휠체어 사진 찍기' : step.dataset.title;
         header.classList.toggle('app-header--dark', stepKey === 'a1');
+        // 첫 화면에선 취소를 감춤 (자리는 남겨 제목이 가운데 그대로)
+        var cancel = document.querySelector('[data-wc-cancel]');
+        cancel.classList.toggle('is-off', key === 'a0');
+        cancel.tabIndex = key === 'a0' ? -1 : 0;
+        cancel.setAttribute('aria-hidden', key === 'a0');
         document.body.classList.toggle('wc-dark', stepKey === 'a1');
         if (stepKey === 'a1') openCamera(key === 'a1b' ? 'photo' : 'label');
         else closeCamera();
@@ -47,11 +52,22 @@
     }
     window.addEventListener('hashchange', show);
 
-    // 뒤로: 이 흐름 안에서 왔으면 이전 화면, 처음 화면이면 탑승 정보 등록으로
+    // 탑승 정보 등록 화면으로 (휠체어 정보 흐름을 빠져나감)
+    function toRideInfo() {
+        closeCamera();
+        location.href = 'ride-info.html' + (from ? '?from=' + from : '');
+    }
+
+    // 뒤로: 이 흐름 안에서 이전 화면이 있으면 그 화면, 아니면 탑승 정보 등록으로
+    var depth = 0;   // 이 페이지 안에서 넘어간 화면 수
+    window.addEventListener('hashchange', function () { depth++; });
     document.querySelector('[data-wc-back]').addEventListener('click', function () {
-        if (location.hash && location.hash !== '#a0' && history.length > 1) history.back();
-        else location.href = 'ride-info.html' + (from ? '?from=' + from : '');
+        if (depth > 0) { depth -= 2; history.back(); }
+        else toRideInfo();
     });
+
+    // 취소: 저장하지 않고 탑승 정보 등록으로
+    document.querySelector('[data-wc-cancel]').addEventListener('click', toRideInfo);
 
     // ---------- 저장 ----------
     function save(wheelchair, message) {

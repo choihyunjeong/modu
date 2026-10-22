@@ -19,7 +19,13 @@
         <section class="voice-listen" data-voice-step="listen">
             <div class="voice-listen__body">
                 <h1 class="voice-listen__title" data-voice-title>어디로 갈까요?</h1>
-                <p class="voice-listen__desc" data-voice-desc aria-live="polite">말씀하신 내용을 확인한 뒤 진행해요.</p>
+                <p class="voice-listen__desc" data-voice-desc aria-live="polite">가운데 마이크를 누르고 말씀해 주세요.</p>
+                <!-- 키보드로 입력 (키보드 버튼을 누르면 열림 · 휴대폰 키보드가 올라옴) -->
+                <form class="voice-type" data-voice-type hidden>
+                    <label for="voice-text" class="blind">어디로 갈지 입력</label>
+                    <input type="text" id="voice-text" class="voice-type__input" placeholder="예: 은평성모병원" autocomplete="off" enterkeyhint="go">
+                    <button type="submit" class="voice-type__send">확인</button>
+                </form>
                 <p class="voice-listen__heard" data-voice-heard aria-live="polite" hidden></p>
                 <div class="voice-examples" data-voice-examples>
                     <p class="blind">이렇게 말해 보세요 (눌러도 돼요)</p>
@@ -32,9 +38,9 @@
 
             <div class="voice-controls">
                 <div class="voice-controls__item">
-                    <a href="search.html" class="voice-round" aria-label="글자로 입력하기" data-voice-keyboard>
+                    <button type="button" class="voice-round" aria-label="키보드로 입력하기" aria-pressed="false" data-voice-keyboard>
                         <span class="icon icon--keyboard" aria-hidden="true"></span>
-                    </a>
+                    </button>
                     <span class="voice-controls__label">키보드</span>
                 </div>
                 <div class="voice-controls__item">

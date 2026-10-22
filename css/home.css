@@ -178,8 +178,7 @@
     [data-read] { transition: none; }
 }
 
-/* 평균 대기 기준 안내 시트 */
-.basis-sheet { padding-bottom: var(--space-24); }
+.basis-sheet .modal-sheet__title { font-size: var(--fs-18); line-height: var(--lh-26); }
 
 .basis-sheet__list {
     display: flex;

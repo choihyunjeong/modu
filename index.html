@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/home.css">
     <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/ride-info.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/reader.js"></script>
 </head>
@@ -58,16 +60,16 @@
                     <li class="ride-info__row">
                         <div class="ride-info__text" data-read>
                             <p class="ride-info__title">탑승 정보</p>
-                            <p class="ride-info__desc">이동 보조기기와 필요한 도움을 기사님께 미리 알려드려요.</p>
+                            <p class="ride-info__desc" data-home-ride>이동 보조기기와 필요한 도움을 기사님께 미리 알려드려요.</p>
                         </div>
-                        <a href="ride-info.html" class="btn-sm">등록</a>
+                        <a href="ride-info.html" class="btn-sm" data-home-ride-btn>등록</a>
                     </li>
                     <li class="ride-info__row">
                         <div class="ride-info__text" data-read>
                             <p class="ride-info__title">보호자 연결</p>
-                            <p class="ride-info__desc">보호자와 차량 도착·이동 상황을 공유해요.</p>
+                            <p class="ride-info__desc" data-home-guardian>보호자와 차량 도착·이동 상황을 공유해요.</p>
                         </div>
-                        <a href="guardian.html" class="btn-sm">연결</a>
+                        <a href="guardian.html" class="btn-sm" data-home-guardian-btn>연결</a>
                     </li>
                 </ul>
             </section>
@@ -117,10 +119,9 @@
         </nav>
     </div>
 
-    <!-- 평균 대기 기준 안내 시트 (지금 상황의 ? 에서 열림) -->
-    <div class="modal-sheet" id="basis-sheet" role="dialog" aria-modal="true" aria-labelledby="basis-title" hidden>
-        <div class="modal-sheet__panel basis-sheet">
-            <span class="sheet__grabber" aria-hidden="true"></span>
+    <!-- 평균 대기 기준 안내 팝업 (지금 상황의 ? 에서 열림 · 가운데 창) -->
+    <div class="popup" id="basis-sheet" role="dialog" aria-modal="true" aria-labelledby="basis-title" hidden>
+        <div class="popup__box basis-sheet">
             <div>
                 <h2 class="modal-sheet__title" id="basis-title">평균 대기 시간은 이렇게 계산했어요</h2>
                 <p class="modal-sheet__desc">실제 기다리는 시간은 그날 차량·접수 상황에 따라 달라질 수 있어요.</p>
@@ -187,6 +188,25 @@
         basisSheet.querySelector('[data-close-basis]').addEventListener('click', closeBasis);
         basisSheet.addEventListener('click', function (e) { if (e.target === basisSheet) closeBasis(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !basisSheet.hidden) closeBasis(); });
+    </script>
+<script>
+        // 내 탑승 정보: 저장한 탑승 정보·연결된 보호자를 보여 주고, 버튼은 "수정"으로
+        (function () {
+            var ride = RideInfo.describe();
+            if (ride && ride.device) {
+                document.querySelector('[data-home-ride]').textContent = ride.device;
+                document.querySelector('[data-home-ride-btn]').textContent = '수정';
+            }
+            var list = Guardians.list();
+            if (list.length) {
+                document.querySelector('[data-home-guardian]').textContent = list.map(function (g) {
+                    var who = g.name + (g.relation ? '(' + g.relation + ')' : '');
+                    if (g.status !== 'connected') return who + ' · 수락 대기 중';
+                    return who + (g.notify ? ' · 이동 알림 받는 중' : ' · 연결됨');
+                }).join(' / ');
+                document.querySelector('[data-home-guardian-btn]').textContent = '수정';
+            }
+        })();
     </script>
 </body>
 </html>
