@@ -12,13 +12,13 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>이용내역 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221340">
-    <link rel="stylesheet" href="css/tabs.css?v=2610221340">
-    <script src="js/common.js?v=2610221340"></script>
-    <script src="js/config.js?v=2610221340"></script>
-    <script src="js/trip.js?v=2610221340"></script>
-    <script src="js/push.js?v=2610221340"></script>
-    <script src="js/stats.js?v=2610221340"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221348">
+    <link rel="stylesheet" href="css/tabs.css?v=2610221348">
+    <script src="js/common.js?v=2610221348"></script>
+    <script src="js/config.js?v=2610221348"></script>
+    <script src="js/trip.js?v=2610221348"></script>
+    <script src="js/push.js?v=2610221348"></script>
+    <script src="js/stats.js?v=2610221348"></script>
 </head>
 <body>
     <!-- 이용내역 (이동 완료 화면에서 남긴 기록 · 누르면 자세히) -->
@@ -119,7 +119,7 @@
             liveBox.querySelector('[data-live-title]').textContent = s.title;
             var dest = (t.destination && t.destination.name) || '은평성모병원';
             var desc = key === 'waiting'
-                ? (window.WaitStats ? '차량 배정까지 예상 약 ' + WaitStats.forDay().avg + '분' : '')
+                ? (window.WaitStats ? '승차까지 예상 약 ' + WaitStats.forDay().avg + '분' : '')
                 : key === 'riding' ? dest + '까지 가고 있어요' : s.desc + ' · ' + ((driver.plate || '') + ' ' + (driver.car || '')).trim();
             liveBox.querySelector('[data-live-desc]').textContent = desc;
             liveBox.querySelector('[data-live-route]').textContent = (t.pickupName || '래미안베라힐즈 정문') + ' → ' + dest;
