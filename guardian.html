@@ -12,10 +12,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>보호자 연결 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221442">
-    <link rel="stylesheet" href="css/guardian.css?v=2610221442">
-    <script src="js/common.js?v=2610221442"></script>
-    <script src="js/config.js?v=2610221442"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221447">
+    <link rel="stylesheet" href="css/guardian.css?v=2610221447">
+    <script src="js/common.js?v=2610221447"></script>
+    <script src="js/config.js?v=2610221447"></script>
 </head>
 <body>
     <div id="wrap">
@@ -96,8 +96,16 @@
         // 초대 문자 보내기: 번호·관계·허용 기능을 저장 (수락 전까지는 '수락 대기' · 알림이 가지 않음)
         var phone = document.getElementById('guardian-phone');
         var phoneError = document.getElementById('guardian-phone-error');
-        phone.addEventListener('input', function () { phoneError.hidden = true; });
-        document.querySelector('[data-send-invite]').addEventListener('click', function () {
+        // 휴대폰 번호를 끝까지 넣어야 보내기 버튼이 켜짐 · 다 넣었는데 형식이 틀리면 칸 아래 안내
+        var inviteBtn = document.querySelector('[data-send-invite]');
+        function syncInvite() {
+            var digits = phone.value.replace(/\D/g, '');
+            inviteBtn.disabled = !/^01\d{8,9}$/.test(digits);
+            phoneError.hidden = digits.length < 10 || !inviteBtn.disabled;
+        }
+        phone.addEventListener('input', syncInvite);
+        syncInvite();
+        inviteBtn.addEventListener('click', function () {
             var digits = phone.value.replace(/\D/g, '');
             if (!/^01\d{8,9}$/.test(digits)) {
                 phoneError.hidden = false;

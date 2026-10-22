@@ -287,8 +287,13 @@
         }, '휠체어 규격을 저장했어요');
     });
     Object.keys(sizeInputs).forEach(function (k) {
-        sizeInputs[k].addEventListener('input', function () { confirmedOver = false; });
+        sizeInputs[k].addEventListener('input', function () { confirmedOver = false; syncSizeSave(); });
     });
+
+    // 폭·길이를 둘 다 넣어야 저장 버튼이 켜짐
+    function syncSizeSave() {
+        document.querySelector('[data-size-save]').disabled = !(value('w') && value('l'));
+    }
 
     // 말로 입력: "폭 620 길이 1100" → 숫자 두 개를 폭·길이에
     document.querySelector('[data-size-voice]').addEventListener('click', function () {
@@ -306,6 +311,7 @@
             if (!nums.length) Toast.show('숫자를 듣지 못했어요. "폭 620, 길이 1100"처럼 말해 주세요');
             confirmedOver = false;
             setOver([]);
+            syncSizeSave();
         };
         rec.onend = function () { btn.classList.remove('is-listening'); };
         rec.start();
@@ -317,6 +323,7 @@
         sizeInputs.w.value = num(saved.w);
         sizeInputs.l.value = num(saved.l);
     }
+    syncSizeSave();
 
     show();
 })();

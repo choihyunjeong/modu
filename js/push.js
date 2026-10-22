@@ -11,7 +11,7 @@ var Progress = (function () {
         { stage: 'waiting', url: 'waiting.html', ms: 4000, notice: 'UD택시가 배정됐어요' },
         { stage: 'assigned', url: 'assigned.html', ms: 8000, notice: 'UD택시가 곧 도착해요' },
         { stage: 'arriving', url: 'arriving.html', ms: 6000, notice: '차량이 도착했어요' },
-        { stage: 'arrived', url: 'arrived.html', ms: 2400, notice: '탑승했어요 · 목적지로 출발해요' },
+        { stage: 'arrived', url: 'arrived.html', ms: 4000, notice: '탑승했어요 · 목적지로 출발해요' },
         { stage: 'riding', url: 'riding.html', ms: 8000, notice: '목적지에 도착했어요' },
         { stage: 'done', url: 'trip-done.html' }
     ];

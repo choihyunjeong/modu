@@ -279,11 +279,6 @@
 }
 
 /* 고르기 전 비활성 버튼 */
-.btn--primary:disabled {
-    background: var(--color-divider);
-    color: var(--color-text);
-    cursor: not-allowed;
-}
 
 /* 하단 버튼 간격 12 · 건너뛰기는 36 높이 */
 .bottom-action--feedback { gap: var(--space-12); }

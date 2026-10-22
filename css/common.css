@@ -289,6 +289,21 @@ button {
 }
 
 /* 글자만 있는 버튼 (나중에 할게요) */
+/* 아직 누를 수 없는 버튼 (써야 하거나 골라야 할 것이 남았을 때) · 채우면 원래 색으로 */
+.btn--primary:disabled {
+    background: var(--color-divider);
+    color: var(--color-text-sub);
+    cursor: not-allowed;
+}
+
+.btn:disabled { cursor: not-allowed; }
+
+.chat-round--send:disabled,
+.voice-type__send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 .btn--text {
     min-height: var(--button-height-md);
     font-size: var(--fs-15);

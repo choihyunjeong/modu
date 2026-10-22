@@ -131,6 +131,11 @@
     // 직접 입력 · 말로 입력 → 보내기
     var form = document.querySelector('[data-chat-form]');
     var field = document.getElementById('chat-text');
+    // 글을 쓰거나 말로 넣어야 보내기 버튼이 켜짐
+    var sendBtn = form.querySelector('[type="submit"]');
+    function syncSend() { sendBtn.disabled = !field.value.trim(); }
+    field.addEventListener('input', syncSend);
+    syncSend();
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         var text = field.value.trim();
@@ -140,5 +145,6 @@
         }
         Chat.send(text);
         field.value = '';
+        syncSend();
     });
 })();

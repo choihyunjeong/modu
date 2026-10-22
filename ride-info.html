@@ -12,10 +12,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>탑승 정보 등록 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221442">
-    <link rel="stylesheet" href="css/ride-info.css?v=2610221442">
-    <script src="js/common.js?v=2610221442"></script>
-    <script src="js/ride-info.js?v=2610221442"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221447">
+    <link rel="stylesheet" href="css/ride-info.css?v=2610221447">
+    <script src="js/common.js?v=2610221447"></script>
+    <script src="js/ride-info.js?v=2610221447"></script>
 </head>
 <body>
     <div id="wrap">
@@ -186,6 +186,12 @@
             otherSaved.textContent = '요청한 탑승 방법 · ' + text;
             otherOpener.textContent = text ? '다른 탑승 방법 고치기 ›' : '다른 탑승 방법이 필요해요 ›';
         }
+        // 저장 버튼: 내용을 적어야 켜짐 (이미 저장한 내용이 있으면 지워서 저장하는 것도 가능)
+        var otherSave = document.querySelector('[data-save-other]');
+        function syncOtherSave() {
+            otherSave.disabled = !otherInput.value.trim() && !(RideInfo.load() || {}).otherBoarding;
+        }
+        otherInput.addEventListener('input', syncOtherSave);
         function openOther() {
             otherInput.value = (RideInfo.load() || {}).otherBoarding || '';
             otherInput.dispatchEvent(new Event('input', { bubbles: true }));

@@ -203,12 +203,18 @@
             desc.textContent = '어디로 갈지 입력해 주세요.';
             var text = heardLine.hidden ? '' : heardLine.textContent.replace(/"/g, '');
             if (text && !typeInput.value) typeInput.value = text;
+            syncTypeSend();
             typeInput.focus();
         } else {
             desc.textContent = '가운데 마이크를 누르고 말씀해 주세요.';
         }
     }
     keyboardBtn.addEventListener('click', function () { setTyping(typeForm.hidden); });
+    // 글자를 넣어야 확인 버튼이 켜짐
+    var typeSend = typeForm.querySelector('[type="submit"]');
+    function syncTypeSend() { typeSend.disabled = !typeInput.value.trim(); }
+    typeInput.addEventListener('input', syncTypeSend);
+    syncTypeSend();
     typeForm.addEventListener('submit', function (e) {
         e.preventDefault();
         var text = typeInput.value.trim();

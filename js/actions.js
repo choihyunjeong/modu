@@ -519,8 +519,47 @@ var Chat = (function () {
             save(list().map(function (m) { return m.at === at && m.from === 'me' ? Object.assign({}, m, { status: 'seen' }) : m; }));
         }, 3000);
         setTimeout(function () {
-            save(list().concat([{ from: 'driver', text: '네, 알겠어요.', at: Date.now() }]));
+            save(list().concat([{ from: 'driver', text: reply(text), at: Date.now() }]));
         }, 5500);
+    }
+
+    // 기사님 답: 보낸 말과 지금 단계(오는 중 · 도착 · 탑승 중 · 끝)에 맞춰 (시연용)
+    function reply(text) {
+        var stage = (window.Trip && Trip.get().stage) || 'assigned';
+        var coming = stage === 'waiting' || stage === 'assigned' || stage === 'arriving';
+        var arrived = stage === 'arrived';
+        var car = (window.APP_CONFIG && APP_CONFIG.driver && APP_CONFIG.driver.car) || '흰색 PV5';
+        var rules = [
+            [/위치를 바꾸|위치 변경|다른 곳|다른 데/, '네, 어디로 가면 될까요? 바꾸실 곳을 말씀해 주세요.'],
+            [/찾기 어려|안 보|못 찾|어디 (계|있)/, arrived
+                ? '비상등 켜 둔 ' + car + '예요. 제가 내려서 찾아볼게요.'
+                : '도착하면 비상등 켜 둘게요. ' + car + '예요.'],
+            [/시간이 필요|천천히|준비/, arrived
+                ? '네, 천천히 나오세요. 여기서 기다리고 있을게요.'
+                : '네, 서두르지 않으셔도 돼요. 도착해서 기다릴게요.'],
+            [/기다리고 있|도착했어요|나와 있/, stage === 'arriving'
+                ? '거의 다 왔어요. 1~2분 안에 도착해요.'
+                : arrived ? '저도 도착했어요. ' + car + ' 옆문 쪽으로 와 주세요.' : '네, 확인했어요. 가는 중이에요.'],
+            [/금방 나가|곧 나가|나가요|내려가요/, '네, 천천히 오세요. 경사로 내려 둘게요.'],
+            [/늦|조금만 기다/, '괜찮아요. 천천히 오세요.'],
+            [/화장실|잠깐|잠시/, '네, 잠시 기다릴게요.'],
+            [/짐|가방|캐리어/, '네, 짐 싣는 것도 도와드릴게요.'],
+            [/휠체어|경사로|리프트|고정/, coming || arrived
+                ? '네, 휠체어 탑승 준비해 둘게요.'
+                : '네, 휠체어 고정 다시 확인할게요.'],
+            [/에어컨|히터|덥|더워|추워|춥|온도|창문/, '네, 바로 맞춰 드릴게요. 더 필요하면 말씀해 주세요.'],
+            [/내릴 때|하차/, '네, 도착하면 경사로 내려서 도와드릴게요.'],
+            [/가까워지면|도착하면 알려|다 와 가면/, '네, 도착 5분 전에 말씀드릴게요.'],
+            [/천천히 가|급하게|멀미|흔들/, '네, 천천히 조심해서 갈게요.'],
+            [/감사|고마워|고맙/, stage === 'done' ? '저도 감사합니다. 조심히 들어가세요.' : '별말씀을요. 편하게 계세요.']
+        ];
+        for (var i = 0; i < rules.length; i++) {
+            if (rules[i][0].test(text)) return rules[i][1];
+        }
+        if (arrived) return '네, 확인했어요. 탑승 위치에서 기다리고 있어요.';
+        if (coming) return '네, 확인했어요. 운전 중이라 짧게 답할게요.';
+        if (stage === 'riding') return '네, 알겠어요. 편하게 계세요.';
+        return '네, 확인했어요.';
     }
 
     function onChange(fn) { listeners.push(fn); }
