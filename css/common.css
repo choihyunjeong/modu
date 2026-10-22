@@ -665,10 +665,13 @@ fieldset {
     pointer-events: none;
 }
 
+/* 그림 속 파란 점(오른쪽 아래 37,37)이 상자 한가운데(=내 좌표)에 오게 놓고, 방향은 그 점을 축으로 돌림
+   → 점이 늘 내 위치에 있고 호출할 때 퍼지는 원도 점 한가운데서 퍼짐 */
 .map-me img {
     width: 51px;
     height: 51px;
-    margin: 10.5px;
+    margin: -1.13px;
+    transform-origin: 37.13px 37.13px;
     transform: rotate(var(--heading, 130deg));
 }
 

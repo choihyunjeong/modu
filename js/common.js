@@ -55,6 +55,43 @@ var SheetDrag = (function () {
         handle.addEventListener('pointercancel', end);
     }
 
+    // 시트 안 내용을 손가락으로 끌 때: 시트를 움직일지(takeOver) 안을 스크롤할지 처음 움직인 방향으로 정함
+    //  takeOver(dy): dy < 0 위로, dy > 0 아래로 · true면 시트가 손가락을 따라 움직이고 안은 스크롤되지 않음
+    function contentDrag(area, takeOver, onStart, onMove, onEnd) {
+        var startX = 0, startY = 0, mode = null;
+        area.addEventListener('touchstart', function (e) {
+            // 글 쓰는 칸·슬라이더·지도 안에서는 원래대로
+            if (e.touches.length !== 1 || e.target.closest('input, textarea, select, [contenteditable], .map-view')) { mode = 'none'; return; }
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            mode = null;
+        }, { passive: true });
+        area.addEventListener('touchmove', function (e) {
+            if (mode === 'none' || e.touches.length !== 1) return;
+            var dx = e.touches[0].clientX - startX;
+            var dy = e.touches[0].clientY - startY;
+            if (mode === null) {
+                if (!dy || Math.abs(dx) > Math.abs(dy)) {
+                    if (Math.abs(dx) > 4) mode = 'none';    // 옆으로 넘기는 칩 목록 등은 그대로
+                    return;
+                }
+                if (!takeOver(dy)) { mode = 'none'; return; }
+                mode = 'sheet';
+                onStart();
+            }
+            if (e.cancelable) e.preventDefault();
+            onMove(dy);
+        }, { passive: false });
+        function end(e) {
+            if (mode !== 'sheet') { mode = null; return; }
+            mode = null;
+            var t = e.changedTouches && e.changedTouches[0];
+            onEnd(t ? t.clientY - startY : 0);
+        }
+        area.addEventListener('touchend', end);
+        area.addEventListener('touchcancel', end);
+    }
+
     function mapSheet(sheet) {
         var map = sheet.previousElementSibling;
         if (!map || !map.classList.contains('map-view')) return;
@@ -121,6 +158,25 @@ var SheetDrag = (function () {
             // 놓은 자리에 그대로 멈춤 (맨 위·맨 아래 넘지 않게만)
             setHeight(Math.min(l.max, Math.max(l.min, startHeight + dy)), true);
         });
+
+        // 시트 안 어디를 끌어도 시트가 움직임
+        //  위로: 다 펼쳐질 때까지는 시트가 올라가고, 다 펼친 뒤에야 안이 스크롤됨
+        //  아래로: 안이 맨 위일 때는 시트가 내려가고, 스크롤된 상태면 먼저 안이 위로 스크롤됨
+        var lastDy = 0;
+        contentDrag(scroller, function (dy) {
+            if (dy < 0) return map.offsetHeight > MAP_MIN + 1;
+            return scroller.scrollTop <= 0;
+        }, function () {
+            startHeight = map.offsetHeight;
+            lastDy = 0;
+        }, function (dy) {
+            var l = limits();
+            lastDy = dy;
+            setHeight(Math.min(l.max, Math.max(l.min, startHeight + dy)), false);
+        }, function () {
+            var l = limits();
+            setHeight(Math.min(l.max, Math.max(l.min, startHeight + lastDy)), true);
+        });
     }
 
     function modalPanel(panel) {
@@ -140,6 +196,32 @@ var SheetDrag = (function () {
             // 80px 넘게 내리면 닫기 (각 화면의 '바깥 누르면 닫힘'을 그대로 씀)
             if (dy > 80) panel.parentNode.click();
         });
+
+        // 시트 안 내용을 아래로 끌어도 (안이 맨 위일 때) 시트가 따라 내려감
+        var lastDy = 0;
+        contentDrag(panel, function (dy) {
+            if (dy < 0) return false;
+            return panel.scrollTop <= 0 && !innerScrolled(panel);
+        }, function () {
+            panel.style.transition = 'none';
+            lastDy = 0;
+        }, function (dy) {
+            lastDy = dy;
+            panel.style.transform = 'translateY(' + Math.max(0, dy) + 'px)';
+        }, function () {
+            panel.style.transition = '';
+            panel.style.transform = '';
+            if (lastDy > 80) panel.parentNode.click();
+        });
+    }
+
+    // 시트 안에 따로 스크롤되는 칸이 있고 그게 내려가 있으면 그 칸을 먼저 스크롤
+    function innerScrolled(panel) {
+        var boxes = panel.querySelectorAll('*');
+        for (var i = 0; i < boxes.length; i++) {
+            if (boxes[i].scrollTop > 0 && boxes[i].scrollHeight > boxes[i].clientHeight) return true;
+        }
+        return false;
     }
 
     function init() {
