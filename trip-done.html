@@ -12,11 +12,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>이동 완료 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221426">
-    <link rel="stylesheet" href="css/after.css?v=2610221426">
-    <script src="js/common.js?v=2610221426"></script>
-    <script src="js/config.js?v=2610221426"></script>
-    <script src="js/trip.js?v=2610221426"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221437">
+    <link rel="stylesheet" href="css/after.css?v=2610221437">
+    <script src="js/common.js?v=2610221437"></script>
+    <script src="js/config.js?v=2610221437"></script>
+    <script src="js/trip.js?v=2610221437"></script>
 </head>
 <body>
     <div id="wrap">
@@ -53,10 +53,11 @@
             </div>
 
             <div class="done-actions">
-                <a href="feedback.html" class="feedback-entry">
+                <!-- 이용 상세(운행·결제 정보)로 가서 바로 별점 창이 열림 · 평가했으면 상세 보기 -->
+                <a href="feedback.html#rate" class="feedback-entry" data-feedback-entry>
                     <span>
-                        <span class="feedback-entry__title">이번 휠체어 탑승은 어떠셨나요?</span>
-                        <span class="feedback-entry__desc">탑승 경험 남기기</span>
+                        <span class="feedback-entry__title" data-feedback-title>이번 탑승은 어떠셨나요?</span>
+                        <span class="feedback-entry__desc" data-feedback-desc>별점으로 탑승 경험 남기기</span>
                     </span>
                     <span class="icon icon--sm icon--chevron-right feedback-entry__arrow" aria-hidden="true"></span>
                 </a>
@@ -67,21 +68,23 @@
         </main>
     </div>
 
-    <!-- G4 ① 전송 성공 토스트 (탑승 경험을 보내고 돌아왔을 때 잠시) -->
-    <p class="toast" role="status" hidden>
-        <span class="icon icon--sm icon--checkmark-outline" aria-hidden="true"></span>
-        탑승 경험을 보냈어요.
-    </p>
-
     <script>
         // 이번 이동을 이용내역에 남김 (같은 호출은 한 번만)
         Trip.recordDone();
 
-        if (new URLSearchParams(location.search).get('sent') === '1') {
-            var toast = document.querySelector('.toast');
-            toast.hidden = false;
-            setTimeout(function () { toast.hidden = true; }, 3000);
-        }
+        // 방금 이동 기록으로 연결 · 이미 평가했으면 "○점으로 평가했어요 · 이용 상세 보기"
+        (function () {
+            var rec = Trip.history()[0];
+            if (!rec) return;
+            var entry = document.querySelector('[data-feedback-entry]');
+            entry.href = 'feedback.html?id=' + rec.id + (rec.rating ? '' : '#rate');
+            if (rec.rating) {
+                document.querySelector('[data-feedback-title]').textContent = '★ ' + rec.rating + '점으로 평가했어요';
+                document.querySelector('[data-feedback-desc]').textContent = '이용 상세 보기';
+            }
+        })();
+        // 이용 상세에서 뒤로 왔을 때도 평가 결과가 보이게
+        window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
     </script>
 </body>
 </html>

@@ -12,13 +12,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>이용내역 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221426">
-    <link rel="stylesheet" href="css/tabs.css?v=2610221426">
-    <script src="js/common.js?v=2610221426"></script>
-    <script src="js/config.js?v=2610221426"></script>
-    <script src="js/trip.js?v=2610221426"></script>
-    <script src="js/push.js?v=2610221426"></script>
-    <script src="js/stats.js?v=2610221426"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221437">
+    <link rel="stylesheet" href="css/tabs.css?v=2610221437">
+    <script src="js/common.js?v=2610221437"></script>
+    <script src="js/config.js?v=2610221437"></script>
+    <script src="js/trip.js?v=2610221437"></script>
+    <script src="js/push.js?v=2610221437"></script>
+    <script src="js/stats.js?v=2610221437"></script>
+    <script src="js/actions.js?v=2610221437"></script>
 </head>
 <body>
     <!-- 이용내역 (이동 완료 화면에서 남긴 기록 · 누르면 자세히) -->
@@ -130,49 +131,78 @@
             });
         }
 
-        var items = Trip.history();
+        // 이용내역 카드: 날짜 · 운행 시간 · 출발 · 도착 · 금액 / 기사님께 전화 · 탑승 경험 (카드를 누르면 이용 상세)
         var list = document.querySelector('[data-history]');
-        document.querySelector('[data-history-empty]').hidden = items.length > 0;
-
-        list.innerHTML = items.map(function (r, i) {
-            var times = r.boardedAt ? hm(r.boardedAt) + ' 탑승 · ' + hm(r.doneAt) + ' 하차' : hm(r.doneAt) + ' 이동 완료';
-            var help = r.helpRequests && r.helpRequests.length
-                ? '<ul class="history-item__requests">' + r.helpRequests.map(function (q) {
-                    return '<li>' + hm(q.at) + ' · ' + esc(q.title) + (q.text ? ' · "' + esc(q.text) + '"' : '') + '</li>';
-                }).join('') + '</ul>'
-                : '<p class="history-item__none">보낸 도움 요청이 없어요</p>';
-            return '<li class="history-item">' +
-                '<button type="button" class="history-item__head" aria-expanded="false" aria-controls="history-' + i + '">' +
-                    '<span class="history-item__date">' + day(r.doneAt) + ' · 이동 완료</span>' +
-                    '<span class="history-item__route">' + esc(r.pickup) + ' <span aria-hidden="true">→</span><span class="blind">에서</span> ' + esc(r.dest) + '</span>' +
-                    '<span class="history-item__meta">' + times + ' · ' + (r.km < 1 ? Math.round(r.km * 100) * 10 + 'm' : r.km + 'km') + '</span>' +
-                    '<span class="history-item__fare">' + r.fare.toLocaleString('ko-KR') + '원 <span class="history-item__fare-note">예상 · 바우처</span></span>' +
-                    '<span class="icon icon--sm icon--chevron-down history-item__arrow" aria-hidden="true"></span>' +
-                '</button>' +
-                '<div class="history-item__body" id="history-' + i + '" hidden>' +
+        var emptyBox = document.querySelector('[data-history-empty]');
+        function shortDay(time) {
+            var d = new Date(time);
+            return String(d.getFullYear()).slice(2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2) + ' (' + DAYS[d.getDay()] + ')';
+        }
+        function renderList() {
+            var items = Trip.history();
+            emptyBox.hidden = items.length > 0 || !!liveStage;
+            list.innerHTML = items.map(function (r) {
+                var detail = 'feedback.html?id=' + r.id;
+                var times = r.boardedAt ? hm(r.boardedAt) + ' - ' + hm(r.doneAt) : hm(r.doneAt) + ' 하차';
+                var rate = r.rating
+                    ? '<a href="' + detail + '" class="history-item__btn is-rated"><span class="history-item__star" aria-hidden="true">★</span> ' + r.rating + '점 · 평가 완료</a>'
+                    : '<a href="' + detail + '#rate" class="history-item__btn">탑승 경험 남기기</a>';
+                return '<li class="history-item">' +
+                    '<div class="history-item__top">' +
+                        '<a href="' + detail + '" class="history-item__title">' +
+                            '<img src="image/pv5-side.png" alt="">UD택시' +
+                            '<span class="icon icon--sm icon--chevron-right" aria-hidden="true"></span>' +
+                        '</a>' +
+                        '<button type="button" class="history-item__del" data-del="' + r.id + '" aria-label="' + day(r.doneAt) + ' 이용내역 삭제">' +
+                            '<span class="icon icon--close" aria-hidden="true"></span>' +
+                        '</button>' +
+                    '</div>' +
                     '<dl class="history-item__rows">' +
-                        '<div><dt>차량</dt><dd>' + esc([driver.plate, driver.car, driver.name].filter(Boolean).join(' · ')) + '</dd></div>' +
-                        '<div><dt>탑승 인원</dt><dd>' + esc(r.riders) + '</dd></div>' +
-                        '<div><dt>기사님께 보낸 말</dt><dd>' + (r.chatCount ? r.chatCount + '건' : '없음') + '</dd></div>' +
+                        '<div><dt>날짜</dt><dd>' + shortDay(r.doneAt) + '</dd></div>' +
+                        '<div><dt>운행 시간</dt><dd>' + times + '</dd></div>' +
+                        '<div><dt>출발</dt><dd>' + esc(r.pickup) + '</dd></div>' +
+                        '<div><dt>도착</dt><dd>' + esc(r.dest) + '</dd></div>' +
+                        '<div><dt>금액</dt><dd><span class="history-item__fare">' + r.fare.toLocaleString('ko-KR') + '원</span> <span class="history-item__fare-note">예상 · 현장 결제</span></dd></div>' +
                     '</dl>' +
-                    '<p class="history-item__label">도움 요청 내역</p>' + help +
-                    '<a href="feedback.html" class="btn btn--outline btn--md">탑승 경험 남기기</a>' +
-                '</div>' +
-            '</li>';
-        }).join('');
+                    '<div class="history-item__actions">' +
+                        '<button type="button" class="history-item__btn" data-action="call-driver">기사님께 전화</button>' +
+                        rate +
+                    '</div>' +
+                '</li>';
+            }).join('');
+        }
 
-        // 누르면 자세히 펼침 / 접힘
+        // X: 삭제 확인 → 지우고 목록 다시 그림
         list.addEventListener('click', function (e) {
-            var head = e.target.closest('.history-item__head');
-            if (!head) return;
-            var open = head.getAttribute('aria-expanded') !== 'true';
-            head.setAttribute('aria-expanded', open);
-            document.getElementById(head.getAttribute('aria-controls')).hidden = !open;
+            var del = e.target.closest('[data-del]');
+            if (!del) return;
+            var id = Number(del.dataset.del);
+            Actions.openLayer('dialog',
+                '<div class="confirm-dialog__head confirm-dialog__head--left">' +
+                    '<h2 class="confirm-dialog__title confirm-dialog__title--sm">이용내역을 삭제할까요?</h2>' +
+                    '<p class="confirm-dialog__desc">삭제하면 이 이동의 기록과 평가를 다시 볼 수 없어요.</p>' +
+                '</div>' +
+                '<div class="confirm-dialog__actions">' +
+                    '<button type="button" class="btn btn--outline btn--md" data-keep>취소</button>' +
+                    '<button type="button" class="btn btn--outline btn--md btn--danger-text" data-remove>삭제</button>' +
+                '</div>',
+                function (box, close) {
+                    box.querySelector('[data-keep]').addEventListener('click', function () { close(); });
+                    box.querySelector('[data-remove]').addEventListener('click', function () {
+                        close(true);
+                        Trip.removeHistory(id);
+                        renderList();
+                        Toast.show('이용내역을 삭제했어요', { check: true });
+                        var next = list.querySelector('.history-item__title') || document.querySelector('.tab-page-head__title');
+                        if (next) { next.setAttribute('tabindex', '-1'); next.focus(); }
+                    });
+                }, del);
         });
 
         renderLive();
-        // 진행 중인 호출이 있으면 "아직 이용 내역이 없어요" 대신 진행 카드만
-        if (liveStage) document.querySelector('[data-history-empty]').hidden = true;
+        renderList();
+        // 이용 상세에서 평가하고 뒤로 왔을 때 카드에 반영
+        window.addEventListener('pageshow', function (e) { if (e.persisted) renderList(); });
         setInterval(function () {
             var before = liveStage;
             renderLive();

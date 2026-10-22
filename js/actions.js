@@ -497,7 +497,7 @@ var Actions = (function () {
         renderGuardianNotice();
     });
 
-    return { run: run, clock: clock };
+    return { run: run, clock: clock, openLayer: openLayer };
 })();
 
 // 기사님과 대화 기록 (이번 호출 · 빠른 메시지와 대화 화면이 같이 씀)

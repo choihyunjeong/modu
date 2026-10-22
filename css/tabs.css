@@ -335,73 +335,48 @@
 
 .history-list:empty { display: none; }
 
+/* 이용내역 카드 (날짜·운행 시간·출발·도착·금액 · 아래 기사님께 전화 / 탑승 경험) */
 .history-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding: var(--space-16);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     background: var(--color-bg);
 }
 
-.history-item__head {
-    position: relative;
+.history-item__top {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    width: 100%;
-    padding: var(--space-14) 48px var(--space-14) var(--space-16);
-    text-align: left;
+    align-items: center;
+    gap: var(--space-8);
 }
 
-.history-item__date {
-    font-size: var(--fs-13);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--lh-18);
-    color: var(--color-text-sub);
-}
-
-.history-item__route {
-    font-size: var(--fs-16);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--lh-22);
-}
-
-.history-item__meta {
-    font-size: var(--fs-14);
-    line-height: var(--lh-20);
-    color: var(--color-text-secondary);
-}
-
-.history-item__fare {
-    font-size: var(--fs-15);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--lh-22);
-}
-
-.history-item__fare-note {
-    font-size: var(--fs-13);
-    font-weight: var(--font-weight-regular);
-    color: var(--color-text-sub);
-}
-
-.history-item__arrow {
-    position: absolute;
-    top: var(--space-16);
-    right: var(--space-16);
-    color: var(--color-text-sub);
-    transition: transform 0.2s ease;
-}
-
-.history-item__head[aria-expanded="true"] .history-item__arrow { transform: rotate(180deg); }
-
-.history-item__body {
+.history-item__title {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-10);
-    margin: 0 var(--space-16);
-    padding: var(--space-14) 0 var(--space-16);
-    border-top: 1px solid var(--color-divider);
+    flex: 1;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: var(--touch-size);
+    font-size: var(--fs-17);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-24);
 }
 
-.history-item__body[hidden] { display: none; }
+.history-item__title img { width: 40px; height: auto; }
+.history-item__title .icon { color: var(--color-text-sub); }
+
+.history-item__del {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--touch-size);
+    height: var(--touch-size);
+    margin-right: calc(var(--space-10) * -1);
+    border-radius: var(--radius-full);
+    color: var(--color-text-sub);
+}
 
 .history-item__rows {
     display: flex;
@@ -413,38 +388,47 @@
 .history-item__rows div {
     display: flex;
     gap: var(--space-12);
-    font-size: var(--fs-14);
-    line-height: var(--lh-20);
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
 }
 
 .history-item__rows dt {
     flex-shrink: 0;
-    width: 96px;
+    width: 64px;
     color: var(--color-text-sub);
 }
 
-.history-item__rows dd { margin: 0; }
+.history-item__rows dd { margin: 0; min-width: 0; }
 
-.history-item__label {
-    padding-top: var(--space-4);
-    font-size: var(--fs-14);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--lh-20);
+.history-item__fare { font-weight: var(--font-weight-bold); }
+
+.history-item__fare-note {
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-sub);
 }
 
-.history-item__requests {
+.history-item__actions {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    padding: var(--space-10) var(--space-12);
-    border-radius: var(--radius-md);
-    background: var(--color-bg-gray);
-    font-size: var(--fs-14);
-    line-height: var(--lh-20);
+    gap: var(--space-8);
+    padding-top: var(--space-4);
 }
 
-.history-item__none {
-    font-size: var(--fs-14);
-    line-height: var(--lh-20);
-    color: var(--color-text-sub);
+.history-item__btn {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    min-height: var(--touch-size);
+    padding: 0 var(--space-8);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
 }
+
+.history-item__btn.is-rated { font-weight: var(--font-weight-medium); color: var(--color-text-secondary); }
+.history-item__star { color: #ffb400; }

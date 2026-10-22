@@ -250,6 +250,7 @@ var Trip = (function () {
             boardedAt: t.boardedAt || null,
             doneAt: t.boardedAt ? t.boardedAt + rideMinutes() * 60000 : Date.now(),
             pickup: t.pickupName || '래미안베라힐즈 정문',
+            pickupSpot: t.pickupSpot || '정문 · 경사로 쪽',
             dest: (t.destination && t.destination.name) || '은평성모병원',
             km: Math.round(rideKm() * 10) / 10,
             fare: fare(),
@@ -257,7 +258,19 @@ var Trip = (function () {
             helpRequests: t.helpRequests || [],
             chatCount: (t.chat || []).filter(function (m) { return m.from === 'me'; }).length
         });
+        saveHistory(list);
+    }
+
+    function saveHistory(list) {
         try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 50))); } catch (e) {}
+    }
+
+    // 기록 하나 고치기 (별점 등) · 지우기
+    function updateHistory(id, patch) {
+        saveHistory(history().map(function (r) { return r.id === id ? Object.assign({}, r, patch) : r; }));
+    }
+    function removeHistory(id) {
+        saveHistory(history().filter(function (r) { return r.id !== id; }));
     }
 
     function bind(root) {
@@ -285,6 +298,6 @@ var Trip = (function () {
         get: load, set: set, start: start, places: places, bind: bind,
         route: route, ensureRoute: ensureRoute, fetchRoute: fetchRoute,
         approachRoute: approachRoute, driveMinutes: driveMinutes, fillEta: fillEta,
-        history: history, recordDone: recordDone, clock: clock
+        history: history, recordDone: recordDone, updateHistory: updateHistory, removeHistory: removeHistory, clock: clock
     };
 })();

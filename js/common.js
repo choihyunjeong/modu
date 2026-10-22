@@ -90,6 +90,42 @@ var SheetDrag = (function () {
         }
         area.addEventListener('touchend', end);
         area.addEventListener('touchcancel', end);
+
+        // 컴퓨터(마우스)로 끌 때도 같게 · 6px 넘게 움직여야 끌기로 봄 (그냥 누르기는 그대로 클릭)
+        var mStart = null, mMode = null, mDy = 0;
+        area.addEventListener('mousedown', function (e) {
+            if (e.button !== 0 || e.target.closest('input, textarea, select, [contenteditable], .map-view')) return;
+            mStart = e.clientY;
+            mMode = null;
+            mDy = 0;
+        });
+        document.addEventListener('mousemove', function (e) {
+            if (mStart === null) return;
+            mDy = e.clientY - mStart;
+            if (mMode === null) {
+                if (Math.abs(mDy) < 6) return;
+                if (!takeOver(mDy)) { mMode = 'none'; return; }
+                mMode = 'sheet';
+                document.body.style.userSelect = 'none';
+                onStart();
+            }
+            if (mMode !== 'sheet') return;
+            e.preventDefault();
+            onMove(mDy);
+        });
+        document.addEventListener('mouseup', function () {
+            if (mStart === null) return;
+            var was = mMode;
+            mStart = null;
+            mMode = null;
+            if (was !== 'sheet') return;
+            document.body.style.userSelect = '';
+            onEnd(mDy);
+            // 끌고 놓은 자리의 버튼이 눌리지 않게 (바로 뒤 클릭 한 번만 막음)
+            function stop(ev) { ev.stopPropagation(); ev.preventDefault(); }
+            area.addEventListener('click', stop, true);
+            setTimeout(function () { area.removeEventListener('click', stop, true); }, 0);
+        });
     }
 
     function mapSheet(sheet) {
@@ -177,6 +213,22 @@ var SheetDrag = (function () {
             var l = limits();
             setHeight(Math.min(l.max, Math.max(l.min, startHeight + lastDy)), true);
         });
+
+        // 마우스 휠: 아래로 굴리면 시트가 다 펼쳐질 때까지 올라가고, 위로 굴리면 안이 맨 위일 때 시트가 내려감
+        var wheelEnd = null;
+        scroller.addEventListener('wheel', function (e) {
+            if (e.ctrlKey) return;    // 확대·축소
+            var l = limits();
+            var delta = e.deltaY * (e.deltaMode === 1 ? 16 : 1);
+            var h = map.offsetHeight;
+            var up = delta > 0 && h > l.min + 1;
+            var down = delta < 0 && scroller.scrollTop <= 0 && h < l.max - 1;
+            if (!up && !down) return;
+            e.preventDefault();
+            setHeight(Math.min(l.max, Math.max(l.min, h - delta)), false);
+            clearTimeout(wheelEnd);
+            wheelEnd = setTimeout(relayoutMaps, 150);
+        }, { passive: false });
     }
 
     function modalPanel(panel) {

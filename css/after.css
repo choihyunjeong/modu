@@ -293,3 +293,241 @@
     min-height: 36px;
     font-weight: var(--font-weight-medium);
 }
+
+/* =========================================================
+   이용 상세 · 탑승 경험 (feedback.html)
+   ========================================================= */
+.trip-detail { gap: var(--space-16); padding-bottom: var(--space-32); }
+
+.trip-detail__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-12);
+    padding: var(--space-4) 0 var(--space-4);
+}
+
+.trip-detail__date {
+    font-size: var(--fs-22);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+}
+
+.trip-detail__state {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+    color: var(--color-primary);
+}
+
+.trip-detail__car { width: 72px; height: auto; }
+
+.detail-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding: var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-gray);
+}
+
+.detail-card[hidden] { display: none; }
+
+.detail-card__title {
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.detail-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    margin: 0;
+}
+
+.detail-rows--line {
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+}
+
+.detail-rows div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-16);
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
+}
+
+.detail-rows dt { flex-shrink: 0; color: var(--color-text-sub); }
+.detail-rows dd { margin: 0; text-align: right; }
+.detail-rows__note { font-size: var(--fs-13); color: var(--color-text-sub); }
+
+.detail-requests {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+}
+
+/* 별점 카드 */
+.rate-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-10);
+    padding: var(--space-20) var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-gray);
+    text-align: center;
+}
+
+.rate-card__title {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-22);
+    color: var(--color-text-secondary);
+}
+
+.rate-card__desc {
+    font-size: var(--fs-13);
+    line-height: 1.5;
+    color: var(--color-text-sub);
+}
+
+.rate-stars {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+}
+
+/* 별 하나 = 누르는 칸 44px · 켜지면 노랑 */
+.rate-star {
+    width: var(--touch-size);
+    height: var(--touch-size);
+    border-radius: var(--radius-md);
+    background: center / 32px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c9ccd1' d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z'/%3E%3C/svg%3E");
+}
+
+.rate-star.is-on {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffb400' d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z'/%3E%3C/svg%3E");
+}
+
+.rate-stars--lg .rate-star { background-size: 36px; }
+
+/* 평가 창 */
+.rate-pop__label {
+    margin-top: calc(var(--space-8) * -1);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+    text-align: center;
+    color: var(--color-text-secondary);
+}
+
+.rate-pop__issues {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    padding-top: var(--space-16);
+    border-top: 1px solid var(--color-divider);
+}
+
+.rate-pop__issues[hidden] { display: none; }
+
+.rate-pop__q {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.rate-pop__q span {
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-sub);
+}
+
+.rate-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+}
+
+.rate-chip input { position: absolute; opacity: 0; pointer-events: none; }
+
+.rate-chip span {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 var(--space-12);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+}
+
+.rate-chip input:checked + span {
+    border-color: var(--color-primary);
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+}
+
+.rate-chip input:focus-visible + span { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+.rate-pop__note {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.rate-pop__note textarea {
+    width: 100%;
+    padding: var(--space-10) var(--space-12);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    font: inherit;
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    resize: none;
+}
+
+.rate-pop__voice {
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: var(--space-4);
+    min-height: 36px;
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+}
+
+.btn--md { min-height: var(--touch-size); font-size: var(--fs-15); }
+
+/* 궁금한 점 · 콜센터 */
+.ask-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    width: 100%;
+    min-height: 56px;
+    padding: 0 var(--space-16);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    text-align: left;
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
+}
+
+.ask-row .icon { color: var(--color-text-sub); }
+.ask-row__text { flex: 1; }
+.ask-row__go { flex-shrink: 0; font-size: var(--fs-14); font-weight: var(--font-weight-bold); color: var(--color-primary); }

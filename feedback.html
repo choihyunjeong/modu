@@ -11,106 +11,222 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
-    <title>탑승 경험 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221426">
-    <link rel="stylesheet" href="css/after.css?v=2610221426">
-    <script src="js/common.js?v=2610221426"></script>
+    <title>이용 상세 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css?v=2610221437">
+    <link rel="stylesheet" href="css/after.css?v=2610221437">
+    <script src="js/common.js?v=2610221437"></script>
+    <script src="js/config.js?v=2610221437"></script>
+    <script src="js/trip.js?v=2610221437"></script>
+    <script src="js/actions.js?v=2610221437"></script>
 </head>
 <body>
+    <!-- 이용 상세 · 탑승 경험 (이동 완료 · 이용내역 카드에서 들어옴 · ?id=기록 · #rate면 평가 창을 바로 엶)
+         운행 정보 · 결제 정보 · 별점 (5점은 바로 완료, 4점 이하는 불편했던 점을 더 물어봄) -->
     <div id="wrap">
         <header class="app-header">
-            <a href="trip-done.html" class="app-header__back" data-history-back aria-label="뒤로">
+            <a href="history.html" class="app-header__back" data-history-back aria-label="뒤로">
                 <span class="icon icon--chevron-left" aria-hidden="true"></span>
             </a>
-            <h1 class="app-header__title">이번 탑승</h1>
+            <h1 class="app-header__title">이용 상세</h1>
             <span class="app-header__blank" aria-hidden="true"></span>
         </header>
 
-        <main class="content content--sub">
-            <div class="page-title">
-                <h2 class="page-title__heading">
-                    <span>이번 휠체어 탑승은</span>
-                    <span>어떠셨나요?</span>
-                </h2>
-                <p class="page-title__desc">알려주신 내용은 다음 탑승 준비와 서비스 개선에 참고해요.</p>
-            </div>
-
-            <div class="this-car">
-                <img class="this-car__img" src="image/pv5-side.png" alt="">
+        <main class="content content--sub trip-detail">
+            <div class="trip-detail__head">
                 <div>
-                    <p class="this-car__name">33바 5521 · PV5 WAV · 옆문 경사로</p>
-                    <p class="this-car__desc">수동 휠체어에 앉은 채 탑승</p>
+                    <p class="trip-detail__date" data-d="date">2026.10.22 (목)</p>
+                    <p class="trip-detail__state">이용 완료</p>
                 </div>
+                <img class="trip-detail__car" src="image/pv5-side.png" alt="">
             </div>
 
-            <fieldset class="choice-list feedback-list">
-                <legend class="blind">탑승 경험</legend>
-                <label class="choice-list__item">
-                    <span class="choice-list__text">
-                        <span class="choice-list__title">불편 없이 탔어요</span>
-                    </span>
-                    <input type="radio" class="radio" name="experience" value="good">
-                </label>
-                <label class="choice-list__item">
-                    <span class="choice-list__text">
-                        <span class="choice-list__title">불편한 점이 있었어요</span>
-                        <span class="choice-list__desc">경사로 · 휠체어 고정 · 차내 공간 등</span>
-                    </span>
-                    <input type="radio" class="radio" name="experience" value="bad">
-                </label>
+            <section class="detail-card" aria-labelledby="detail-ride">
+                <h2 class="detail-card__title" id="detail-ride">운행 정보</h2>
+                <dl class="detail-rows">
+                    <div><dt>출발</dt><dd data-d="pickup">래미안베라힐즈 정문</dd></div>
+                    <div><dt>탑승 위치</dt><dd data-d="spot">정문 · 경사로 쪽</dd></div>
+                    <div><dt>도착</dt><dd data-d="dest">은평성모병원</dd></div>
+                </dl>
+                <dl class="detail-rows detail-rows--line">
+                    <div><dt>이용 시간</dt><dd data-d="time">오후 2:20 ~ 2:34</dd></div>
+                    <div><dt>이동 거리</dt><dd data-d="km">5.0km</dd></div>
+                    <div><dt>탑승 인원</dt><dd data-d="riders">본인 + 동승자 1명</dd></div>
+                    <div><dt>탑승 차량</dt><dd data-d="car">33바 5521 · 흰색 PV5</dd></div>
+                    <div><dt>기사님</dt><dd data-d="driver">강○○ 기사님</dd></div>
+                </dl>
+            </section>
 
-                <!-- "불편한 점이 있었어요"를 고르면 펼침 -->
-                <div class="issue-panel" hidden>
-                    <p class="issue-panel__guide">불편했던 점을 모두 선택해 주세요</p>
-                    <div class="issue-panel__items">
-                        <label class="issue-item">경사로 <input type="checkbox" class="checkbox-sm" name="issue" value="ramp"></label>
-                        <label class="issue-item">휠체어 고정 <input type="checkbox" class="checkbox-sm" name="issue" value="tie-down"></label>
-                        <label class="issue-item">차내 공간 <input type="checkbox" class="checkbox-sm" name="issue" value="space"></label>
-                        <label class="issue-item">기타 <input type="checkbox" class="checkbox-sm" name="issue" value="etc"></label>
-                    </div>
-                    <div class="issue-note">
-                        <label for="issue-text" class="issue-note__label">추가 설명 (선택)</label>
-                        <textarea id="issue-text" class="issue-note__input" rows="2" placeholder="예: 휠체어를 고정한 뒤에도 흔들림이 느껴졌어요"></textarea>
-                        <button type="button" class="issue-note__voice" data-voice-for="issue-text">
-                            <span class="icon icon--xs icon--microphone" aria-hidden="true"></span>
-                            음성으로 입력
-                        </button>
-                    </div>
+            <section class="detail-card" aria-labelledby="detail-pay">
+                <h2 class="detail-card__title" id="detail-pay">결제 정보</h2>
+                <dl class="detail-rows">
+                    <div><dt>결제 방법</dt><dd>차 안에서 결제 (현장 결제)</dd></div>
+                    <div><dt>요금</dt><dd><strong data-d="fare">1,500원</strong> <span class="detail-rows__note">예상</span></dd></div>
+                </dl>
+            </section>
+
+            <!-- 이번 이동에 보낸 도움 요청 (있을 때만) -->
+            <section class="detail-card" aria-labelledby="detail-help" data-d-help hidden>
+                <h2 class="detail-card__title" id="detail-help">도움 요청 내역</h2>
+                <ul class="detail-requests" data-d="help"></ul>
+            </section>
+
+            <!-- 별점 · 누르면 평가 창 -->
+            <section class="rate-card" aria-labelledby="rate-title" data-rate-card>
+                <h2 class="rate-card__title" id="rate-title">이번 이용은 어떠셨나요?</h2>
+                <div class="rate-stars" data-rate-stars>
+                    <button type="button" class="rate-star" data-score="1" aria-label="1점"></button>
+                    <button type="button" class="rate-star" data-score="2" aria-label="2점"></button>
+                    <button type="button" class="rate-star" data-score="3" aria-label="3점"></button>
+                    <button type="button" class="rate-star" data-score="4" aria-label="4점"></button>
+                    <button type="button" class="rate-star" data-score="5" aria-label="5점"></button>
                 </div>
-            </fieldset>
+                <p class="rate-card__desc" data-rate-desc>별을 눌러 평가해 주세요. 다음 탑승 준비와 서비스 개선에 참고해요.</p>
+            </section>
 
-            <!-- G4 ② 전송 실패 (선택·입력 내용은 그대로) -->
-            <p class="send-error" role="alert" hidden>보내지 못했어요. 답변은 그대로 있어요.</p>
+            <button type="button" class="ask-row" data-action="call-center">
+                <span class="icon icon--sm icon--help" aria-hidden="true"></span>
+                <span class="ask-row__text">궁금한 내용이나 불편한 점이 있으신가요?</span>
+                <span class="ask-row__go">콜센터 연결</span>
+            </button>
         </main>
-
-        <div class="bottom-action bottom-action--feedback">
-            <button type="button" class="btn btn--primary" data-send disabled>탑승 경험 보내기</button>
-            <a href="trip-done.html" class="btn btn--text">지금은 건너뛰기</a>
-        </div>
     </div>
 
     <script>
-        var sendBtn = document.querySelector('[data-send]');
-        var panel = document.querySelector('.issue-panel');
-        var error = document.querySelector('.send-error');
+        (function () {
+            var DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+            var LABELS = ['', '많이 불편했어요', '불편했어요', '보통이에요', '좋았어요', '아주 좋았어요'];
+            var ISSUES = ['경사로 · 승하차', '휠체어 고정', '차내 공간', '기사님 응대', '배차 · 도착 시간', '기타'];
+            var config = window.APP_CONFIG || {};
+            var driver = config.driver || {};
 
-        // 고르기 전엔 보내기 비활성 · "불편한 점"이면 항목 펼침
-        document.querySelectorAll('input[name="experience"]').forEach(function (radio) {
-            radio.addEventListener('change', function () {
-                sendBtn.disabled = false;
-                panel.hidden = radio.value !== 'bad';
-            });
-        });
+            // 기록 찾기: ?id= → 없으면 가장 최근 이동 → 그것도 없으면 예시
+            var id = Number(new URLSearchParams(location.search).get('id'));
+            var list = Trip.history();
+            var rec = list.filter(function (r) { return r.id === id; })[0] || list[0] || {
+                id: 0, boardedAt: Date.now() - 30 * 60000, doneAt: Date.now() - 16 * 60000,
+                pickup: '래미안베라힐즈 정문', pickupSpot: '정문 · 경사로 쪽', dest: '은평성모병원',
+                km: 5.0, fare: 1500, riders: '본인 + 동승자 1명', helpRequests: []
+            };
+            // 이동 완료 화면에서 왔으면 뒤로 → 이동 완료
+            var back = document.querySelector('.app-header__back');
+            if (document.referrer.indexOf('trip-done.html') > -1) back.href = 'trip-done.html';
 
-        // 보내기: 성공하면 이동 완료 화면에 토스트, 실패하면 답변 유지 + 다시 보내기
-        sendBtn.addEventListener('click', function () {
-            if (navigator.onLine) {
-                location.href = 'trip-done.html?sent=1';
-            } else {
-                error.hidden = false;
-                sendBtn.textContent = '다시 보내기';
+            function esc(text) {
+                var div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
-        });
+            function set(key, text) {
+                var el = document.querySelector('[data-d="' + key + '"]');
+                if (el && text) el.textContent = text;
+            }
+            var d = new Date(rec.doneAt);
+            set('date', d.getFullYear() + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2) + ' (' + DAYS[d.getDay()] + ')');
+            set('pickup', rec.pickup);
+            set('spot', rec.pickupSpot);
+            set('dest', rec.dest);
+            set('time', rec.boardedAt ? Trip.clock(rec.boardedAt) + ' ~ ' + Trip.clock(rec.doneAt).replace(/^오[전후] /, '') : Trip.clock(rec.doneAt) + ' 하차');
+            set('km', rec.km < 1 ? Math.round(rec.km * 100) * 10 + 'm' : Number(rec.km).toFixed(1) + 'km');
+            set('riders', rec.riders);
+            set('car', [driver.plate, driver.car].filter(Boolean).join(' · '));
+            set('driver', driver.name);
+            set('fare', rec.fare.toLocaleString('ko-KR') + '원');
+            if (rec.helpRequests && rec.helpRequests.length) {
+                document.querySelector('[data-d-help]').hidden = false;
+                document.querySelector('[data-d="help"]').innerHTML = rec.helpRequests.map(function (q) {
+                    return '<li>' + Trip.clock(q.at) + ' · ' + esc(q.title) + (q.text ? ' · "' + esc(q.text) + '"' : '') + '</li>';
+                }).join('');
+            }
+
+            // ---------- 별점 ----------
+            var stars = document.querySelectorAll('[data-rate-stars] .rate-star');
+            var desc = document.querySelector('[data-rate-desc]');
+            var title = document.getElementById('rate-title');
+            function paint(btns, score) {
+                btns.forEach(function (b, i) { b.classList.toggle('is-on', i < score); });
+            }
+            function renderCard() {
+                paint(stars, rec.rating || 0);
+                if (!rec.rating) return;
+                title.textContent = '평가해 주셔서 고마워요';
+                desc.textContent = rec.rating + '점 · ' + LABELS[rec.rating] +
+                    (rec.issues && rec.issues.length ? ' · 불편했던 점: ' + rec.issues.join(', ') : '') +
+                    ' · 별을 누르면 다시 평가할 수 있어요';
+            }
+            renderCard();
+
+            function openRate(start, opener) {
+                var score = start || 0;
+                var html =
+                    '<div class="confirm-dialog__head">' +
+                        '<h2 class="confirm-dialog__title confirm-dialog__title--sm">이번 이용 경험은 어땠나요?</h2>' +
+                    '</div>' +
+                    '<div class="rate-stars rate-stars--lg" role="radiogroup" aria-label="별점">' +
+                        [1, 2, 3, 4, 5].map(function (n) {
+                            return '<button type="button" class="rate-star" role="radio" aria-checked="false" data-score="' + n + '" aria-label="' + n + '점 · ' + LABELS[n] + '"></button>';
+                        }).join('') +
+                    '</div>' +
+                    '<p class="rate-pop__label" data-pop-label aria-live="polite">별을 눌러 주세요</p>' +
+                    // 4점 이하일 때만: 불편했던 점
+                    '<div class="rate-pop__issues" data-pop-issues hidden>' +
+                        '<p class="rate-pop__q">불편한 점이 있었나요?<span>있었다면 모두 골라 주세요 (선택)</span></p>' +
+                        '<div class="rate-chips">' + ISSUES.map(function (t) {
+                            return '<label class="rate-chip"><input type="checkbox" value="' + t + '"' +
+                                (rec.issues && rec.issues.indexOf(t) > -1 ? ' checked' : '') + '><span>' + t + '</span></label>';
+                        }).join('') + '</div>' +
+                        '<div class="rate-pop__note">' +
+                            '<label for="rate-note" class="blind">추가 설명</label>' +
+                            '<textarea id="rate-note" rows="2" placeholder="예: 휠체어를 고정한 뒤에도 흔들림이 느껴졌어요">' + esc(rec.note || '') + '</textarea>' +
+                            '<button type="button" class="rate-pop__voice" data-voice-for="rate-note">' +
+                                '<span class="icon icon--xs icon--microphone" aria-hidden="true"></span>음성으로 입력</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="confirm-dialog__actions">' +
+                        '<button type="button" class="btn btn--outline btn--md" data-pop-close>닫기</button>' +
+                        '<button type="button" class="btn btn--primary btn--md" data-pop-done disabled>평가 완료</button>' +
+                    '</div>';
+                Actions.openLayer('dialog', html, function (box, close) {
+                    var btns = box.querySelectorAll('.rate-star');
+                    var label = box.querySelector('[data-pop-label]');
+                    var issues = box.querySelector('[data-pop-issues]');
+                    var done = box.querySelector('[data-pop-done]');
+                    function pick(n) {
+                        score = n;
+                        paint(btns, n);
+                        btns.forEach(function (b, i) { b.setAttribute('aria-checked', i + 1 === n); });
+                        label.textContent = n + '점 · ' + LABELS[n];
+                        issues.hidden = n >= 5;
+                        done.disabled = false;
+                    }
+                    btns.forEach(function (b) {
+                        b.addEventListener('click', function () { pick(Number(b.dataset.score)); });
+                    });
+                    if (score) pick(score);
+                    box.querySelector('[data-pop-close]').addEventListener('click', function () { close(); });
+                    done.addEventListener('click', function () {
+                        if (!navigator.onLine) return Toast.show('보내지 못했어요. 인터넷 연결을 확인해 주세요');
+                        var low = score < 5;
+                        var patch = {
+                            rating: score,
+                            issues: low ? Array.prototype.map.call(box.querySelectorAll('.rate-chip input:checked'), function (c) { return c.value; }) : [],
+                            note: low ? box.querySelector('#rate-note').value.trim() : '',
+                            ratedAt: Date.now()
+                        };
+                        Object.assign(rec, patch);
+                        if (rec.id) Trip.updateHistory(rec.id, patch);
+                        close();
+                        renderCard();
+                        Toast.show('평가를 보냈어요. 고마워요', { check: true });
+                    });
+                }, opener);
+            }
+
+            stars.forEach(function (b) {
+                b.addEventListener('click', function () { openRate(Number(b.dataset.score), b); });
+            });
+            // 이동 완료 · 이용내역의 "탑승 경험 남기기"로 왔으면 바로 평가 창
+            if (location.hash === '#rate' && !rec.rating) openRate(0, stars[0]);
+        })();
     </script>
 </body>
 </html>
