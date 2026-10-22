@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/guardian.css">
     <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
 </head>
 <body>
     <div id="wrap">
@@ -30,7 +31,8 @@
             <!-- 휴대폰 번호 -->
             <div class="text-field">
                 <label for="guardian-phone" class="text-field__label">휴대폰 번호</label>
-                <input type="tel" id="guardian-phone" class="text-field__input" placeholder="010-0000-0000" inputmode="numeric" autocomplete="tel">
+                <input type="tel" id="guardian-phone" class="text-field__input" placeholder="010-0000-0000" inputmode="numeric" autocomplete="tel" aria-describedby="guardian-phone-error">
+                <p class="field-error" id="guardian-phone-error" role="alert" hidden>휴대폰 번호를 확인해 주세요.</p>
             </div>
 
             <!-- 관계 -->
@@ -77,9 +79,35 @@
         </main>
 
         <div class="bottom-action">
-            <button type="button" class="btn btn--primary">초대 문자 보내기</button>
+            <button type="button" class="btn btn--primary" data-send-invite>초대 문자 보내기</button>
             <a href="index.html" class="btn btn--text">나중에 할게요</a>
         </div>
     </div>
+
+    <script>
+        // 초대 문자 보내기: 번호·관계·허용 기능을 저장 (수락 전까지는 '수락 대기' · 알림이 가지 않음)
+        var phone = document.getElementById('guardian-phone');
+        var phoneError = document.getElementById('guardian-phone-error');
+        phone.addEventListener('input', function () { phoneError.hidden = true; });
+        document.querySelector('[data-send-invite]').addEventListener('click', function () {
+            var digits = phone.value.replace(/\D/g, '');
+            if (!/^01\d{8,9}$/.test(digits)) {
+                phoneError.hidden = false;
+                phone.focus();
+                return;
+            }
+            var shown = digits.replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
+            var relation = document.querySelector('.guardian__chips [aria-pressed="true"]');
+            Guardians.invite({
+                name: shown,
+                relation: relation ? relation.textContent.trim() : '',
+                phone: shown,
+                notify: document.querySelector('input[name="permission"][value="notify"]').checked,
+                proxy: document.querySelector('input[name="permission"][value="proxy"]').checked
+            });
+            StateNotice.leave('초대 문자를 보냈어요 · 상대방이 수락하면 연결돼요');
+            location.href = 'index.html';
+        });
+    </script>
 </body>
 </html>

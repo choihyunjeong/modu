@@ -109,7 +109,14 @@ var Actions = (function () {
     // ---------- F3 보호자 공유 · F3b 공유 중 ----------
     function share(opener) {
         if (trip().share) return sharing(opener);
-        var guardians = config.guardians || [];
+        // 연결된(수락한) 보호자만 · "이동 알림 받기"를 허용한 분은 처음부터 골라 둠
+        var guardians = Guardians.connected().map(function (g) {
+            return Object.assign({ badge: g.notify ? '접수 알림 받는 중' : '연결됨', checked: g.notify }, g);
+        });
+        if (!guardians.length) {
+            Toast.show('연결된 보호자가 없어요 · 홈의 "보호자 연결"에서 먼저 초대해 주세요');
+            return;
+        }
         var html = sheetTitle('보호자에게 이동 상황을 공유할까요?', '공유를 시작하면 보호자가 이번 이동을 같이 볼 수 있어요.') +
             '<p class="action-sheet__label" id="share-to">공유할 보호자</p>' +
             '<div class="guardian-pick" role="group" aria-labelledby="share-to">' +
@@ -445,11 +452,21 @@ var Actions = (function () {
         if (btn) run(btn.dataset.action, btn);
     });
 
+    // 탑승 중 · 보호자 자동 알림 줄 ("이동 알림 받기"를 허용한 연결된 보호자가 있을 때만)
+    function renderGuardianNotice() {
+        var names = Guardians.notifyTargets().map(function (g) { return g.name; });
+        document.querySelectorAll('[data-guardian-notice]').forEach(function (el) {
+            el.hidden = !names.length;
+            el.textContent = names.join(', ') + ' 님에게 이동 시작 알림을 보냈어요';
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('[data-help-label]').forEach(function (el) {
             if (!el.dataset.helpLabel) el.dataset.helpLabel = el.textContent.trim();
         });
         renderHelpStatus();
+        renderGuardianNotice();
     });
 
     return { run: run, clock: clock };

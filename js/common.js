@@ -162,6 +162,44 @@ var Toast = (function () {
     return { show: show };
 })();
 
+// 보호자 (브라우저 localStorage · 처음엔 config.js의 예시 보호자)
+//  { name, relation, phone, notify(이동 알림 받기), proxy(대신 접수), status: 'connected' | 'invited' }
+//  자동 알림은 연결됐고(수락함) "이동 알림 받기"를 허용한 보호자에게만 감
+var Guardians = (function () {
+    var KEY = 'guardians';
+
+    function list() {
+        try {
+            var saved = JSON.parse(localStorage.getItem(KEY));
+            if (saved) return saved;
+        } catch (e) {}
+        var base = (window.APP_CONFIG && APP_CONFIG.guardians) || [];
+        return base.map(function (g) { return Object.assign({ status: 'connected' }, g); });
+    }
+
+    function save(items) {
+        try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {}
+    }
+
+    // 새로 초대 (수락 대기) · 같은 번호면 설정만 바꿈
+    function invite(g) {
+        var items = list().filter(function (x) { return x.phone !== g.phone; });
+        items.push(Object.assign({ status: 'invited' }, g));
+        save(items);
+    }
+
+    function connected() {
+        return list().filter(function (g) { return g.status === 'connected'; });
+    }
+
+    // 자동 알림을 받는 보호자
+    function notifyTargets() {
+        return connected().filter(function (g) { return g.notify; });
+    }
+
+    return { list: list, invite: invite, connected: connected, notifyTargets: notifyTargets };
+})();
+
 // 말로 입력 (브라우저 음성 인식 · 지원할 때만) · 들은 말을 입력칸 끝에 붙임
 //  <button data-voice-for="입력칸 id">  ·  직접 부를 때: VoiceInput.listen(입력칸, 버튼)
 var VoiceInput = (function () {

@@ -11,10 +11,11 @@ window.APP_CONFIG = {
     //  tel: 전화 버튼을 누르면 휴대폰 전화 앱이 이 번호로 열림 · 예시 번호라 확정되면 바꿔 주세요
     driver: { name: '강○○ 기사님', plate: '33바 5521', car: '흰색 PV5', tel: '050-0000-0000' },
     callCenter: { name: '관제센터', tel: '02-0000-0000' },
-    // 보호자 공유 시트에 나오는 연결된 보호자 (checked: 처음부터 골라 둠)
+    // 이미 연결된 보호자 (예시) · notify: "이동 알림 받기"를 허용함 → 접수·배차·출발·도착 알림이 자동으로 감
+    //  보호자 연결 화면에서 새로 초대한 분은 수락 전까지 알림이 가지 않음 (common.js Guardians)
     guardians: [
-        { name: '김민정', relation: '엄마', phone: '010-98••-••21', badge: '접수 알림 받는 중', checked: true },
-        { name: '박○○', relation: '아빠', phone: '010-55••-••09', badge: '연결됨' }
+        { name: '김민정', relation: '엄마', phone: '010-98••-••21', notify: true },
+        { name: '박○○', relation: '아빠', phone: '010-55••-••09', notify: false }
     ],
 
     // 예시 좌표 (실제 서비스에선 검색·호출 데이터로 바뀜)

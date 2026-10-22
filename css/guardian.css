@@ -41,6 +41,16 @@
     outline: 0;
 }
 
+.text-field:has(.field-error:not([hidden])) .text-field__input { border-color: var(--color-error); }
+
+.field-error {
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-error);
+}
+
+.field-error[hidden] { display: none; }
+
 /* 구역 */
 .guardian__group {
     display: flex;
