@@ -182,69 +182,6 @@ fieldset.section { display: block; }
     gap: var(--space-12);
 }
 
-.text-area {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-}
-
-.text-area__label {
-    font-size: var(--fs-14);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--lh-20);
-    color: var(--color-text-sub);
-}
-
-.text-area__box {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-    padding: var(--space-14) var(--space-16) var(--space-12);
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-lg);
-}
-
-.text-area__box:focus-within { border-color: var(--color-primary); }
-
-.text-area__input {
-    min-height: 62px;
-    padding: 0;
-    border: 0;
-    outline: 0;
-    resize: none;
-    font: inherit;
-    font-size: var(--fs-16);
-    line-height: var(--lh-22);
-    color: var(--color-text);
-}
-
-.text-area__input::placeholder { color: var(--color-text-sub); }
-
-.text-area__foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.voice-input {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    height: 40px;
-    padding: 0 var(--space-12) 0 var(--space-10);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-14);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--lh-20);
-}
-
-.text-area__count {
-    font-size: var(--fs-13);
-    line-height: var(--lh-18);
-    color: var(--color-text-sub);
-}
-
 /* =========================================================
    최초 등록 ③ 저장 완료 (탑승정보_v12_03_저장완료)
    ========================================================= */

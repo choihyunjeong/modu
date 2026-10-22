@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기사님과 대화 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/progress.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
+    <script src="js/actions.js"></script>
+</head>
+<body>
+    <!-- F4 기사 대화 · 탑승 전 (?stage=before · soon · arrived) / F5 이동 중 (?stage=riding) -->
+    <div id="wrap" class="chat-page" data-stage="before">
+        <header class="chat-head">
+            <a href="assigned.html" class="chat-head__back" data-history-back data-chat-back aria-label="뒤로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+            </a>
+            <div class="chat-head__who">
+                <h1 class="chat-head__name" data-chat-name>강○○ 기사님</h1>
+                <p class="chat-head__sub" data-chat-sub>33바 5521 · 약 8분 후 도착 예정</p>
+            </div>
+            <button type="button" class="chat-round" data-action="call-driver" aria-label="기사님께 전화">
+                <span class="icon icon--phone" aria-hidden="true"></span>
+            </button>
+        </header>
+
+        <p class="chat-notice">
+            <span class="icon icon--sm icon--information" aria-hidden="true"></span>
+            보낸 말은 기사님 차 화면에 글로 뜨고 한 번 읽어 드려요. 운전 중이라 답은 늦을 수 있어요.
+        </p>
+
+        <main class="chat-log" data-chat-log aria-live="polite" aria-label="대화 내용"></main>
+
+        <section class="chat-quick" aria-labelledby="chat-quick-title">
+            <h2 class="chat-quick__title" id="chat-quick-title">자주 쓰는 말 바로 보내기</h2>
+            <p class="chat-quick__desc">누르면 기사님께 바로 전송돼요.</p>
+            <div class="chat-quick__chips" data-chat-quick></div>
+        </section>
+
+        <form class="chat-input" data-chat-form>
+            <button type="button" class="chat-round chat-round--help" data-action="help" aria-haspopup="dialog" aria-label="도움 요청">
+                <span class="icon icon--hand" aria-hidden="true"></span>
+            </button>
+            <div class="chat-input__box">
+                <input class="chat-input__field" id="chat-text" type="text" maxlength="40" placeholder="메시지 입력 · 40자까지" aria-label="기사님께 보낼 메시지" autocomplete="off" enterkeyhint="send">
+                <button type="button" class="chat-input__mic" data-voice-for="chat-text" aria-label="말로 입력하기">
+                    <span class="icon icon--microphone" aria-hidden="true"></span>
+                </button>
+            </div>
+            <button type="submit" class="chat-round chat-round--send" aria-label="보내기">
+                <span class="icon icon--send" aria-hidden="true"></span>
+            </button>
+        </form>
+    </div>
+
+    <script src="js/chat.js"></script>
+</body>
+</html>

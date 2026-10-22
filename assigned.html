@@ -15,7 +15,7 @@
 </head>
 <body>
     <div id="wrap" class="map-page" data-auto-next="arriving.html" data-delay="8000" data-next-notice="UD택시가 곧 도착해요"
-        data-share-status="UD택시 배정 · 33바 5521 흰색 PV5 · 탑승 위치로 오는 중" data-cancel-desc="배정된 차가 오고 있어요. 취소하면 기사님께 바로 알려드려요.">
+        data-stage="before" data-cancel-stage="after">
         <div class="map-view" style="--map-height: 304px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2" data-fit="car,pickup,me">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
@@ -47,8 +47,7 @@
                         <p class="assigned-desc">차량이 배정됐어요</p>
                     </div>
                     <!-- 더보기: 보호자 공유 · 접수 취소 -->
-                    <button type="button" class="btn-icon-round" aria-label="더보기" aria-haspopup="dialog"
-                        data-action="menu" data-title="더보기" data-options="guardian,call-center,cancel">
+                    <button type="button" class="btn-icon-round" aria-label="더보기" aria-haspopup="dialog" data-action="more">
                         <span class="icon icon--more" aria-hidden="true"></span>
                     </button>
                 </div>
@@ -91,18 +90,17 @@
             <!-- 연락 · 메시지 · 전화 · 도움 -->
             <div class="assigned-group assigned-group--contact">
                 <div class="btn-line-row">
-                    <button type="button" class="btn-line" data-action="msg" aria-haspopup="dialog">
+                    <a href="chat.html?stage=before" class="btn-line">
                         <span class="icon icon--chat" aria-hidden="true"></span>
                         메시지
-                    </button>
+                    </a>
                     <button type="button" class="btn-line" data-action="call-driver">
                         <span class="icon icon--phone" aria-hidden="true"></span>
                         전화
                     </button>
                 </div>
                 <div class="help-row">
-                    <button type="button" class="btn-help" aria-haspopup="dialog"
-                        data-action="menu" data-title="도움이 필요하세요?" data-desc="필요한 도움을 골라 주세요" data-options="call-center,call-driver,guardian">
+                    <button type="button" class="btn-help" aria-haspopup="dialog" data-action="help">
                         <span class="icon icon--sm icon--help" aria-hidden="true"></span>
                         도움이 필요해요
                     </button>

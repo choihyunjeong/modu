@@ -14,8 +14,7 @@
     <script src="js/actions.js"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-auto-next="assigned.html" data-delay="8000" data-next-notice="UD택시가 배정됐어요"
-        data-share-status="차량을 찾고 있어요 (접수번호 1125)" data-cancel-desc="지금 취소하면 기다린 순서가 없어져요. 다시 부르면 처음부터 기다려야 해요.">
+    <div id="wrap" class="map-page" data-auto-next="assigned.html" data-delay="8000" data-next-notice="UD택시가 배정됐어요" data-cancel-stage="before">
         <div class="map-view" style="--map-height: 244px; --map-img-top: -235px;" data-map data-center="pickup">
             <img class="map-view__static" src="image/map-static.png" alt="">
 
@@ -41,7 +40,7 @@
             <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
                 <span class="icon icon--location-current" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn-pill-float" data-action="cancel">호출 취소</button>
+            <button type="button" class="btn-pill-float" data-action="cancel" aria-haspopup="dialog">호출 취소</button>
         </div>
 
         <section class="sheet sheet--progress">
@@ -104,11 +103,11 @@
             <div class="progress-group">
                 <p class="notice-line">
                     <span class="icon icon--xs icon--notification" aria-hidden="true"></span>
-                    앱을 닫아도 차량이 배정되면 알림으로 알려드려요
+                    앱을 닫아도 차가 정해지면 알려드려요
                 </p>
 
                 <div class="btn-row">
-                    <button type="button" class="btn btn--outline" data-action="guardian" aria-haspopup="dialog">보호자에게 알리기</button>
+                    <button type="button" class="btn btn--outline" data-action="share" aria-haspopup="dialog">보호자에게 알리기</button>
                     <button type="button" class="btn btn--outline" data-action="call-center">콜센터 문의</button>
                 </div>
             </div>

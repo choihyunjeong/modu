@@ -146,13 +146,14 @@
             </div>
             <fieldset class="edit-group">
                 <legend class="edit-group__title">이동 보조기기</legend>
-                <div class="card choice-list">
-                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="manual-wheelchair" checked><span class="choice-list__title">수동 휠체어</span></label>
-                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="power-wheelchair"><span class="choice-list__title">전동 휠체어</span></label>
-                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="walker"><span class="choice-list__title">보행기</span></label>
-                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="cane"><span class="choice-list__title">지팡이·목발</span></label>
-                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="other"><span class="choice-list__title">다른 이동 보조기기</span></label>
-                    <label class="choice-list__item"><input type="radio" class="radio" name="device" value="none"><span class="choice-list__title">이동 보조기기 없음</span></label>
+                <!-- 2개씩 배치 -->
+                <div class="choice-grid">
+                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="manual-wheelchair" checked><span class="choice-tile__title">수동 휠체어</span></label>
+                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="power-wheelchair"><span class="choice-tile__title">전동 휠체어</span></label>
+                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="walker"><span class="choice-tile__title">보행기</span></label>
+                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="cane"><span class="choice-tile__title">지팡이·목발</span></label>
+                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="other"><span class="choice-tile__title">다른 보조기기</span></label>
+                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="none"><span class="choice-tile__title">보조기기 없음</span></label>
                 </div>
             </fieldset>
             <fieldset class="edit-group">
@@ -161,7 +162,21 @@
                     <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="slow-explain" checked><span class="choice-list__title">천천히 설명해 주세요</span></label>
                     <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="text-guide"><span class="choice-list__title">글로 안내해 주세요</span></label>
                     <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="tell-before-help"><span class="choice-list__title">도와주시기 전에 먼저 말씀해 주세요</span></label>
-                    <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="wait-answer"><span class="choice-list__title">답변을 조금 기다려 주세요</span></label>
+                    <label class="choice-list__item"><input type="checkbox" class="checkbox" data-request-etc-toggle aria-controls="ride-etc"><span class="choice-list__title">기타</span></label>
+                </div>
+                <!-- 기타를 고르면: 직접 쓰거나 말로 입력 -->
+                <div class="text-area" id="ride-etc" hidden>
+                    <label for="ride-etc-input" class="blind">기사님께 미리 전할 요청 직접 입력</label>
+                    <div class="text-area__box">
+                        <textarea id="ride-etc-input" class="text-area__input" maxlength="200" rows="3" placeholder="예: 휠체어를 움직이기 전에 말씀해 주세요."></textarea>
+                        <div class="text-area__foot">
+                            <button type="button" class="voice-input" data-voice-for="ride-etc-input">
+                                <span class="icon icon--xs icon--microphone" aria-hidden="true"></span>
+                                음성으로 입력
+                            </button>
+                            <span class="text-area__count"><span data-count-for="ride-etc-input">0</span> / 200</span>
+                        </div>
+                    </div>
                 </div>
             </fieldset>
             <div class="edit-foot">
@@ -271,6 +286,19 @@
 
         // 탑승 정보: 저장된 값으로 채워 열고, 적용하면 저장 (다른 항목은 그대로 둠)
         var rideSheet = document.getElementById('ride-sheet');
+        var etcToggle = rideSheet.querySelector('[data-request-etc-toggle]');
+        var etcBox = document.getElementById('ride-etc');
+        var etcInput = document.getElementById('ride-etc-input');
+        // 기타: 고르면 입력칸이 열림
+        function syncEtc() {
+            etcBox.hidden = !etcToggle.checked;
+            etcToggle.setAttribute('aria-expanded', etcToggle.checked);
+            etcInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        etcToggle.addEventListener('change', function () {
+            syncEtc();
+            if (etcToggle.checked) etcInput.focus();
+        });
         var closeRide = setupSheet(rideSheet, document.querySelector('[data-open-ride]'), function () {
             var data = RideInfo.load() || {};
             if (data.device) check(rideSheet, 'device', data.device);
@@ -279,11 +307,15 @@
                     input.checked = data.requests.indexOf(input.value) > -1;
                 });
             }
+            etcInput.value = data.requestEtc || '';
+            etcToggle.checked = !!data.requestEtc;
+            syncEtc();
         });
         rideSheet.querySelector('[data-apply-ride]').addEventListener('click', function () {
             RideInfo.save({
                 device: rideSheet.querySelector('input[name="device"]:checked').value,
-                requests: Array.prototype.map.call(rideSheet.querySelectorAll('input[name="request"]:checked'), function (input) { return input.value; })
+                requests: Array.prototype.map.call(rideSheet.querySelectorAll('input[name="request"]:checked'), function (input) { return input.value; }),
+                requestEtc: etcToggle.checked ? etcInput.value.trim() : ''
             });
             renderRide();
             closeRide();
@@ -303,7 +335,8 @@
 
         // 호출하기: 접수 시각과 인원을 저장하고 진행 화면으로
         document.querySelector('[data-call]').addEventListener('click', function () {
-            Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null });
+            // 새 호출: 지난 호출의 대화·도움 요청·보호자 공유·차 방향은 지움
+            Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null });
         });
     </script>
 </body>

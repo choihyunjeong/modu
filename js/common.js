@@ -131,7 +131,7 @@ var SheetDrag = (function () {
 })();
 
 // 앱 안 짧은 안내 (보냈어요 · 배정됐어요 등) · 하나씩만 보이고 잠시 뒤 사라짐
-//  Toast.show('기사님께 보냈어요')  ·  Toast.show('UD택시가 배정됐어요', { top: true })
+//  Toast.show('관제센터에 메시지를 보냈어요', { check: true })  ·  Toast.show('UD택시가 배정됐어요', { top: true })
 var Toast = (function () {
     var el = null;
     var timer = null;
@@ -145,6 +145,12 @@ var Toast = (function () {
             document.body.appendChild(el);
         }
         el.textContent = text;
+        if (opts.check) {
+            var icon = document.createElement('span');
+            icon.className = 'icon icon--sm icon--checkmark';
+            icon.setAttribute('aria-hidden', 'true');
+            el.prepend(icon);
+        }
         el.classList.toggle('app-toast--top', !!opts.top);
         // 다시 보여 줄 때도 나타나는 움직임이 나오게
         el.classList.remove('is-shown');
@@ -155,6 +161,47 @@ var Toast = (function () {
     }
     return { show: show };
 })();
+
+// 말로 입력 (브라우저 음성 인식 · 지원할 때만) · 들은 말을 입력칸 끝에 붙임
+//  <button data-voice-for="입력칸 id">  ·  직접 부를 때: VoiceInput.listen(입력칸, 버튼)
+var VoiceInput = (function () {
+    function listen(field, button) {
+        var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!Recognition) return Toast.show('이 기기에서는 말로 입력할 수 없어요. 직접 입력해 주세요');
+        var rec = new Recognition();
+        rec.lang = 'ko-KR';
+        var placeholder = field.placeholder;
+        if (button) button.classList.add('is-listening');
+        field.placeholder = '듣고 있어요… 말씀해 주세요';
+        rec.onresult = function (e) {
+            var text = e.results[0][0].transcript;
+            var max = field.maxLength > 0 ? field.maxLength : Infinity;
+            field.value = (field.value ? field.value.replace(/\s*$/, ' ') : '') + text;
+            field.value = field.value.slice(0, max);
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+        rec.onerror = function () { Toast.show('잘 듣지 못했어요. 다시 눌러 주세요'); };
+        rec.onend = function () {
+            if (button) button.classList.remove('is-listening');
+            field.placeholder = placeholder;
+        };
+        rec.start();
+    }
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-voice-for]');
+        var field = btn && document.getElementById(btn.dataset.voiceFor);
+        if (field) listen(field, btn);
+    });
+    return { listen: listen };
+})();
+
+// 글자 수: <span data-count-for="입력칸 id">0</span>
+document.addEventListener('input', function (e) {
+    if (!e.target.id) return;
+    document.querySelectorAll('[data-count-for="' + e.target.id + '"]').forEach(function (el) {
+        el.textContent = e.target.value.length;
+    });
+});
 
 // 화면이 다음 상태로 바뀔 때 남긴 안내를 새 화면에서 보여 줌 (push.js · 호출 취소)
 var StateNotice = (function () {
