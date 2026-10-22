@@ -98,6 +98,7 @@
             level: 2
         });
         var snapping = false;
+        wrap.pickMap = map;    // 점검용 (지도 가운데 확인)
 
         function settle() {
             if (snapping) { snapping = false; return; }
