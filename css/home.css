@@ -18,7 +18,18 @@
 .home-top {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
+    gap: var(--space-8);
+}
+
+/* 왼쪽 위 로고 (심볼 + 모두의이동) */
+.home-top__logo {
+    width: auto;
+    height: 30px;
+}
+
+.home-top__actions {
+    display: flex;
     gap: var(--space-8);
 }
 
