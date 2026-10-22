@@ -1701,6 +1701,47 @@
     color: var(--color-text-inverse);
 }
 
+/* 탑승 중 시트를 올리면 보이는 묶음 (굵은 회색 띠로 나눔) */
+.sheet--riding .boarding-note { min-height: 0; }
+
+.riding-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    margin: var(--space-12) calc(var(--page-padding) * -1) 0;
+    padding: var(--space-20) var(--page-padding) 0;
+    border-top: 8px solid var(--color-bg-gray);
+}
+
+.riding-section__title {
+    font-size: var(--fs-17);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-24);
+}
+
+.riding-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    margin: 0;
+    padding: var(--space-14) var(--space-16);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-gray);
+}
+
+.riding-rows dd { margin: 0; }
+
+.riding-rows__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-12);
+    font-size: var(--fs-15);
+    line-height: var(--lh-22);
+}
+
+.riding-rows__row dt { color: var(--color-text-sub); }
+.riding-rows__row dd { font-weight: var(--font-weight-bold); }
+
 .riding-info,
 .riding-guardian {
     display: flex;

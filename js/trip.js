@@ -210,6 +210,11 @@ var Trip = (function () {
         'arrive-clock': function (t) {
             return t.boardedAt ? clock(t.boardedAt + rideMinutes() * 60000) + ' 도착 예상' : null;
         },
+        // 탑승 중 시트 · 운행 정보 (목적지를 안 골랐어도 예시 좌표로 계산)
+        'board-clock': function (t) { return t.boardedAt ? clock(t.boardedAt) : null; },
+        'arrive-at': function (t) { return t.boardedAt ? clock(t.boardedAt + rideMinutes() * 60000) : null; },
+        'ride-dist': function () { return distText(); },
+        'ride-fare': function () { return '약 ' + fare().toLocaleString('ko-KR') + '원'; },
         'done-desc': function (t) {
             return t.boardedAt ? clock24(t.boardedAt + rideMinutes() * 60000) + ' 하차 · 오늘 이동이 끝났어요' : null;
         },

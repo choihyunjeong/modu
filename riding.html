@@ -12,18 +12,19 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>탑승 중 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221417">
-    <link rel="stylesheet" href="css/progress.css?v=2610221417">
-    <script src="js/common.js?v=2610221417"></script>
-    <script src="js/config.js?v=2610221417"></script>
-    <script src="js/trip.js?v=2610221417"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221426">
+    <link rel="stylesheet" href="css/progress.css?v=2610221426">
+    <script src="js/common.js?v=2610221426"></script>
+    <script src="js/config.js?v=2610221426"></script>
+    <script src="js/trip.js?v=2610221426"></script>
+    <script src="js/ride-info.js?v=2610221426"></script>
     <script>
         // 탑승 시각 기록 (도착 예상·이동 완료 시각 계산에 씀)
         if (!Trip.get().boardedAt) Trip.set({ boardedAt: Date.now() });
     </script>
-    <script src="js/map.js?v=2610221417"></script>
-    <script src="js/push.js?v=2610221417"></script>
-    <script src="js/actions.js?v=2610221417"></script>
+    <script src="js/map.js?v=2610221426"></script>
+    <script src="js/push.js?v=2610221426"></script>
+    <script src="js/actions.js?v=2610221426"></script>
 </head>
 <body>
     <div id="wrap" class="map-page" data-progress-stage="riding" data-stage="riding">
@@ -56,9 +57,11 @@
             </button>
         </div>
 
+        <!-- 탑승 중 시트: 처음엔 요약·버튼까지 보이고, 올리면 운행 정보 · 기사·차량 · 보호자·콜센터 -->
         <section class="sheet sheet--riding">
             <span class="sheet__grabber" aria-hidden="true"></span>
 
+            <!-- 요약 -->
             <div class="riding-head">
                 <h1 class="assigned-title">목적지로 이동 중</h1>
                 <span class="riding-head__eta" data-trip="ride-left">약 4분 남음</span>
@@ -67,6 +70,11 @@
                 <p><span data-trip="dest-name">은평성모병원</span> · <span data-trip="arrive-clock">오후 3:43 도착 예상</span></p>
                 <p>33바 5521 · 흰색 PV5 · 강○○ 기사님</p>
             </div>
+
+            <p class="boarding-note">
+                <span class="icon icon--sm icon--information" aria-hidden="true"></span>
+                요금은 내릴 때 차 안에서 결제해요
+            </p>
 
             <!-- 도움 요청 상태 줄 (요청 보낸 뒤에만 · 상태 보기 → 요청 내역) -->
             <button type="button" class="help-status" data-help-status data-action="requests" aria-haspopup="dialog" hidden>
@@ -85,9 +93,82 @@
                 </button>
             </div>
 
-            <!-- "이동 알림 받기"를 허용한 연결된 보호자가 있을 때만 (없으면 숨김) -->
-            <p class="riding-guardian" data-guardian-notice hidden></p>
+            <!-- 운행 정보 -->
+            <div class="riding-section" aria-labelledby="riding-route-title">
+                <h2 class="riding-section__title" id="riding-route-title">운행 정보</h2>
+                <ul class="route-list">
+                    <li class="route-list__item">
+                        <img src="image/route-dot-start.svg" alt="">
+                        <span class="route-list__label">출발</span>
+                        <span class="route-list__place" data-trip="pickup-name">래미안베라힐즈 정문</span>
+                    </li>
+                    <li class="route-list__item">
+                        <img src="image/route-dot-end.svg" alt="">
+                        <span class="route-list__label">도착</span>
+                        <span class="route-list__place" data-trip="dest-name">은평성모병원</span>
+                    </li>
+                    <li class="route-list__line" role="presentation"><img src="image/route-line.svg" alt=""></li>
+                </ul>
+                <dl class="riding-rows">
+                    <div class="riding-rows__row"><dt>탑승 시각</dt><dd data-trip="board-clock">오후 2:20</dd></div>
+                    <div class="riding-rows__row"><dt>도착 예정</dt><dd data-trip="arrive-at">오후 2:34</dd></div>
+                    <div class="riding-rows__row"><dt>이동 거리</dt><dd data-trip="ride-dist">5.2km</dd></div>
+                    <div class="riding-rows__row"><dt>예상 요금</dt><dd data-trip="ride-fare">약 1,500원</dd></div>
+                </dl>
+                <ul class="tag-list" aria-label="함께 전달된 정보" data-ride-tags>
+                    <li class="tag" data-trip="riders">본인 + 동승자 1명</li>
+                    <li class="tag">수동 휠체어</li>
+                    <li class="tag tag--primary">UD 가능</li>
+                    <li class="tag">문자·앱 메시지로 연락</li>
+                </ul>
+            </div>
+
+            <!-- 기사·차량 -->
+            <div class="riding-section" aria-labelledby="riding-driver-title">
+                <h2 class="riding-section__title" id="riding-driver-title">기사님·차량</h2>
+                <div class="driver-card">
+                    <img class="driver-card__photo" src="image/driver.png" alt="">
+                    <div class="driver-card__text">
+                        <p class="driver-card__plate">33바 5521</p>
+                        <p class="driver-card__info">강○○ 기사님 · 흰색 PV5</p>
+                    </div>
+                    <img class="driver-card__car" src="image/pv5-side.png" alt="">
+                </div>
+                <button type="button" class="btn-line" data-action="call-driver">
+                    <span class="icon icon--phone" aria-hidden="true"></span>
+                    기사님께 전화하기
+                </button>
+            </div>
+
+            <!-- 보호자 · 콜센터 -->
+            <div class="riding-section" aria-labelledby="riding-share-title">
+                <h2 class="riding-section__title" id="riding-share-title">함께 확인하기</h2>
+                <!-- "이동 알림 받기"를 허용한 연결된 보호자가 있을 때만 (없으면 숨김) -->
+                <p class="riding-guardian" data-guardian-notice hidden></p>
+                <div class="btn-row">
+                    <button type="button" class="btn btn--outline" data-action="share" aria-haspopup="dialog">보호자에게 알리기</button>
+                    <button type="button" class="btn btn--outline" data-action="call-center">콜센터 문의</button>
+                </div>
+            </div>
         </section>
+
+        <script>
+            // 함께 전달된 정보: 접수할 때 담은 탑승 정보 (없으면 지금 저장된 탑승 정보 · 그것도 없으면 예시 그대로)
+            (function () {
+                var tags = Trip.get().ride || (window.RideInfo && RideInfo.tags());
+                if (!tags) return;
+                var box = document.querySelector('[data-ride-tags]');
+                var riders = box.querySelector('[data-trip="riders"]');
+                box.innerHTML = '';
+                box.appendChild(riders);
+                tags.forEach(function (tag) {
+                    var li = document.createElement('li');
+                    li.className = 'tag' + (tag.tone ? ' tag--' + tag.tone : '');
+                    li.textContent = tag.text;
+                    box.appendChild(li);
+                });
+            })();
+        </script>
     </div>
 </body>
 </html>
