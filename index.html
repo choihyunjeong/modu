@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221237">
-    <link rel="stylesheet" href="css/home.css?v=2610221237">
-    <script src="js/common.js?v=2610221237"></script>
-    <script src="js/config.js?v=2610221237"></script>
-    <script src="js/ride-info.js?v=2610221237"></script>
-    <script src="js/stats.js?v=2610221237"></script>
-    <script src="js/reader.js?v=2610221237"></script>
-    <script src="js/trip.js?v=2610221237"></script>
-    <script src="js/actions.js?v=2610221237"></script>
-    <script src="js/push.js?v=2610221237"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221306">
+    <link rel="stylesheet" href="css/home.css?v=2610221306">
+    <script src="js/common.js?v=2610221306"></script>
+    <script src="js/config.js?v=2610221306"></script>
+    <script src="js/ride-info.js?v=2610221306"></script>
+    <script src="js/stats.js?v=2610221306"></script>
+    <script src="js/reader.js?v=2610221306"></script>
+    <script src="js/trip.js?v=2610221306"></script>
+    <script src="js/actions.js?v=2610221306"></script>
+    <script src="js/push.js?v=2610221306"></script>
 </head>
 <body>
     <div id="wrap">
@@ -55,13 +55,13 @@
                 <!-- 지금 상황 -->                <section class="now" data-read-part="호출 안내" data-now>
                     <!-- 오늘 요일의 평균 대기 (js/stats.js · 2026년 1월 통계) -->
                     <h1 class="now__title" data-read>
-                        <span><span data-stat="day">목요일</span>에는</span>
-                        <span>승차까지 평균 <span data-stat="avg">32</span>분</span>
+                        <span data-stat="slot">10월 22일(목) 오후 2~3시</span>
+                        <span>차량 배정까지 평균 <span data-stat="avg">32</span>분</span>
                     </h1>
                     <p class="now__nearby" data-read>
                         <img class="now__car" src="image/car.png" alt="">
                         <span class="now__count">주변 배차 가능 차량 5대</span>
-                        <span class="now__time">· 오후 2:25 기준</span>
+                        <span class="now__time" data-stat="now">· 오후 2:25 기준</span>
                     </p>
                     <div class="now__basis">
                         <span data-stat="basis" data-read>은평구 · 2026년 1월 같은 요일 평균</span>

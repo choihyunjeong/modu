@@ -58,9 +58,23 @@ var WaitStats = (function () {
         return SOURCE.area + ' · ' + SOURCE.year + '년 ' + SOURCE.month + '월 같은 요일 평균';
     }
 
+    // 지금 날짜(요일)·시간대 (10월 22일(목) 오후 2~3시)
+    function slot(date) {
+        var d = date || new Date();
+        var h = d.getHours();
+        var h12 = h % 12 || 12;
+        var next = (h + 1) % 12 || 12;
+        return (d.getMonth() + 1) + '월 ' + d.getDate() + '일(' + '일월화수목금토'.charAt(d.getDay()) + ') ' +
+            (h < 12 ? '오전 ' : '오후 ') + h12 + '~' + next + '시';
+    }
+
     function fill(root) {
         var s = forDay();
+        var now = new Date();
         var texts = {
+            slot: slot(),
+            // 지금 시각 (· 오후 1:05 기준)
+            now: '· ' + (now.getHours() < 12 ? '오전 ' : '오후 ') + (now.getHours() % 12 || 12) + ':' + ('0' + now.getMinutes()).slice(-2) + ' 기준',
             day: s.day,
             avg: String(s.avg),
             range: s.min + '~' + s.max,
@@ -71,7 +85,11 @@ var WaitStats = (function () {
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () { fill(document); });
+    document.addEventListener('DOMContentLoaded', function () {
+        fill(document);
+        // 시간대가 바뀌면 문구도 바뀌게 (1분마다 확인)
+        setInterval(function () { fill(document); }, 60000);
+    });
 
-    return { forDay: forDay, basis: basis, fill: fill, source: SOURCE };
+    return { forDay: forDay, slot: slot, basis: basis, fill: fill, source: SOURCE };
 })();
