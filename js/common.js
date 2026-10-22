@@ -176,6 +176,7 @@ var SheetDrag = (function () {
             sheet.style.flex = 'none';
             sheet.style.height = Math.max(sheetBase, room) + 'px';
             sheet.dataset.state = h <= MAP_MIN + 1 ? 'expanded' : (h >= l.max - 1 ? 'collapsed' : 'default');
+            handle.setAttribute('aria-expanded', sheet.dataset.state !== 'collapsed');
             if (animate) setTimeout(relayoutMaps, 260);
             else relayoutMaps();
         }
@@ -193,6 +194,14 @@ var SheetDrag = (function () {
             }
             // 놓은 자리에 그대로 멈춤 (맨 위·맨 아래 넘지 않게만)
             setHeight(Math.min(l.max, Math.max(l.min, startHeight + dy)), true);
+        });
+
+        // 키보드(Enter·Space)·화면 읽기 프로그램으로 누를 때도 접기 ↔ 펼치기 (손가락·마우스는 위 끌기에서 처리)
+        handle.setAttribute('aria-expanded', 'true');
+        handle.addEventListener('click', function (e) {
+            if (e.detail !== 0) return;
+            var l = limits();
+            setHeight(sheet.dataset.state === 'collapsed' ? base : l.max, true);
         });
 
         // 시트 안 어디를 끌어도 시트가 움직임
