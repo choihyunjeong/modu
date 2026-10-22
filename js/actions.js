@@ -93,13 +93,21 @@ var Actions = (function () {
 
     // ---------- F8 더보기 메뉴 ----------
     function more(opener) {
+        var sharing = !!trip().share;
         var html =
+            '<h2 class="blind">더보기</h2>' +
             '<div class="menu-rows">' +
-                '<button type="button" class="menu-row" data-go="share">보호자에게 이동 상황 공유</button>' +
+                '<button type="button" class="menu-row" data-go="share">' +
+                    '<span class="menu-row__icon" aria-hidden="true"><span class="icon icon--user-multiple"></span></span>' +
+                    '<span class="menu-row__text">보호자에게 이동 상황 공유' +
+                        (sharing ? '<span class="menu-row__sub">공유 중</span>' : '') + '</span>' +
+                    '<span class="icon icon--sm icon--chevron-right menu-row__arrow" aria-hidden="true"></span></button>' +
                 '<button type="button" class="menu-row menu-row--danger" data-go="cancel">' +
-                    '<span class="icon icon--close" aria-hidden="true"></span>호출 취소</button>' +
-                '<button type="button" class="menu-row menu-row--close" data-close>닫기</button>' +
-            '</div>';
+                    '<span class="menu-row__icon" aria-hidden="true"><span class="icon icon--close"></span></span>' +
+                    '<span class="menu-row__text">호출 취소</span>' +
+                    '<span class="icon icon--sm icon--chevron-right menu-row__arrow" aria-hidden="true"></span></button>' +
+            '</div>' +
+            '<button type="button" class="btn-text-close" data-close>닫기</button>';
         openLayer('sheet', html, function (panel, close) {
             panel.querySelectorAll('[data-go]').forEach(function (btn) {
                 btn.addEventListener('click', function () {

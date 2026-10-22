@@ -867,10 +867,11 @@
     color: var(--color-text-sub);
 }
 
-/* F8 더보기 메뉴 */
+/* F8 더보기 메뉴 · 누를 수 있는 줄 버튼 (아이콘 · 글자 · 화살표) */
 .menu-rows {
     display: flex;
     flex-direction: column;
+    gap: var(--space-8);
     padding-top: var(--space-4);
 }
 
@@ -879,24 +880,55 @@
     align-items: center;
     gap: var(--space-12);
     width: 100%;
-    padding: var(--space-16) 0;
-    font-size: var(--fs-16);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--lh-24);
+    min-height: 60px;
+    padding: var(--space-10) var(--space-14) var(--space-10) var(--space-12);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
     text-align: left;
 }
 
-.menu-row + .menu-row { border-top: 1px solid var(--color-divider); }
+.menu-row:active { background: var(--color-bg-gray); }
+
+.menu-row__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+}
+
+.menu-row__icon .icon { --icon-size: 20px; }
+
+.menu-row__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+}
+
+.menu-row__sub {
+    font-size: var(--fs-13);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-18);
+    color: var(--color-primary);
+}
+
+.menu-row__arrow { color: var(--color-text-sub); }
 
 .menu-row--danger { color: var(--color-error); }
-.menu-row--danger .icon { color: var(--color-text-sub); }
 
-.menu-row--close {
-    justify-content: center;
-    padding: var(--space-12) 0;
-    font-size: var(--fs-15);
-    line-height: var(--lh-22);
-    color: var(--color-text-sub);
+.menu-row--danger .menu-row__icon {
+    background: var(--color-error-bg);
+    color: var(--color-error);
 }
 
 /* F3 공유할 보호자 */

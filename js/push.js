@@ -9,12 +9,29 @@ document.addEventListener('DOMContentLoaded', function () {
     var scale = (window.APP_CONFIG && APP_CONFIG.demoScale) || 1;
     var auto = document.querySelector('[data-auto-next]');
     if (!auto) return;
+    var started = false;
+    var told = false;
     var next = function () {
-        // 시트(메시지·대기 현황)나 통화 화면을 보고 있으면 닫을 때까지 조금씩 미룸
-        if (document.body.classList.contains('is-modal-open')) return setTimeout(next, 1500);
+        // 시트·메뉴를 보고 있으면 닫을 때까지 조금씩 미룸 · 왜 멈췄는지 한 번 알려 줌
+        if (document.body.classList.contains('is-modal-open')) {
+            if (!told && auto.dataset.nextNotice) {
+                told = true;
+                Toast.show(auto.dataset.nextNotice + ' · 창을 닫으면 다음 화면으로 넘어가요', { top: true, duration: 4000 });
+            }
+            return setTimeout(next, 1500);
+        }
         if (auto.dataset.nextNotice) StateNotice.leave(auto.dataset.nextNotice);
         // replace: 자동으로 바뀐 상태는 뒤로 가기 기록에 남기지 않음
         location.replace(auto.dataset.autoNext);
     };
-    setTimeout(next, Number(auto.dataset.delay || 8000) * scale);
+    function go() {
+        if (started) return;
+        started = true;
+        next();
+    }
+    setTimeout(go, Number(auto.dataset.delay || 8000) * scale);
+    // data-next-on-arrive: 지도 위 차가 탑승 위치에 닿으면 바로 (지도를 못 쓰면 위 시간대로)
+    if (auto.hasAttribute('data-next-on-arrive')) {
+        document.addEventListener('mapkit:car-arrived', function () { setTimeout(go, 1200); });
+    }
 });

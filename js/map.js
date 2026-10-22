@@ -155,8 +155,12 @@ var MapKit = (function () {
                 }
             }
             if (onStep) onStep(ratio);
-            if (t < 1) requestAnimationFrame(step);
-            else if (isCar && heading != null && window.Trip) Trip.set({ carHeading: heading });
+            if (t < 1) return requestAnimationFrame(step);
+            if (isCar && heading != null && window.Trip) Trip.set({ carHeading: heading });
+            // 탑승 위치에 닿음 (경로 끝까지 간 차) → 도착 임박 화면이 차량 도착으로 넘어감 (push.js)
+            if (isCar && range[1] >= 1 && el.dataset.movePath === 'approach') {
+                document.dispatchEvent(new CustomEvent('mapkit:car-arrived'));
+            }
         }
         requestAnimationFrame(step);
     }
