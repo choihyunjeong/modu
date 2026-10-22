@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="image/favicon-32.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="모두의 이동">
+    <title>공지사항 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css?v=2610221603">
+    <script src="js/common.js?v=2610221603"></script>
+    <script src="js/notices.js?v=2610221603"></script>
+    <style>
+        .notices { padding-top: 0; }
+        .notice-row { border-bottom: 1px solid var(--color-divider); }
+        .notice-row__head {
+            display: flex; flex-direction: column; gap: var(--space-4);
+            width: 100%; padding: var(--space-16) 0; text-align: left;
+        }
+        .notice-row__meta { display: flex; align-items: center; gap: var(--space-6); font-size: var(--fs-13); line-height: 1.4; color: var(--color-text-sub); }
+        .notice-row__tag { font-weight: var(--font-weight-bold); color: var(--color-primary); }
+        .notice-row__meta span + span::before { content: ""; display: inline-block; width: 1px; height: 10px; margin-right: var(--space-6); background: var(--color-border-strong); }
+        .notice-row__title { font-size: var(--fs-16); font-weight: var(--font-weight-medium); line-height: 1.45; }
+        .notice-row__body {
+            margin-bottom: var(--space-16); padding: var(--space-14) var(--space-16);
+            border-radius: var(--radius-md); background: var(--color-bg-gray);
+            font-size: var(--fs-15); line-height: 1.6; color: var(--color-text-secondary);
+        }
+        .notice-row__body[hidden] { display: none; }
+        .notice-row__head[aria-expanded="true"] .notice-row__title { font-weight: var(--font-weight-bold); }
+    </style>
+</head>
+<body>
+    <!-- 공지사항 (홈 "전체 보기"·공지 줄에서) · 분류 | 날짜 / 제목 · 누르면 내용이 아래로 펼쳐짐 -->
+    <div id="wrap">
+        <header class="app-header">
+            <a href="index.html" class="app-header__back" data-history-back aria-label="뒤로">
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </a>
+            <h1 class="app-header__title">공지사항</h1>
+            <span class="app-header__blank" aria-hidden="true"></span>
+        </header>
+        <main class="content content--sub notices">
+            <ul data-notices></ul>
+        </main>
+    </div>
+    <script>
+        var box = document.querySelector('[data-notices]');
+        function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+        box.innerHTML = NOTICES.map(function (n) {
+            return '<li class="notice-row">' +
+                '<button type="button" class="notice-row__head" id="' + n.id + '" aria-expanded="false" aria-controls="' + n.id + '-body">' +
+                    '<span class="notice-row__meta"><span class="notice-row__tag">' + esc(n.tag) + '</span><span>' + n.date + '</span></span>' +
+                    '<span class="notice-row__title">' + esc(n.title) + '</span>' +
+                '</button>' +
+                '<p class="notice-row__body" id="' + n.id + '-body" hidden>' + esc(n.body) + '</p>' +
+            '</li>';
+        }).join('');
+        function toggle(head, open) {
+            head.setAttribute('aria-expanded', open);
+            document.getElementById(head.getAttribute('aria-controls')).hidden = !open;
+        }
+        box.addEventListener('click', function (e) {
+            var head = e.target.closest('.notice-row__head');
+            if (head) toggle(head, head.getAttribute('aria-expanded') !== 'true');
+        });
+        // 홈에서 공지 하나를 눌러 왔으면 그 공지를 펼쳐 둠
+        var target = location.hash && document.getElementById(location.hash.slice(1));
+        if (target) { toggle(target, true); target.scrollIntoView({ block: 'center' }); }
+    </script>
+</body>
+</html>

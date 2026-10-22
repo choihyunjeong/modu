@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="image/favicon-32.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="모두의 이동">
+    <title>지도에서 고르기 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css?v=2610221603">
+    <link rel="stylesheet" href="css/pick.css?v=2610221603">
+    <script src="js/common.js?v=2610221603"></script>
+    <script src="js/config.js?v=2610221603"></script>
+    <script src="js/trip.js?v=2610221603"></script>
+    <script src="js/map.js?v=2610221603"></script>
+    <script src="js/favorites.js?v=2610221603"></script>
+</head>
+<body>
+    <!-- 지도에서 직접 고르기 (?mode=pickup 탑승 위치 · dest 도착지 · fav 자주 가는 곳 · &edit=home 집 주소 바꾸기)
+         지도를 움직이면 가운데 핀이 그 자리 · 손을 떼면 차가 설 수 있는 가까운 도로로 핀을 맞추고 주소를 보여 줌 -->
+    <div id="wrap" class="pick">
+        <div class="pick__map" data-pick-map aria-label="지도 · 움직여서 위치를 골라 주세요"></div>
+
+        <!-- 가운데 고정 핀 (지도 좌표 = 핀 아래 점) -->
+        <div class="pick__pin map-pin map-pin--destination" aria-hidden="true">
+            <span class="map-pin__label" data-pin-label>여기</span>
+            <span class="map-pin__stem"></span>
+            <span class="map-pin__dot"></span>
+        </div>
+
+        <a href="search.html" class="btn-float btn-float--back pick__back" data-history-back aria-label="뒤로">
+            <span class="icon icon--arrow-left" aria-hidden="true"></span>
+        </a>
+        <button type="button" class="btn-float pick__locate" aria-label="내 위치로 이동" data-pick-locate>
+            <span class="icon icon--location-current" aria-hidden="true"></span>
+        </button>
+
+        <section class="pick-card" aria-labelledby="pick-title">
+            <h1 class="pick-card__title" id="pick-title" data-pick-title>지도를 움직여 위치를 골라 주세요</h1>
+            <div class="pick-card__place" aria-live="polite">
+                <span class="pick-card__dot" aria-hidden="true"></span>
+                <span class="pick-card__text">
+                    <strong class="pick-card__name" data-pick-name>위치를 확인하고 있어요…</strong>
+                    <span class="pick-card__addr" data-pick-addr></span>
+                </span>
+            </div>
+            <p class="pick-card__note" data-pick-note hidden></p>
+            <button type="button" class="btn btn--primary" data-pick-ok disabled>위치 확인</button>
+        </section>
+    </div>
+
+    <script src="js/map-pick.js?v=2610221603"></script>
+</body>
+</html>

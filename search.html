@@ -19,6 +19,7 @@
     <script src="js/trip.js?v=2610221603"></script>
     <script src="js/map.js?v=2610221603"></script>
     <script src="js/places.js?v=2610221603"></script>
+    <script src="js/favorites.js?v=2610221603"></script>
 </head>
 <body>
     <div id="wrap">
@@ -38,10 +39,10 @@
                 </form>
             </div>
             <div class="search-area__quick">
-                <button type="button" class="map-chip" data-soon="지도에서 직접 고르기">
+                <a href="map-pick.html?mode=dest" class="map-chip">
                     <span class="icon icon--xs icon--map" aria-hidden="true"></span>
                     지도에서 직접 고르기
-                </button>
+                </a>
             </div>
             <p class="search-area__help">장소를 고르면 내릴 출입구(정문·후문)도 확인해요</p>
         </div>
@@ -61,37 +62,10 @@
         <section class="place-block">
             <div class="place-block__head">
                 <h2 class="place-block__title">자주 가는 곳</h2>
-                <button type="button" class="place-block__action" data-soon="자주 가는 곳 편집">편집</button>
+                <a href="favorites.html" class="place-block__action">편집</a>
             </div>
-            <ul class="place-list">
-                <li>
-                    <a href="pickup.html" class="place-list__item" data-dest="집" data-lat="37.60277" data-lng="126.93638">
-                        <span class="place-list__tile"><span class="icon icon--home" aria-hidden="true"></span></span>
-                        <span class="place-list__text">
-                            <strong class="place-list__name">집</strong>
-                            <span class="place-list__addr">은평구 통일로 630 · 래미안베라힐즈</span>
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="pickup.html" class="place-list__item" data-dest="은평성모병원" data-lat="37.63361" data-lng="126.91630">
-                        <span class="place-list__tile"><span class="icon icon--location-star" aria-hidden="true"></span></span>
-                        <span class="place-list__text">
-                            <strong class="place-list__name">은평성모병원</strong>
-                            <span class="place-list__addr">은평구 통일로 1021 · 본관 정문</span>
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="pickup.html" class="place-list__item" data-dest="녹번동 주민센터" data-lat="37.60222" data-lng="126.92992">
-                        <span class="place-list__tile"><span class="icon icon--recently-viewed" aria-hidden="true"></span></span>
-                        <span class="place-list__text">
-                            <strong class="place-list__name">녹번동 주민센터</strong>
-                            <span class="place-list__addr">은평구 은평로 195 · 은평구청 안</span>
-                        </span>
-                    </a>
-                </li>
-            </ul>
+            <!-- 집 + 추가한 곳 (js/favorites.js) -->
+            <ul class="place-list" data-fav-list></ul>
         </section>
 
         <hr class="divider divider--thick">
@@ -102,36 +76,9 @@
                 <h2 class="place-block__title">최근 목적지</h2>
                 <button type="button" class="place-block__action" data-clear-recent>전체 지우기</button>
             </div>
-            <p class="search-empty" data-recent-empty hidden>최근 목적지가 없어요.</p>
-            <ul class="place-list place-list--recent" data-recent-list>
-                <li class="place-list__item">
-                    <a href="pickup.html" class="place-list__text" data-dest="연신내역 3번 출구" data-lat="37.61862" data-lng="126.92181">
-                        <span class="place-list__name">연신내역 3번 출구</span>
-                        <span class="place-list__addr">은평구 불광동 308-1 · 3호선</span>
-                    </a>
-                    <button type="button" class="place-list__map" aria-label="연신내역 3번 출구 지도에서 보기">
-                        <span class="icon icon--xs icon--map" aria-hidden="true"></span>
-                    </button>
-                </li>
-                <li class="place-list__item">
-                    <a href="pickup.html" class="place-list__text" data-dest="녹번역 3호선" data-lat="37.60081" data-lng="126.93583">
-                        <span class="place-list__name">녹번역 3호선</span>
-                        <span class="place-list__addr">은평구 통일로 지하 602-1</span>
-                    </a>
-                    <button type="button" class="place-list__map" aria-label="녹번역 3호선 지도에서 보기">
-                        <span class="icon icon--xs icon--map" aria-hidden="true"></span>
-                    </button>
-                </li>
-                <li class="place-list__item">
-                    <a href="pickup.html" class="place-list__text" data-dest="은평구청" data-lat="37.60282" data-lng="126.92894">
-                        <span class="place-list__name">은평구청</span>
-                        <span class="place-list__addr">은평구 은평로 195</span>
-                    </a>
-                    <button type="button" class="place-list__map" aria-label="은평구청 지도에서 보기">
-                        <span class="icon icon--xs icon--map" aria-hidden="true"></span>
-                    </button>
-                </li>
-            </ul>
+            <!-- 이동을 마친 곳 (처음엔 비어 있음 · 이동 완료되면 생김) -->
+            <p class="search-empty" data-recent-empty hidden>아직 최근 목적지가 없어요. 이동을 마치면 여기에 보여요.</p>
+            <ul class="place-list place-list--recent" data-recent-list></ul>
         </section>
         </div>
     </div>
@@ -145,20 +92,48 @@
             location.href = 'confirm.html';
         }
 
-        function addrOf(a) {
-            var el = a.querySelector('.place-list__addr');
-            return el ? el.textContent : '';
+        function esc(text) {
+            var div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
         }
-        document.querySelectorAll('[data-dest]').forEach(function (a) {
-            a.addEventListener('click', function (e) {
-                e.preventDefault();
-                chooseDest(a.dataset.dest, addrOf(a), a.dataset.lat, a.dataset.lng);
-            });
-            // 최근 목적지의 지도 버튼도 같은 곳으로 (호출 전 확인 지도에서 보여줌)
-            var mapBtn = a.parentNode.querySelector('.place-list__map');
-            if (mapBtn) mapBtn.addEventListener('click', function () {
-                chooseDest(a.dataset.dest, addrOf(a), a.dataset.lat, a.dataset.lng);
-            });
+
+        // 자주 가는 곳: 집 + 추가한 곳
+        document.querySelector('[data-fav-list]').innerHTML = Favorites.list().map(function (f, i) {
+            return '<li><a href="confirm.html" class="place-list__item" data-pick="fav" data-i="' + i + '">' +
+                '<span class="place-list__tile"><span class="icon ' + (f.type === 'home' ? 'icon--home' : 'icon--location-star') + '" aria-hidden="true"></span></span>' +
+                '<span class="place-list__text"><strong class="place-list__name">' + esc(f.name) + '</strong>' +
+                '<span class="place-list__addr">' + esc(f.addr) + '</span></span></a></li>';
+        }).join('');
+
+        // 최근 목적지: 이동을 마친 곳만 (처음엔 비어 있음)
+        var recentItems = Recent.list().filter(function (r) { return r.lat && r.lng; });
+        var recentList = document.querySelector('[data-recent-list]');
+        var recentEmpty = document.querySelector('[data-recent-empty]');
+        var clearBtn = document.querySelector('[data-clear-recent]');
+        function renderRecent() {
+            recentList.innerHTML = recentItems.map(function (r, i) {
+                return '<li class="place-list__item"><a href="confirm.html" class="place-list__text" data-pick="recent" data-i="' + i + '">' +
+                    '<span class="place-list__name">' + esc(r.name) + '</span>' +
+                    (r.addr ? '<span class="place-list__addr">' + esc(r.addr) + '</span>' : '') + '</a></li>';
+            }).join('');
+            recentEmpty.hidden = recentItems.length > 0;
+            clearBtn.hidden = !recentItems.length;
+        }
+        renderRecent();
+        clearBtn.addEventListener('click', function () {
+            Recent.clear();
+            recentItems = [];
+            renderRecent();
+            Toast.show('최근 목적지를 지웠어요', { check: true });
+        });
+
+        document.addEventListener('click', function (e) {
+            var a = e.target.closest('[data-pick]');
+            if (!a) return;
+            e.preventDefault();
+            var p = (a.dataset.pick === 'fav' ? Favorites.list() : recentItems)[Number(a.dataset.i)];
+            chooseDest(p.name, p.addr, p.lat, p.lng);
         });
 
         // 장소 검색 (카카오 장소 검색 · 내 위치 가까운 곳 먼저)
@@ -201,22 +176,6 @@
                 list.appendChild(li);
             });
         }
-
-        // 최근 목적지 전체 지우기 (이 브라우저에 기억)
-        var recentList = document.querySelector('[data-recent-list]');
-        var recentEmpty = document.querySelector('[data-recent-empty]');
-        var clearBtn = document.querySelector('[data-clear-recent]');
-        function showRecentCleared() {
-            recentList.hidden = true;
-            recentEmpty.hidden = false;
-            clearBtn.hidden = true;
-        }
-        try { if (localStorage.getItem('recentCleared')) showRecentCleared(); } catch (e) {}
-        clearBtn.addEventListener('click', function () {
-            try { localStorage.setItem('recentCleared', '1'); } catch (e) {}
-            showRecentCleared();
-            Toast.show('최근 목적지를 지웠어요', { check: true });
-        });
 
         // 장소 검색 (js/places.js · 카카오 → 못 쓰면 OpenStreetMap)
         //  가장 마지막에 요청한 검색의 결과만 보여 줌 (휴대폰 한글 조합 중 글자 차이로 결과를 버리지 않게)

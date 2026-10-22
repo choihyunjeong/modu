@@ -348,6 +348,81 @@
     color: var(--color-primary);
 }
 
+/* 콜센터 연결 (콜센터연결,공지사항) · 회색 면 버튼 2개 */
+.center-btns {
+    display: flex;
+    gap: var(--space-10);
+}
+
+.center-btn {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    min-height: 62px;
+    padding: var(--space-12) var(--space-8);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-gray);
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+
+.center-btn img { width: 38px; height: 38px; }
+
+/* 공지사항 · 제목 줄 + 전체 보기 */
+.section__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section__more {
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-size);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-sub);
+}
+
+.section:has(.section__more) { gap: var(--space-4); }
+
+.notice-box {
+    padding: 0 var(--space-16);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+}
+
+.notice-box li + li { border-top: 1px solid var(--color-divider); }
+
+.notice-box__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-12);
+    min-height: 46px;
+    padding: var(--space-12) 0;
+}
+
+.notice-box__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: var(--fs-15);
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notice-box__date {
+    flex-shrink: 0;
+    font-size: var(--fs-13);
+    color: var(--color-text-sub);
+}
+
 
 /* =========================================================
    글자 크기 시트 (홈_글자크기_시트)

@@ -29,6 +29,7 @@
     <script src="js/trip.js?v=2610221603"></script>
     <script src="js/actions.js?v=2610221603"></script>
     <script src="js/push.js?v=2610221603"></script>
+    <script src="js/notices.js?v=2610221603"></script>
 </head>
 <body>
     <div id="wrap">
@@ -127,6 +128,30 @@
                 <span class="icon icon--checkmark-outline" aria-hidden="true"></span>
                 한 번 등록한 탑승정보는 다음 호출에도 사용할 수 있어요. 언제든 수정할 수 있어요.
             </p>
+
+            <!-- 콜센터 연결 (콜센터연결,공지사항 · 앱이 어려우면 사람이 도와드려요) -->
+            <section class="section" data-read-part="콜센터 연결">
+                <h2 class="section__title" data-read>콜센터 연결</h2>
+                <div class="center-btns">
+                    <a href="tel:15884388" class="center-btn" data-center-tel>
+                        <img src="image/call-phone.png" alt="">
+                        전화로 접수
+                    </a>
+                    <a href="sms:15884388" class="center-btn" data-center-sms>
+                        <img src="image/call-sms.png" alt="">
+                        문자로 접수
+                    </a>
+                </div>
+            </section>
+
+            <!-- 공지사항 (최근 3개 · 전체 보기 → 공지사항 화면) -->
+            <section class="section" data-read-part="공지사항">
+                <div class="section__head">
+                    <h2 class="section__title" data-read>공지사항</h2>
+                    <a href="notices.html" class="section__more">전체 보기</a>
+                </div>
+                <ul class="notice-box" data-home-notices></ul>
+            </section>
         </main>
 
         <!-- 읽는 중 조작 (읽는 동안만 · 탭바 위) -->
@@ -389,6 +414,22 @@
             cancel.hidden = !s.cancel;
             document.getElementById('wrap').dataset.cancelStage = s.cancel || 'before';
         })();
+
+        // 콜센터 연결: 번호는 config (전화 앱 · 문자 앱이 번호가 채워진 채로 열림 · 바로 걸리지 않음)
+        (function () {
+            var tel = ((window.APP_CONFIG && APP_CONFIG.callCenter && APP_CONFIG.callCenter.tel) || '1588-4388').replace(/[^0-9]/g, '');
+            document.querySelector('[data-center-tel]').href = 'tel:' + tel;
+            document.querySelector('[data-center-sms]').href = 'sms:' + tel;
+        })();
+
+        // 공지사항: 최근 3개 · 누르면 공지사항 화면에서 그 공지가 펼쳐짐
+        document.querySelector('[data-home-notices]').innerHTML = NOTICES.slice(0, 3).map(function (n) {
+            var div = document.createElement('div');
+            div.textContent = n.title;
+            return '<li><a href="notices.html#' + n.id + '" class="notice-box__item">' +
+                '<span class="notice-box__title">' + div.innerHTML + '</span>' +
+                '<span class="notice-box__date">' + n.date + '</span></a></li>';
+        }).join('');
     </script>
 </body>
 </html>

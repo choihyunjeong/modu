@@ -252,6 +252,10 @@ var Trip = (function () {
             pickup: t.pickupName || '래미안베라힐즈 정문',
             pickupSpot: t.pickupSpot || '정문 · 경사로 쪽',
             dest: (t.destination && t.destination.name) || '은평성모병원',
+            // 최근 목적지에서 다시 고를 수 있게 좌표·주소도 남김
+            destAddr: (t.destination && t.destination.addr) || '',
+            destLat: places().destination.lat,
+            destLng: places().destination.lng,
             km: Math.round(rideKm() * 10) / 10,
             fare: fare(),
             riders: t.riders != null ? ridersText(t.riders) : '본인 1명',

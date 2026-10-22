@@ -73,7 +73,7 @@
             </fieldset>
 
             <div class="sheet-actions">
-                <button type="button" class="btn btn--gray btn--md" data-soon="다른 위치 선택">다른 위치 선택하기</button>
+                <a href="map-pick.html?mode=pickup" class="btn btn--gray btn--md">다른 위치 선택하기</a>
                 <a href="confirm.html" class="btn btn--primary" data-confirm-pickup>이 위치로 부를게요</a>
             </div>
         </section>
@@ -89,6 +89,26 @@
             // 정적 지도일 때는 디자인 좌표로 옮김
             pin.style.setProperty('--x', d.x + 'px');
             pin.style.setProperty('--y', d.y + 'px');
+        }
+        // 지도에서 직접 고른 위치가 있으면 선택지로 하나 더 (다시 고를 수 있게)
+        var custom = Trip.get().pickupCustom;
+        if (custom) {
+            var label = document.createElement('label');
+            label.className = 'pickup-option';
+            label.innerHTML = '<input type="radio" class="radio" name="pickup" value="custom">' +
+                '<span class="pickup-option__text"><span class="pickup-option__title"></span>' +
+                '<span class="pickup-option__desc"></span></span>';
+            var input = label.querySelector('input');
+            input.dataset.name = custom.name;
+            input.dataset.short = custom.road ? custom.road + ' 길가' : '고른 위치';
+            input.dataset.spot = '지도에서 고른 위치';
+            input.dataset.lat = custom.lat;
+            input.dataset.lng = custom.lng;
+            input.dataset.x = 62;
+            input.dataset.y = 220;
+            label.querySelector('.pickup-option__title').textContent = custom.name;
+            label.querySelector('.pickup-option__desc').textContent = '지도에서 고른 위치' + (custom.addr ? ' · ' + custom.addr : '');
+            document.querySelector('.pickup-options').appendChild(label);
         }
         document.querySelectorAll('input[name="pickup"]').forEach(function (radio) {
             radio.addEventListener('change', function () { choosePickup(radio); });

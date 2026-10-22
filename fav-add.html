@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="image/favicon-32.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="모두의 이동">
+    <title>자주 가는 곳 추가 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css?v=2610221603">
+    <link rel="stylesheet" href="css/fav.css?v=2610221603">
+    <script src="js/common.js?v=2610221603"></script>
+    <script src="js/config.js?v=2610221603"></script>
+    <script src="js/trip.js?v=2610221603"></script>
+    <script src="js/map.js?v=2610221603"></script>
+    <script src="js/places.js?v=2610221603"></script>
+    <script src="js/favorites.js?v=2610221603"></script>
+</head>
+<body>
+    <!-- 자주 가는 곳 추가 (?edit=home 이면 집 주소 바꾸기)
+         ① 장소 검색 (또는 아래 "지도에서 선택" → map-pick.html) → ② 이름 입력 (#name · 집은 이름 없이 바로 저장) -->
+    <div id="wrap">
+        <!-- ① 장소 찾기 -->
+        <section class="fav-step" data-step="search">
+            <header class="app-header">
+                <a href="favorites.html" class="app-header__back" aria-label="뒤로">
+                    <span class="icon icon--chevron-left" aria-hidden="true"></span>
+                </a>
+                <h1 class="app-header__title" data-search-title>자주 가는 곳 추가</h1>
+                <span class="app-header__blank" aria-hidden="true"></span>
+            </header>
+            <main class="content content--sub fav">
+                <form class="fav-search" role="search" onsubmit="return false;">
+                    <span class="fav-search__dot" aria-hidden="true"></span>
+                    <label for="fav-query" class="blind">장소 검색</label>
+                    <input type="search" id="fav-query" class="fav-search__input" placeholder="장소 이름이나 주소로 찾기" autocomplete="off" enterkeyhint="search">
+                    <button type="button" class="fav-search__voice" aria-label="말로 입력" data-voice-for="fav-query">
+                        <span class="icon icon--microphone" aria-hidden="true"></span>
+                    </button>
+                </form>
+                <ul class="fav-results" data-results aria-live="polite"></ul>
+                <p class="fav-empty" data-results-msg hidden></p>
+            </main>
+            <div class="fav-mapbar">
+                <a href="map-pick.html?mode=fav" class="fav-mapbar__btn" data-map-link>
+                    <span class="icon icon--location" aria-hidden="true"></span>
+                    지도에서 선택
+                </a>
+            </div>
+        </section>
+
+        <!-- ② 이름 입력 -->
+        <section class="fav-step" data-step="name" hidden>
+            <header class="app-header">
+                <a href="#" class="app-header__back" aria-label="장소 다시 고르기" data-back-search>
+                    <span class="icon icon--chevron-left" aria-hidden="true"></span>
+                </a>
+                <span class="app-header__title"></span>
+                <span class="app-header__blank" aria-hidden="true"></span>
+            </header>
+            <main class="content content--sub fav">
+                <h1 class="fav-name__title" id="fav-name-title" tabindex="-1">자주 가는 곳에 추가할<br>장소 이름을 입력해 주세요</h1>
+                <p class="fav-name__place" data-name-place></p>
+                <label for="fav-name" class="blind">장소 이름</label>
+                <input type="text" id="fav-name" class="fav-name__input" maxlength="20" placeholder="예: 은평성모병원, 복지관" autocomplete="off" aria-describedby="fav-name-title">
+            </main>
+            <div class="bottom-action">
+                <button type="button" class="btn btn--primary" data-save-name disabled>입력 완료</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        var edit = new URLSearchParams(location.search).get('edit');
+        var isHome = edit === 'home';
+        var picked = null;
+        var stepSearch = document.querySelector('[data-step="search"]');
+        var stepName = document.querySelector('[data-step="name"]');
+        var nameInput = document.getElementById('fav-name');
+        var saveBtn = document.querySelector('[data-save-name]');
+
+        if (isHome) {
+            document.querySelector('[data-search-title]').textContent = '집 주소 바꾸기';
+            document.title = '집 주소 바꾸기 | 모두의 이동';
+            document.querySelector('[data-map-link]').href = 'map-pick.html?mode=fav&edit=home';
+        }
+
+        function esc(text) {
+            var div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        // 장소를 골랐을 때: 집이면 바로 저장 · 아니면 이름 입력
+        function choose(place) {
+            picked = place;
+            if (isHome) {
+                Favorites.update('home', { addr: place.addr ? place.name + ' · ' + place.addr : place.name, lat: place.lat, lng: place.lng });
+                StateNotice.leave('집 위치를 바꿨어요');
+                return location.replace('favorites.html');
+            }
+            showName();
+        }
+        function showName() {
+            stepSearch.hidden = true;
+            stepName.hidden = false;
+            nameInput.value = picked.name;
+            document.querySelector('[data-name-place]').textContent = picked.addr || '';
+            syncSave();
+            document.getElementById('fav-name-title').focus();
+        }
+        function showSearch() {
+            stepName.hidden = true;
+            stepSearch.hidden = false;
+            document.getElementById('fav-query').focus();
+        }
+        document.querySelector('[data-back-search]').addEventListener('click', function (e) {
+            e.preventDefault();
+            if (location.hash === '#name') history.replaceState(null, '', location.pathname + location.search);
+            showSearch();
+        });
+
+        // 이름을 넣어야 입력 완료가 켜짐
+        function syncSave() { saveBtn.disabled = !nameInput.value.trim(); }
+        nameInput.addEventListener('input', syncSave);
+        saveBtn.addEventListener('click', function () {
+            var name = nameInput.value.trim();
+            if (!name || !picked) return;
+            Favorites.add({ name: name, addr: picked.addr || (picked.name !== name ? picked.name : ''), lat: picked.lat, lng: picked.lng });
+            StateNotice.leave(name + '을(를) 자주 가는 곳에 추가했어요');
+            location.replace('favorites.html');
+        });
+
+        // 지도에서 고르고 돌아왔으면 (#name) 이름 입력부터
+        if (location.hash === '#name') {
+            try { picked = JSON.parse(sessionStorage.getItem('favPick')); } catch (e) {}
+            if (picked) showName();
+        }
+
+        // 장소 검색 (js/places.js)
+        var input = document.getElementById('fav-query');
+        var results = document.querySelector('[data-results]');
+        var msg = document.querySelector('[data-results-msg]');
+        var timer = null, lastQuery = '';
+        function search(query) {
+            lastQuery = query;
+            msg.hidden = false;
+            msg.textContent = '찾고 있어요…';
+            Places.search(query, function (items) {
+                if (query !== lastQuery) return;
+                items = items || [];
+                msg.hidden = items.length > 0;
+                msg.textContent = '검색 결과가 없어요. 다른 이름으로 찾아보거나 지도에서 골라 주세요.';
+                results.innerHTML = items.map(function (p, i) {
+                    return '<li><button type="button" class="fav-result" data-i="' + i + '">' +
+                        '<strong class="fav-result__name">' + esc(p.name) + '</strong>' +
+                        '<span class="fav-result__addr">' + esc(p.addr) + '</span></button></li>';
+                }).join('');
+                results.onclick = function (e) {
+                    var b = e.target.closest('[data-i]');
+                    if (b) choose(items[Number(b.dataset.i)]);
+                };
+            });
+        }
+        function onType() {
+            var q = input.value.trim();
+            clearTimeout(timer);
+            if (!q) { lastQuery = ''; results.innerHTML = ''; msg.hidden = true; return; }
+            timer = setTimeout(function () { search(q); }, 250);
+        }
+        input.addEventListener('input', onType);
+        input.addEventListener('compositionend', onType);
+        input.form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var q = input.value.trim();
+            if (q) { clearTimeout(timer); input.blur(); search(q); }
+        });
+        MapKit.load(function () {}, function () {});
+    </script>
+</body>
+</html>
