@@ -168,30 +168,53 @@ var Toast = (function () {
     return { show: show };
 })();
 
-// 보호자 (브라우저 localStorage · 처음엔 config.js의 예시 보호자)
-//  { name, relation, phone, notify(이동 알림 받기), proxy(대신 접수), status: 'connected' | 'invited' }
+// 보호자 (브라우저 localStorage · 처음엔 아무도 없음)
+//  { relation, phone, notify(이동 알림 받기), proxy(대신 접수), status: 'connected' | 'invited', invitedAt }
+//  보호자 연결에서 초대 → "수락 대기 중" → 시연용으로 잠시(ACCEPT_MS) 뒤 상대가 수락한 것으로 처리
 //  자동 알림은 연결됐고(수락함) "이동 알림 받기"를 허용한 보호자에게만 감
 var Guardians = (function () {
     var KEY = 'guardians';
+    var ACCEPT_MS = 10000;
 
-    function list() {
-        try {
-            var saved = JSON.parse(localStorage.getItem(KEY));
-            if (saved) return saved;
-        } catch (e) {}
-        var base = (window.APP_CONFIG && APP_CONFIG.guardians) || [];
-        return base.map(function (g) { return Object.assign({ status: 'connected' }, g); });
+    function read() {
+        try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; }
     }
 
     function save(items) {
         try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {}
     }
 
+    // 수락 대기 중인 초대가 충분히 지났으면 연결로 바꾸고, 새로 연결된 보호자를 돌려줌
+    function acceptPending() {
+        var items = read();
+        var accepted = [];
+        items.forEach(function (g) {
+            if (g.status === 'invited' && Date.now() - (g.invitedAt || 0) > ACCEPT_MS) {
+                g.status = 'connected';
+                g.justAccepted = true;   // 다음 화면에서 "수락했어요"를 한 번 알려 줌
+                accepted.push(g);
+            }
+        });
+        if (accepted.length) save(items);
+        return accepted;
+    }
+
+    function list() {
+        acceptPending();
+        return read();
+    }
+
     // 새로 초대 (수락 대기) · 같은 번호면 설정만 바꿈
     function invite(g) {
-        var items = list().filter(function (x) { return x.phone !== g.phone; });
-        items.push(Object.assign({ status: 'invited' }, g));
+        var items = read().filter(function (x) { return x.phone !== g.phone; });
+        items.push(Object.assign({ status: 'invited', invitedAt: Date.now() }, g));
         save(items);
+    }
+
+    // 화면에 보이는 이름: 관계 + 가린 번호 (가족 010-12••-••78)
+    function label(g) {
+        var phone = (g.phone || '').replace(/^(\d{3})-(\d{2})\d{1,2}-\d{2}(\d{2})$/, '$1-$2••-••$3');
+        return (g.relation ? g.relation + ' ' : '') + phone;
     }
 
     function connected() {
@@ -203,7 +226,18 @@ var Guardians = (function () {
         return connected().filter(function (g) { return g.notify; });
     }
 
-    return { list: list, invite: invite, connected: connected, notifyTargets: notifyTargets };
+    // 막 수락한 보호자를 한 번만 알려 줌
+    function announceAccepted() {
+        acceptPending();
+        var items = read();
+        var fresh = items.filter(function (g) { return g.justAccepted; });
+        if (!fresh.length) return;
+        items.forEach(function (g) { delete g.justAccepted; });
+        save(items);
+        Toast.show(fresh.map(label).join(', ') + ' 님이 보호자 연결을 수락했어요', { check: true, top: true, duration: 4000 });
+    }
+
+    return { list: list, invite: invite, connected: connected, notifyTargets: notifyTargets, label: label, announceAccepted: announceAccepted };
 })();
 
 // 말로 입력 (브라우저 음성 인식 · 지원할 때만) · 들은 말을 입력칸 끝에 붙임
@@ -282,6 +316,8 @@ var StateNotice = (function () {
 document.addEventListener('DOMContentLoaded', function () {
     SheetDrag.init();
     StateNotice.show();
+    // 다른 안내와 겹치지 않게 조금 뒤에
+    setTimeout(Guardians.announceAccepted, 1200);
 
     // 다른 화면에서 수정하러 들어온 경우(?from=confirm): 저장 후 그 화면으로 돌아감
     //  [data-keep-from] 다음 단계 링크에도 from을 이어 붙임

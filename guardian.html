@@ -99,7 +99,6 @@
             var shown = digits.replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
             var relation = document.querySelector('.guardian__chips [aria-pressed="true"]');
             Guardians.invite({
-                name: shown,
                 relation: relation ? relation.textContent.trim() : '',
                 phone: shown,
                 notify: document.querySelector('input[name="permission"][value="notify"]').checked,

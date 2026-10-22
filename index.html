@@ -189,23 +189,32 @@
         basisSheet.addEventListener('click', function (e) { if (e.target === basisSheet) closeBasis(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !basisSheet.hidden) closeBasis(); });
     </script>
-<script>
-        // 내 탑승 정보: 저장한 탑승 정보·연결된 보호자를 보여 주고, 버튼은 "수정"으로
+    <script>
+        // 내 탑승 정보: 저장한 탑승 정보·보호자를 보여 주고, 버튼은 "수정"으로 (아무것도 안 했으면 처음 문구 그대로)
         (function () {
             var ride = RideInfo.describe();
             if (ride && ride.device) {
                 document.querySelector('[data-home-ride]').textContent = ride.device;
                 document.querySelector('[data-home-ride-btn]').textContent = '수정';
             }
-            var list = Guardians.list();
-            if (list.length) {
+            function renderGuardians() {
+                var list = Guardians.list();
+                if (!list.length) return;
                 document.querySelector('[data-home-guardian]').textContent = list.map(function (g) {
-                    var who = g.name + (g.relation ? '(' + g.relation + ')' : '');
+                    var who = Guardians.label(g);
                     if (g.status !== 'connected') return who + ' · 수락 대기 중';
                     return who + (g.notify ? ' · 이동 알림 받는 중' : ' · 연결됨');
                 }).join(' / ');
                 document.querySelector('[data-home-guardian-btn]').textContent = '수정';
+                // 수락 대기 중이면 잠시 뒤 다시 확인 (시연용 · 수락되면 바로 바뀜)
+                if (list.some(function (g) { return g.status !== 'connected'; })) {
+                    setTimeout(function () {
+                        renderGuardians();
+                        Guardians.announceAccepted();
+                    }, 5000);
+                }
             }
+            renderGuardians();
         })();
     </script>
 </body>

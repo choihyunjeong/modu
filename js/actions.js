@@ -124,7 +124,12 @@ var Actions = (function () {
         if (trip().share) return sharing(opener);
         // 연결된(수락한) 보호자만 · "이동 알림 받기"를 허용한 분은 처음부터 골라 둠
         var guardians = Guardians.connected().map(function (g) {
-            return Object.assign({ badge: g.notify ? '접수 알림 받는 중' : '연결됨', checked: g.notify }, g);
+            return Object.assign({}, g, {
+                name: g.relation || '보호자',
+                phone: Guardians.label({ phone: g.phone }),
+                badge: g.notify ? '이동 알림 받는 중' : '연결됨',
+                checked: g.notify
+            });
         });
         if (!guardians.length) {
             Toast.show('연결된 보호자가 없어요 · 홈의 "보호자 연결"에서 먼저 초대해 주세요');
@@ -137,7 +142,7 @@ var Actions = (function () {
                     return '<label class="guardian-pick__row">' +
                         '<span class="guardian-pick__avatar" aria-hidden="true"></span>' +
                         '<span class="guardian-pick__text">' +
-                            '<span class="guardian-pick__name">' + esc(g.name) + ' (' + esc(g.relation) + ')' +
+                            '<span class="guardian-pick__name">' + esc(g.name) +
                                 (g.badge ? '<span class="guardian-pick__badge">' + esc(g.badge) + '</span>' : '') + '</span>' +
                             '<span class="guardian-pick__phone">' + esc(g.phone) + '</span>' +
                         '</span>' +
@@ -155,7 +160,8 @@ var Actions = (function () {
             var start = panel.querySelector('[data-start]');
             function picked() {
                 return Array.prototype.map.call(panel.querySelectorAll('.guardian-pick input:checked'), function (input) {
-                    return guardians[input.value].name;
+                    var g = guardians[input.value];
+                    return g.name + ' ' + g.phone;
                 });
             }
             function sync() { start.disabled = !picked().length; }
@@ -472,7 +478,7 @@ var Actions = (function () {
 
     // 탑승 중 · 보호자 자동 알림 줄 ("이동 알림 받기"를 허용한 연결된 보호자가 있을 때만)
     function renderGuardianNotice() {
-        var names = Guardians.notifyTargets().map(function (g) { return g.name; });
+        var names = Guardians.notifyTargets().map(Guardians.label);
         document.querySelectorAll('[data-guardian-notice]').forEach(function (el) {
             el.hidden = !names.length;
             el.textContent = names.join(', ') + ' 님에게 이동 시작 알림을 보냈어요';
