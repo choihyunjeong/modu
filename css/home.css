@@ -51,8 +51,8 @@
 }
 
 .now__title {
-    /* 30px · 좁은 화면에서는 "10월 22일(목) 오후 8~9시"가 한 줄에 들어가게 줄어듦 (320px ≈ 26px) */
-    font-size: calc(clamp(24px, (100vw - 40px) / 10.6, 30px) * var(--font-scale));
+    /* 28px · 아주 좁은 화면에서는 "10월 22일(목) 오후 8~9시"가 한 줄에 들어가게 줄어듦 (320px ≈ 26px) */
+    font-size: calc(clamp(24px, (100vw - 40px) / 10.6, 28px) * var(--font-scale));
     font-weight: var(--font-weight-bold);
     line-height: 1.5;
     letter-spacing: -0.02em;
