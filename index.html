@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/home.css">
     <script src="js/common.js"></script>
     <script src="js/stats.js"></script>
+    <script src="js/reader.js"></script>
 </head>
 <body>
     <div id="wrap">
@@ -17,25 +18,25 @@
                 <!-- 맨 위 줄 · 글자 크기 / 읽어주기 -->
                 <div class="home-top">
                     <button type="button" class="btn-circle btn-circle--text" aria-label="글자 크기 바꾸기" aria-haspopup="dialog" aria-controls="font-size-sheet" data-open-font-size>가</button>
-                    <button type="button" class="btn-circle" aria-label="화면 읽어주기">
+                    <button type="button" class="btn-circle" aria-label="화면 읽어주기" aria-pressed="false" data-reader-toggle>
                         <span class="icon icon--speak" aria-hidden="true"></span>
                     </button>
                 </div>
 
                 <!-- 지금 상황 -->
-                <section class="now">
+                <section class="now" data-read-part="호출 안내">
                     <!-- 오늘 요일의 평균 대기 (js/stats.js · 2026년 1월 통계) -->
-                    <h1 class="now__title">
+                    <h1 class="now__title" data-read>
                         <span><span data-stat="day">목요일</span>에는</span>
                         <span>승차까지 평균 <span data-stat="avg">32</span>분</span>
                     </h1>
-                    <p class="now__nearby">
+                    <p class="now__nearby" data-read>
                         <img class="now__car" src="image/car.png" alt="">
                         <span class="now__count">주변 배차 가능 차량 5대</span>
                         <span class="now__time">· 오후 2:25 기준</span>
                     </p>
                     <div class="now__basis">
-                        <span data-stat="basis">은평구 · 2026년 1월 같은 요일 평균</span>
+                        <span data-stat="basis" data-read>은평구 · 2026년 1월 같은 요일 평균</span>
                         <button type="button" class="btn-help" aria-label="기준 안내 보기" aria-haspopup="dialog" data-open-basis>?</button>
                     </div>
                 </section>
@@ -51,18 +52,18 @@
             </div>
 
             <!-- 내 탑승 정보 -->
-            <section class="section">
-                <h2 class="section__title">내 탑승 정보</h2>
+            <section class="section" data-read-part="내 탑승 정보">
+                <h2 class="section__title" data-read>내 탑승 정보</h2>
                 <ul class="card ride-info">
                     <li class="ride-info__row">
-                        <div class="ride-info__text">
+                        <div class="ride-info__text" data-read>
                             <p class="ride-info__title">탑승 정보</p>
                             <p class="ride-info__desc">이동 보조기기와 필요한 도움을 기사님께 미리 알려드려요.</p>
                         </div>
                         <a href="ride-info.html" class="btn-sm">등록</a>
                     </li>
                     <li class="ride-info__row">
-                        <div class="ride-info__text">
+                        <div class="ride-info__text" data-read>
                             <p class="ride-info__title">보호자 연결</p>
                             <p class="ride-info__desc">보호자와 차량 도착·이동 상황을 공유해요.</p>
                         </div>
@@ -72,14 +73,31 @@
             </section>
 
             <!-- 안내 줄 -->
-            <p class="notice home-notice">
+            <p class="notice home-notice" data-read-part="안내" data-read>
                 <span class="icon icon--checkmark-outline" aria-hidden="true"></span>
                 한 번 등록한 탑승정보는 다음 호출에도 사용할 수 있어요. 언제든 수정할 수 있어요.
             </p>
         </main>
 
-        <!-- 탭바 -->
-        <nav class="tab-bar" aria-label="주 메뉴">
+        <!-- 읽는 중 조작 (읽는 동안만 · 탭바 위) -->
+        <div class="reader-bar" data-reader-bar hidden>
+            <div class="reader-bar__text" aria-live="polite">
+                <p class="reader-bar__count" data-reader-count>1/3</p>
+                <p class="reader-bar__part" data-reader-part>호출 안내 읽는 중</p>
+            </div>
+            <div class="reader-bar__btns">
+                <button type="button" class="reader-bar__btn" data-reader-pause>
+                    <span class="icon icon--pause" aria-hidden="true"></span>
+                    <span data-reader-pause-label>일시정지</span>
+                </button>
+                <button type="button" class="reader-bar__btn reader-bar__btn--stop" data-reader-stop>
+                    <span class="icon icon--close" aria-hidden="true"></span>
+                    읽기 종료
+                </button>
+            </div>
+        </div>
+
+        <!-- 탭바 -->        <nav class="tab-bar" aria-label="주 메뉴">
             <a href="index.html" class="tab-bar__item is-active" aria-current="page">
                 <span class="icon icon--home" aria-hidden="true"></span>
                 홈
@@ -92,7 +110,7 @@
                 <span class="icon icon--time" aria-hidden="true"></span>
                 이용내역
             </a>
-            <a href="#" class="tab-bar__item">
+            <a href="#" class="tab-bar__item" data-soon="설정 화면">
                 <span class="icon icon--settings" aria-hidden="true"></span>
                 설정
             </a>

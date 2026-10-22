@@ -30,7 +30,7 @@
                 </form>
             </div>
             <div class="search-area__quick">
-                <button type="button" class="map-chip">
+                <button type="button" class="map-chip" data-soon="지도에서 직접 고르기">
                     <span class="icon icon--xs icon--map" aria-hidden="true"></span>
                     지도에서 직접 고르기
                 </button>
@@ -53,7 +53,7 @@
         <section class="place-block">
             <div class="place-block__head">
                 <h2 class="place-block__title">자주 가는 곳</h2>
-                <button type="button" class="place-block__action">편집</button>
+                <button type="button" class="place-block__action" data-soon="자주 가는 곳 편집">편집</button>
             </div>
             <ul class="place-list">
                 <li>
@@ -92,9 +92,10 @@
         <section class="place-block">
             <div class="place-block__head">
                 <h2 class="place-block__title">최근 목적지</h2>
-                <button type="button" class="place-block__action">전체 지우기</button>
+                <button type="button" class="place-block__action" data-clear-recent>전체 지우기</button>
             </div>
-            <ul class="place-list place-list--recent">
+            <p class="search-empty" data-recent-empty hidden>최근 목적지가 없어요.</p>
+            <ul class="place-list place-list--recent" data-recent-list>
                 <li class="place-list__item">
                     <a href="pickup.html" class="place-list__text" data-dest="연신내역 3번 출구" data-lat="37.61862" data-lng="126.92181">
                         <span class="place-list__name">연신내역 3번 출구</span>
@@ -197,6 +198,22 @@
                 list.appendChild(li);
             });
         }
+
+        // 최근 목적지 전체 지우기 (이 브라우저에 기억)
+        var recentList = document.querySelector('[data-recent-list]');
+        var recentEmpty = document.querySelector('[data-recent-empty]');
+        var clearBtn = document.querySelector('[data-clear-recent]');
+        function showRecentCleared() {
+            recentList.hidden = true;
+            recentEmpty.hidden = false;
+            clearBtn.hidden = true;
+        }
+        try { if (localStorage.getItem('recentCleared')) showRecentCleared(); } catch (e) {}
+        clearBtn.addEventListener('click', function () {
+            try { localStorage.setItem('recentCleared', '1'); } catch (e) {}
+            showRecentCleared();
+            Toast.show('최근 목적지를 지웠어요', { check: true });
+        });
 
         // 장소 검색 (js/places.js · 카카오 → 못 쓰면 OpenStreetMap)
         function search(query) {

@@ -175,6 +175,14 @@
     }
 
     // ---------- 버튼 ----------
+    // 키보드: 듣기·읽기를 멈추고 목적지 검색으로 (들은 말이 있으면 검색창에 넣어 줌)
+    document.querySelector('[data-voice-keyboard]').addEventListener('click', function (e) {
+        e.preventDefault();
+        stopListening();
+        stopSpeaking();
+        var text = heardLine.hidden ? '' : heardLine.textContent.replace(/"/g, '');
+        location.href = 'search.html' + (text ? '?q=' + encodeURIComponent(text) : '');
+    });
     mic.addEventListener('click', function () {
         if (rec) stopListening();
         else listen(understand);

@@ -94,6 +94,90 @@
     color: var(--color-text-sub);
 }
 
+/* =========================================================
+   화면 읽어주기 (홈_v18_03_읽어주는중)
+   ========================================================= */
+.icon--pause { --icon-url: url("../image/pause.svg"); }
+.icon--play { --icon-url: url("../image/play.svg"); }
+.icon--close { --icon-url: url("../image/close.svg"); }
+
+/* 스피커 켜짐 */
+.btn-circle.is-on {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+/* 읽는 문장만 연한 파란 배경 */
+[data-read] {
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.is-reading-mode [data-read] { scroll-margin: 96px 0; }
+
+.is-reading {
+    background: var(--color-primary-bg);
+    box-shadow: 0 0 0 6px var(--color-primary-bg);
+}
+
+/* 읽는 중 조작 (탭바 위) */
+.reader-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-10) var(--space-12);
+    background: var(--color-primary-bg);
+}
+
+.reader-bar__count {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+    color: var(--color-primary);
+}
+
+.reader-bar__part {
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-text-sub);
+}
+
+.reader-bar__btns {
+    display: flex;
+    gap: var(--space-6);
+}
+
+.reader-bar__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    height: 52px;
+    padding: 0 var(--space-8);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+}
+
+.reader-bar__btn--stop {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-read] { transition: none; }
+}
+
 /* 평균 대기 기준 안내 시트 */
 .basis-sheet { padding-bottom: var(--space-24); }
 

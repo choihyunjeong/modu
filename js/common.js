@@ -239,6 +239,18 @@ var VoiceInput = (function () {
     return { listen: listen };
 })();
 
+// 아직 화면이 없는 버튼: <button data-soon="설정">  → "설정 화면은 아직 준비 중이에요"
+document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-soon]');
+    if (!el) return;
+    e.preventDefault();
+    var name = el.dataset.soon;
+    // 받침이 있으면 "은", 없으면 "는"
+    var code = name ? name.charCodeAt(name.length - 1) - 0xac00 : -1;
+    var josa = code >= 0 && code <= 11171 ? (code % 28 ? '은' : '는') : '은(는)';
+    Toast.show(name ? name + josa + ' 아직 준비 중이에요' : '아직 준비 중인 화면이에요');
+});
+
 // 글자 수: <span data-count-for="입력칸 id">0</span>
 document.addEventListener('input', function (e) {
     if (!e.target.id) return;
