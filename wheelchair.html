@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>휠체어 정보 추가 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/ride-info.css">
+    <link rel="stylesheet" href="css/wheelchair.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/ride-info.js"></script>
+</head>
+<body>
+    <!-- 휠체어정보_v13 (A 사진·모델명 경로 / B 규격 경로) · 화면은 주소 끝(#a0 · #a1 …)으로 바뀌고 뒤로 가기로 돌아감 -->
+    <div id="wrap" class="wc">
+        <header class="app-header" data-wc-header>
+            <button type="button" class="app-header__back" data-wc-back aria-label="뒤로">
+                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+            </button>
+            <h1 class="app-header__title" data-wc-title>휠체어 정보 추가</h1>
+            <span class="app-header__blank" aria-hidden="true"></span>
+        </header>
+
+        <!-- A0 라벨로 찾기 -->
+        <section class="wc-step" data-step="a0" data-title="휠체어 정보 추가" hidden>
+            <main class="content content--sub wc-body">
+                <div class="page-title">
+                    <h2 class="page-title__heading">라벨을 찍어 휠체어 정보 찾기</h2>
+                    <p class="page-title__desc">제품 정보 스티커(제조사·모델명·바코드)를 찍으면 모델을 찾아볼게요.</p>
+                </div>
+                <div class="wc-tiles">
+                    <a href="#a1" class="wc-tile">
+                        <span class="icon icon--camera" aria-hidden="true"></span>
+                        라벨 사진 찍기
+                    </a>
+                    <button type="button" class="wc-tile" data-album="label">
+                        <span class="icon icon--album" aria-hidden="true"></span>
+                        앨범에서 선택
+                    </button>
+                </div>
+                <p class="wc-note">사진은 모델을 찾는 데만 써요. 탑승 가능 여부를 판정하지 않아요.</p>
+                <div class="wc-rows">
+                    <a href="#a1b" class="wc-row">라벨이 없거나 찍기 어려워요<span class="icon icon--chevron-right" aria-hidden="true"></span></a>
+                    <a href="#a2m" class="wc-row">모델명으로 찾기<span class="icon icon--chevron-right" aria-hidden="true"></span></a>
+                    <a href="#b1" class="wc-row">규격을 알고 있어요<span class="icon icon--chevron-right" aria-hidden="true"></span></a>
+                </div>
+            </main>
+            <div class="bottom-action">
+                <button type="button" class="btn btn--text" data-save-unknown>지금은 몰라요 · 정보 없이 저장</button>
+            </div>
+        </section>
+
+        <!-- A1 라벨 사진 찍기 / A1b 휠체어 전체 사진 찍기 (같은 카메라 화면 · 문구만 다름) -->
+        <section class="wc-step wc-camera" data-step="a1" data-title="라벨 사진 찍기" hidden>
+            <div class="wc-camera__body">
+                <h2 class="wc-camera__title" data-cam-title>제품 정보가 적힌 스티커를<br>찍어주세요</h2>
+                <div class="wc-camera__frame" data-cam-frame>
+                    <video class="wc-camera__video" data-cam-video playsinline muted></video>
+                    <span class="wc-camera__chip" data-cam-chip>제조사·모델명·바코드가 함께 보이게</span>
+                    <p class="wc-camera__reading" data-cam-reading hidden>읽는 중…</p>
+                </div>
+                <ul class="wc-camera__tips">
+                    <li>밝은 곳에서 찍어 주세요</li>
+                    <li data-cam-tip2>글자가 또렷하게 보이면 바로 읽어요</li>
+                </ul>
+                <div class="wc-camera__controls">
+                    <div class="wc-camera__ctl">
+                        <button type="button" class="wc-camera__round" data-album="camera" aria-label="앨범에서 고르기"><span class="icon icon--album" aria-hidden="true"></span></button>
+                        <span>앨범</span>
+                    </div>
+                    <div class="wc-camera__ctl">
+                        <button type="button" class="wc-camera__shutter" data-shutter aria-label="찍기"><img src="image/shutter.svg" alt=""></button>
+                        <span>찍기</span>
+                    </div>
+                    <div class="wc-camera__ctl">
+                        <button type="button" class="wc-camera__round" data-flash aria-pressed="false" aria-label="플래시"><span class="wc-camera__flash" data-flash-state aria-hidden="true">끔</span></button>
+                        <span>플래시</span>
+                    </div>
+                </div>
+                <p class="wc-camera__caption" data-cam-caption>찍은 사진은 모델을 찾는 데만 써요</p>
+                <a href="#a1b" class="wc-camera__link" data-cam-link>라벨이 없거나 찍기 어려워요 ›</a>
+            </div>
+            <input type="file" accept="image/*" capture="environment" class="blind" data-cam-file tabindex="-1" aria-hidden="true">
+            <input type="file" accept="image/*" class="blind" data-album-file tabindex="-1" aria-hidden="true">
+        </section>
+
+        <!-- A2 결과 확인 -->
+        <section class="wc-step" data-step="a2" data-title="라벨로 찾기" hidden>
+            <main class="content content--sub wc-body">
+                <div class="page-title">
+                    <h2 class="page-title__heading"><span>이 휠체어가</span><span>맞나요?</span></h2>
+                    <p class="page-title__desc" data-a2-desc>라벨에서 읽은 제조사·모델명이에요. 사진과 비교해 확인해 주세요.</p>
+                </div>
+                <div class="wc-model">
+                    <div class="wc-model__top">
+                        <img class="wc-model__img" src="image/wheelchair-power.png" alt="">
+                        <div>
+                            <p class="wc-model__name" data-a2-name>A사 B500 · 전동 휠체어</p>
+                            <p class="wc-model__size" data-a2-size>폭 620 · 길이 1,110 · 높이 980mm (제조사 자료)</p>
+                        </div>
+                    </div>
+                    <p class="wc-model__ok"><span class="icon icon--sm icon--checkmark-outline" aria-hidden="true"></span>제조사 규격을 불러왔어요 · 실제 기기와 다를 수 있어요</p>
+                </div>
+                <fieldset class="wc-field">
+                    <legend class="wc-field__title">읽은 정보가 맞나요? <span>하나 선택</span></legend>
+                    <div class="card choice-list">
+                        <label class="choice-list__item"><input type="radio" class="radio" name="a2-match" value="yes" checked><span class="choice-list__title">맞아요</span></label>
+                        <label class="choice-list__item"><input type="radio" class="radio" name="a2-match" value="no"><span class="choice-list__text"><span class="choice-list__title">아니에요</span><span class="choice-list__desc">다시 찍거나 다른 방법으로 찾아요</span></span></label>
+                    </div>
+                </fieldset>
+                <fieldset class="wc-field" data-a2-mods>
+                    <legend class="wc-field__title">평소 사용 시 추가 장치나 개조가 있나요?</legend>
+                    <div class="card choice-list">
+                        <label class="choice-list__item"><input type="radio" class="radio" name="a2-mods" value="no" checked><span class="choice-list__title">없어요</span></label>
+                        <label class="choice-list__item"><input type="radio" class="radio" name="a2-mods" value="yes"><span class="choice-list__text"><span class="choice-list__title">있어요</span><span class="choice-list__desc">헤드레스트·배터리·바구니 추가 등 · 이용할 때 함께 확인해요</span></span></label>
+                    </div>
+                </fieldset>
+                <p class="wc-info"><span class="icon icon--warning" aria-hidden="true"></span>찾은 모델 정보는 배차 시 참고해요. 실제 쓰는 기기의 크기가 확정되는 건 아니에요.</p>
+            </main>
+            <div class="bottom-action">
+                <button type="button" class="btn btn--primary" data-a2-save>이 정보로 저장</button>
+            </div>
+        </section>
+
+        <!-- A2m 모델명 직접 입력 / A4 비슷한 모델 후보 (같은 후보 목록) -->
+        <section class="wc-step" data-step="a2m" data-title="모델명으로 찾기" hidden>
+            <main class="content content--sub wc-body">
+                <div class="wc-search">
+                    <label for="wc-model-input" class="blind">제조사나 모델명</label>
+                    <input type="search" id="wc-model-input" class="wc-search__input" placeholder="제조사나 모델명 일부" autocomplete="off">
+                    <button type="button" class="wc-search__mic" data-voice-for="wc-model-input" aria-label="말로 입력하기"><span class="icon icon--microphone" aria-hidden="true"></span></button>
+                </div>
+                <fieldset class="wc-field">
+                    <legend class="wc-field__title"><span data-cand-count>후보 3개</span> <span>사진과 모델명을 보고 맞는지 확인해요</span></legend>
+                    <div class="card choice-list" data-cand-list></div>
+                    <p class="wc-empty" data-cand-empty hidden>찾는 모델이 없어요. 다른 이름으로 찾아보세요.</p>
+                </fieldset>
+                <p class="wc-info"><span class="icon icon--warning" aria-hidden="true"></span>검색 결과는 참고용이에요. 다음 화면에서 실제 기기와 같은지 확인해요.</p>
+            </main>
+            <div class="bottom-action">
+                <button type="button" class="btn btn--primary" data-cand-pick disabled>이 후보로 확인하기</button>
+                <a href="#a5" class="btn btn--text">맞는 게 없어요</a>
+            </div>
+        </section>
+
+        <section class="wc-step" data-step="a4" data-title="전체 사진으로 찾기" hidden>
+            <main class="content content--sub wc-body">
+                <div class="page-title">
+                    <h2 class="page-title__heading">비슷한 모델을 찾았어요</h2>
+                    <p class="page-title__desc">휠체어 전체 사진으로 찾은 후보예요. 라벨이나 설명서와 비교해 확인해 주세요.</p>
+                </div>
+                <fieldset class="wc-field">
+                    <legend class="wc-field__title">후보 3개 <span>맞는 모델을 고르면 다음에 확인해요</span></legend>
+                    <div class="card choice-list" data-cand-list-photo></div>
+                </fieldset>
+                <p class="wc-info"><span class="icon icon--warning" aria-hidden="true"></span>사진으로 찾은 후보는 참고용이에요. 다음 화면에서 실제 기기와 같은지 확인해요.</p>
+            </main>
+            <div class="bottom-action">
+                <button type="button" class="btn btn--primary" data-cand-pick-photo disabled>이 후보로 확인하기</button>
+                <a href="#a5" class="btn btn--text">맞는 게 없어요</a>
+            </div>
+        </section>
+
+        <!-- A2x 라벨에서 못 찾음 -->
+        <section class="wc-step" data-step="a2x" data-title="라벨로 찾기" hidden>
+            <main class="content content--sub wc-body wc-empty-state">
+                <span class="icon icon--warning wc-empty-state__icon" aria-hidden="true"></span>
+                <p class="wc-empty-state__title">라벨에서 모델을 찾지 못했어요</p>
+                <p class="wc-empty-state__desc">글자가 흐리거나 모델명이 없는 라벨일 수 있어요. 다른 방법으로 찾아볼게요.</p>
+            </main>
+            <div class="bottom-action">
+                <a href="#a1" class="btn btn--primary">다시 찍기</a>
+                <a href="#a1b" class="btn btn--outline btn--md">휠체어 전체 사진으로 찾기</a>
+                <a href="#a2m" class="btn btn--text">모델명 직접 입력</a>
+                <a href="#a5" class="btn btn--text">모델 정보는 나중에 등록해도 돼요</a>
+            </div>
+        </section>
+
+        <!-- A5 나중에 등록 -->
+        <section class="wc-step" data-step="a5" data-title="휠체어 정보 추가" hidden>
+            <main class="content content--sub wc-body wc-empty-state">
+                <span class="icon icon--warning wc-empty-state__icon" aria-hidden="true"></span>
+                <p class="wc-empty-state__title">모델 정보는 나중에 등록해도 돼요</p>
+                <p class="wc-empty-state__desc">지금은 모델 없이 등록을 이어가요. 접수할 때는 "규격 미확인"으로 전달되고, 내 정보에서 언제든 다시 찾을 수 있어요.</p>
+            </main>
+            <div class="bottom-action">
+                <button type="button" class="btn btn--primary" data-save-unknown>등록 이어가기</button>
+                <a href="#b2" class="btn btn--outline btn--md">규격을 알고 있어요 · 직접 입력</a>
+            </div>
+        </section>
+
+        <!-- B1 규격 안내 -->
+        <section class="wc-step" data-step="b1" data-title="규격 직접 입력" hidden>
+            <main class="content content--sub wc-body">
+                <div class="page-title">
+                    <h2 class="page-title__heading"><span>알고 있는 규격을</span><span>알려주세요</span></h2>
+                    <p class="page-title__desc">제품 설명서나 라벨의 값을 적어도 되고, 직접 잰 값도 돼요. 단위는 mm예요.</p>
+                </div>
+                <div class="wc-illust">
+                    <img src="image/wc-width.png" alt="휠체어 앞모습 · 전체 폭">
+                    <img src="image/wc-length.png" alt="휠체어 옆모습 · 전체 길이">
+                </div>
+                <ol class="card wc-steps">
+                    <li><span class="wc-steps__no">1</span><span class="choice-list__text"><span class="choice-list__title">폭</span><span class="choice-list__desc">평소 사용하는 상태에서 가장 넓은 바깥쪽 끝에서 끝까지 · 바퀴·팔걸이·부착물 포함</span></span></li>
+                    <li><span class="wc-steps__no">2</span><span class="choice-list__text"><span class="choice-list__title">길이</span><span class="choice-list__desc">평소 사용하는 상태에서 가장 앞쪽부터 가장 뒤쪽까지 · 발판·손잡이·부착물 포함</span></span></li>
+                    <li><span class="wc-steps__no wc-steps__no--off">–</span><span class="choice-list__text"><span class="choice-list__title">높이</span><span class="choice-list__desc">높이를 모르셔도 저장하고 호출할 수 있어요. 탑승 가능 여부는 확인되지 않은 상태로 남아요.</span></span></li>
+                </ol>
+                <p class="wc-info"><span class="icon icon--warning" aria-hidden="true"></span>서울 UD택시 이용 기준: 폭 670 · 길이 1,180 · 높이 1,300mm 이내 (서울시설공단 안내)</p>
+            </main>
+            <div class="bottom-action">
+                <a href="#b2" class="btn btn--primary">입력하기</a>
+            </div>
+        </section>
+
+        <!-- B2 규격 입력 (B2x 기준 초과는 같은 화면의 오류 상태) -->
+        <section class="wc-step" data-step="b2" data-title="규격 직접 입력" hidden>
+            <main class="content content--sub wc-body">
+                <div class="page-title">
+                    <h2 class="page-title__heading" data-b2-title>규격을 입력해 주세요</h2>
+                    <p class="page-title__desc">숫자만 입력하면 돼요. 말로 입력하면 폭·길이에 나눠서 넣어드리고, 고칠 수 있어요.</p>
+                </div>
+                <div class="wc-size">
+                    <label class="wc-size__field">
+                        <span class="wc-size__label">① 폭</span>
+                        <span class="wc-size__box" data-size-box="w"><input type="text" inputmode="numeric" class="wc-size__input" id="wc-w" data-size="w" placeholder="0" aria-describedby="wc-size-error"><span class="wc-size__unit">mm</span></span>
+                    </label>
+                    <label class="wc-size__field">
+                        <span class="wc-size__label">② 길이</span>
+                        <span class="wc-size__box" data-size-box="l"><input type="text" inputmode="numeric" class="wc-size__input" id="wc-l" data-size="l" placeholder="0" aria-describedby="wc-size-error"><span class="wc-size__unit">mm</span></span>
+                    </label>
+                </div>
+                <button type="button" class="btn btn--outline btn--md wc-voice" data-size-voice>
+                    <span class="wc-voice__mic" aria-hidden="true"><span class="icon icon--sm icon--microphone"></span></span>
+                    말로 입력하기
+                </button>
+                <div class="wc-over" id="wc-size-error" data-size-over hidden>
+                    <p class="wc-over__error"><span class="icon icon--sm icon--warning" aria-hidden="true"></span><span data-size-over-text></span></p>
+                    <p class="wc-over__notice"><span class="icon icon--sm icon--warning" aria-hidden="true"></span>값이 맞다면 이 UD택시로는 자동배차하지 않고, 호출 전에 이용 가능한 방법을 안내해요.</p>
+                </div>
+                <div class="card choice-list">
+                    <div class="choice-list__item wc-height">
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">높이</span>
+                            <span class="choice-list__desc" data-height-desc>높이를 모르셔도 저장하고 호출할 수 있어요. 탑승 가능 여부는 확인되지 않은 상태로 남아요.</span>
+                        </span>
+                        <span class="wc-badge" data-height-badge hidden>접수 전 확인</span>
+                    </div>
+                    <label class="choice-list__item"><input type="checkbox" class="checkbox" data-size-mods><span class="choice-list__text"><span class="choice-list__title">부착물 · 개조가 있어요</span><span class="choice-list__desc">헤드레스트·배터리·바구니 추가 등</span></span></label>
+                </div>
+            </main>
+            <div class="bottom-action">
+                <button type="button" class="btn btn--primary" data-size-save>입력한 정보로 저장</button>
+                <a href="tel:" class="btn btn--outline" data-size-help hidden>이용 가능한 방법 확인하기</a>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/wheelchair.js"></script>
+</body>
+</html>

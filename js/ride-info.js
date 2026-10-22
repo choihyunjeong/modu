@@ -95,8 +95,10 @@ var RideInfo = (function () {
 
         if (data.device) {
             var wheelchair = WHEELCHAIRS.indexOf(data.device) > -1;
+            // 휠체어 정보 추가에서 찾은 모델·규격 (없으면 규격 미확인)
+            var wc = data.wheelchair && data.wheelchair.status !== 'unknown' ? data.wheelchair.label : '규격 미확인';
             result.device = DEVICES[data.device] +
-                (wheelchair ? (data.otherBoarding ? ' · 다른 탑승 방법 요청 · ' + data.otherBoarding : ' · 앉은 채 탑승 · 규격 미확인') : '');
+                (wheelchair ? (data.otherBoarding ? ' · 다른 탑승 방법 요청 · ' + data.otherBoarding : ' · 앉은 채 탑승 · ' + wc) : '');
         }
 
         var requests = (data.requests || []).map(function (v) { return REQUESTS[v]; });

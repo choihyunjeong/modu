@@ -747,7 +747,7 @@ fieldset {
     background: var(--color-bg);
 }
 
-.modal-sheet__panel .sheet__grabber { background: var(--color-border); }
+.modal-sheet__panel .sheet__grabber { background: var(--color-border-strong); }
 
 .modal-sheet__title {
     font-size: var(--fs-20);
@@ -918,6 +918,32 @@ body.is-modal-open { overflow: hidden; }
 .map-page .sheet {
     min-height: 0;
     overflow-y: auto;
+}
+
+/* 시트 안 내용을 스크롤해도 그래버(끌기 손잡이)는 시트 맨 위에 그대로 보임
+   (common.js SheetDrag가 넣는 손잡이 버튼이 그래버를 그림 · 원래 그래버는 숨김) */
+.map-page .sheet > .sheet__grabber { display: none; }
+
+.map-page .sheet > .sheet__handle {
+    position: sticky;
+    top: 0;
+    flex: none;
+    height: 24px;
+    margin: calc(var(--space-10) * -1) calc(var(--page-padding) * -1) 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: var(--color-bg);
+}
+
+.map-page .sheet > .sheet__handle::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 40px;
+    height: 5px;
+    margin-left: -20px;
+    border-radius: 3px;
+    background: var(--color-border-strong);
 }
 
 .map-page .bottom-action {

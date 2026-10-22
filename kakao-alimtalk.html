@@ -3,57 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>알림톡 · 차량 배정 | 모두의 이동</title>
+    <title>카카오톡 채널 · 모두의 이동</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/notice.css">
     <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
 </head>
-<body class="chat-screen">
-    <!-- N1-K 카카오톡 채널 알림톡 (차량 배정 · 카카오 채널 연동 결정 뒤 적용 · 누르면 앱 진행 5) -->
-    <div id="wrap" class="chat">
-        <header class="chat__head">
-            <a href="notifications.html" class="chat__back" data-history-back aria-label="뒤로">
-                <span class="icon icon--chevron-left" aria-hidden="true"></span>
+<body class="k-screen">
+    <!-- K · 카카오톡 채널 (앱 없는 승객) · K2 배정 알림톡 → K3~K8 챗봇
+         하단 메뉴는 진입 3개(호출 현황 / 기사님께 말 전하기 / 도움 요청) · 문구는 챗봇 답에서 고름
+         직접 쓴 글은 챗봇 질문으로 처리 (관제센터 문의 입력 중일 때만 관제센터로) -->
+    <div id="wrap" class="k-chat">
+        <header class="k-head">
+            <a href="notifications.html" class="k-head__back" data-history-back aria-label="뒤로">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
-            <div>
-                <h1 class="chat__name">모두의 이동</h1>
-                <p class="chat__type">채널 · 알림톡</p>
+            <div class="k-head__who">
+                <h1 class="k-head__name">모두의 이동 <span class="k-head__badge" aria-label="인증된 채널"></span></h1>
+                <p class="k-head__sub"><span class="k-head__dot" aria-hidden="true"></span><span data-k-sub>1588-4388</span></p>
             </div>
+            <button type="button" class="k-head__icon" aria-label="대화 검색" data-soon="대화 검색">
+                <span class="icon icon--search" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="k-head__icon" aria-label="채널 메뉴 더보기" data-soon="채널 정보">
+                <span class="k-head__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+            </button>
         </header>
 
-        <main class="chat__body">
-            <p class="chat__date">2026년 10월 12일 월요일</p>
-
-            <div class="chat-msg">
-                <img class="chat-msg__avatar" src="image/logo.svg" alt="">
-                <div class="chat-msg__main">
-                    <p class="chat-msg__sender">모두의 이동</p>
-                    <div class="alimtalk">
-                        <p class="alimtalk__head">알림톡 도착</p>
-                        <div class="alimtalk__body">
-                            <p class="alimtalk__title">UD택시가 배정됐어요</p>
-                            <p class="alimtalk__text">
-                                이○○ 님, 호출하신 UD택시가 배정됐어요.<br><br>
-                                도착 예정 · 약 8분 후<br>
-                                차량 · 33바 5521 (흰색 PV5)<br>
-                                탑승 위치 · 래미안베라힐즈 정문 · 경사로 쪽<br><br>
-                                기사님이 도착하면 다시 알려드려요.
-                            </p>
-                            <a href="assigned.html" class="alimtalk__btn">차량 위치·탑승 안내 보기</a>
-                            <button type="button" class="alimtalk__btn">기사님에게 메시지 보내기</button>
-                        </div>
-                    </div>
-                    <p class="chat-msg__time">오후 3:43</p>
+        <main class="k-log" data-k-log aria-live="polite">
+            <!-- K2 배정 알림톡 -->
+            <div class="k-card">
+                <div class="k-card__img"><img src="image/pv5-side.png" alt=""></div>
+                <div class="k-card__body">
+                    <p class="k-card__title">UD택시가 배정됐어요</p>
+                    <hr class="k-card__line">
+                    <p class="k-card__text">
+                        도착 예정 · 약 8분 후<br>
+                        차량 · <span data-k-plate>33바 5521</span> (흰색 PV5)<br>
+                        기사님 · <span data-k-driver>강○○</span><br>
+                        탑승 위치 · <span data-trip="pickup-spot">정문 · 경사로 쪽</span><br><br>
+                        기사님이 도착하면 다시 알려드려요.
+                    </p>
+                    <a href="assigned.html" class="k-btn k-btn--card">차량 위치 보기</a>
+                    <button type="button" class="k-btn k-btn--card" data-k="talk">기사님께 말 전하기</button>
+                    <button type="button" class="k-btn k-btn--card" data-k="help">도움 요청</button>
                 </div>
             </div>
+            <p class="k-card__foot">수신거부 | 홈 &gt; 채널 차단</p>
+            <p class="k-time k-time--bot" data-k-first-time>오전 10:08</p>
         </main>
 
-        <div class="chat__input">
-            <span class="chat__input-icon" aria-hidden="true">+</span>
-            <label for="chat-message" class="blind">메시지 입력</label>
-            <input type="text" id="chat-message" class="chat__field" placeholder="메시지 입력">
-            <span class="chat__input-icon chat__input-icon--hash" aria-hidden="true">#</span>
+        <div class="k-bottom">
+            <!-- 채널 메뉴 (누르면 펼침) -->
+            <div class="k-menu" data-k-menu hidden>
+                <button type="button" class="k-menu__cell" data-k="status">호출 현황</button>
+                <button type="button" class="k-menu__cell" data-k="talk">기사님께 말 전하기</button>
+                <button type="button" class="k-menu__cell" data-k="help">도움 요청</button>
+            </div>
+            <button type="button" class="k-menu-bar" data-k-menu-toggle aria-expanded="false">
+                채널 메뉴 <span class="icon icon--sm icon--chevron-up" aria-hidden="true"></span>
+            </button>
+            <form class="k-input" data-k-form>
+                <span class="k-input__plus" aria-hidden="true">+</span>
+                <label for="k-text" class="blind">챗봇에게 질문 입력</label>
+                <input type="text" id="k-text" class="k-input__field" placeholder="챗봇에게 질문 입력" autocomplete="off" maxlength="200">
+                <button type="submit" class="k-input__send" data-k-send hidden>보내기</button>
+            </form>
         </div>
     </div>
+
+    <script>
+        // 카카오톡 채널 챗봇 (시연용 · 실제로 보내지지 않음)
+        var config = window.APP_CONFIG || {};
+        var driver = config.driver || {};
+        var centerTel = (config.callCenter && config.callCenter.tel) || '';
+        var log = document.querySelector('[data-k-log]');
+        var menu = document.querySelector('[data-k-menu]');
+        var menuToggle = document.querySelector('[data-k-menu-toggle]');
+        var form = document.querySelector('[data-k-form]');
+        var field = document.getElementById('k-text');
+        var sendBtn = document.querySelector('[data-k-send]');
+        var composing = false;   // K7 관제센터 문의 입력 중
+
+        if (driver.plate) document.querySelector('[data-k-plate]').textContent = driver.plate;
+        if (driver.name) document.querySelector('[data-k-driver]').textContent = driver.name.replace(' 기사님', '');
+        if (centerTel) document.querySelector('[data-k-sub]').textContent = centerTel;
+        document.querySelector('[data-k-first-time]').textContent = clock(Date.now());
+
+        function clock(t) {
+            var d = new Date(t);
+            var h = d.getHours();
+            return (h < 12 ? '오전 ' : '오후 ') + (h % 12 || 12) + ':' + ('0' + d.getMinutes()).slice(-2);
+        }
+        function esc(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        function scrollEnd() { log.scrollTop = log.scrollHeight; }
+
+        // 챗봇이 대화 중이라는 표시 (머리글 아래 글자)
+        function chatting() { document.querySelector('[data-k-sub]').textContent = '챗봇 채팅중'; }
+
+        function user(text) {
+            chatting();
+            var row = document.createElement('div');
+            row.className = 'k-row k-row--me';
+            row.innerHTML = '<span class="k-time">' + clock(Date.now()) + '</span><p class="k-bubble k-bubble--me">' + esc(text) + '</p>';
+            log.appendChild(row);
+            scrollEnd();
+        }
+
+        // lines: 글 줄 목록 ('' = 빈 줄) · buttons: [{ label, sub, k | href | tel }]
+        function bot(lines, buttons) {
+            var wrap = document.createElement('div');
+            wrap.className = 'k-bot';
+            var html = '<div class="k-bubble"><p class="k-bubble__text">' +
+                lines.map(function (l) { return l ? esc(l) : ''; }).join('<br>') + '</p>';
+            (buttons || []).forEach(function (b) {
+                var inner = '<span class="k-btn__label">' + esc(b.label) + '</span>' + (b.sub ? '<span class="k-btn__sub">' + esc(b.sub) + '</span>' : '');
+                if (b.href) html += '<a class="k-btn" href="' + b.href + '">' + inner + '</a>';
+                else html += '<button type="button" class="k-btn" data-k="' + b.k + '"' + (b.text ? ' data-k-text="' + esc(b.text) + '"' : '') + '>' + inner + '</button>';
+            });
+            html += '</div><p class="k-time k-time--bot">' + clock(Date.now()) + '</p>';
+            wrap.innerHTML = html;
+            // 챗봇이 잠깐 생각하는 듯 조금 뒤에
+            setTimeout(function () { log.appendChild(wrap); scrollEnd(); }, 400);
+        }
+
+        function setMenu(open) {
+            menu.hidden = !open;
+            menuToggle.setAttribute('aria-expanded', open);
+        }
+
+        function setComposing(on) {
+            composing = on;
+            sendBtn.hidden = !on;
+            field.placeholder = on ? '관제센터에 보낼 내용을 적어 주세요' : '챗봇에게 질문 입력';
+            if (on) field.focus();
+        }
+
+        var TALK = ['탑승 위치에서 기다리고 있어요', '탑승 준비에 시간이 필요해요', '차량을 찾기 어려워요'];
+
+        var ACTIONS = {
+            // K3 기사님께 말 전하기
+            talk: function () {
+                setComposing(false);
+                user('기사님께 말 전하기');
+                bot(['기사님께 전할 말을 골라 주세요.', '고른 내용은 기사님 차 화면에 글로 뜨고 한 번 읽어 드려요.'],
+                    TALK.map(function (t) { return { label: t, sub: '기사님께', k: 'say', text: t }; }));
+            },
+            // K4 전달됨
+            say: function (btn) {
+                var text = btn.dataset.kText;
+                user(text);
+                bot(['기사님 차 화면에 전달했어요.', '더 전할 말이 있으면 아래 메뉴에서 다시 골라 주세요.']);
+                setTimeout(function () { setMenu(true); }, 450);
+            },
+            // K5 도움 요청
+            help: function () {
+                setComposing(false);
+                user('도움 요청');
+                bot(['어떤 도움이 필요하세요?', '도움이 필요한 항목을 선택해 주세요.', '', '긴급한 상황이면 119에 바로 전화해 주세요.'], [
+                    { label: '탑승 장소까지 가기 어려워요', sub: '기사님 + 관제센터', k: 'help-send' },
+                    { label: '관제센터에만 문의하기', sub: '관제센터에만 전달돼요', k: 'ask' }
+                ]);
+            },
+            // K6 도움 요청 보냄
+            'help-send': function () {
+                user('탑승 장소까지 가기 어려워요');
+                bot(['기사님과 관제센터에 요청을 보냈어요.', '', '급하면 관제센터 ' + centerTel + '로 전화해 주세요.']);
+                setTimeout(function () { setMenu(true); }, 450);
+            },
+            // K7 관제센터에만 문의하기 (입력 모드)
+            ask: function () {
+                setMenu(false);
+                user('관제센터에만 문의하기');
+                bot(['어떤 상황인지 적어 주세요.', '내용은 관제센터에만 전달돼요.', '기사님께는 전달되지 않아요.', '', '예: 기사님과 연락이 되지 않아 탑승 위치를 확인하기 어려워요'],
+                    [{ label: '문의 작성 취소', sub: '문의 내용은 전송되지 않아요', k: 'ask-cancel' }]);
+                setComposing(true);
+            },
+            'ask-cancel': function () {
+                if (!composing) return;
+                setComposing(false);
+                field.value = '';
+                user('문의 작성 취소');
+                bot(['문의 작성을 취소했어요. 보낸 내용은 없어요.']);
+            },
+            // 호출 현황 (진행 중 호출이 없으면 예외 ②)
+            status: function () {
+                setComposing(false);
+                setMenu(false);
+                user('호출 현황');
+                var trip = Trip.get();
+                if (trip.calledAt) {
+                    bot(['UD택시가 오고 있어요.', '차량 · ' + (driver.plate || '') + ' (흰색 PV5)', '탑승 위치 · ' + (trip.pickupSpot || '정문 · 경사로 쪽')],
+                        [{ label: '차량 위치 보기', href: 'assigned.html' }]);
+                } else {
+                    bot(['지금 진행 중인 호출이 없어요.', '호출은 전화 ' + centerTel + '로 접수할 수 있어요. 접수되면 이 채널로 알려드려요.'],
+                        [{ label: '전화로 호출하기', href: 'tel:' + centerTel.replace(/[^0-9]/g, '') }]);
+                }
+            }
+        };
+
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-k]');
+            if (btn && ACTIONS[btn.dataset.k]) {
+                setMenu(false);
+                ACTIONS[btn.dataset.k](btn);
+            }
+        });
+        menuToggle.addEventListener('click', function () { setMenu(menu.hidden); });
+
+        // 입력: 관제센터 문의 중이면 K8, 아니면 챗봇 질문으로 처리
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var text = field.value.trim();
+            if (!text) return;
+            field.value = '';
+            user(text);
+            if (composing) {
+                setComposing(false);
+                bot(['관제센터에 문의를 보냈어요.', '필요하면 아래 버튼으로 관제센터에 전화해 주세요.'],
+                    [{ label: '관제센터에 전화', href: 'tel:' + centerTel.replace(/[^0-9]/g, '') }]);
+            } else {
+                bot(['기사님께 전할 말이나 도움 요청은 아래 채널 메뉴에서 골라 주세요.', '직접 쓴 글은 기사님께 전달되지 않아요.']);
+                setTimeout(function () { setMenu(true); }, 450);
+            }
+        });
+        field.addEventListener('input', function () { if (composing) sendBtn.disabled = !field.value.trim(); });
+    </script>
 </body>
 </html>

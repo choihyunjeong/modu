@@ -150,6 +150,27 @@ button.boarding-guide__link { text-align: left; }
 
 .other-sheet__actions .btn--text { font-weight: var(--font-weight-bold); }
 
+.other-sheet__foot {
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-text-sub);
+    text-align: center;
+}
+
+/* 휠체어 정보 추가 시트 · 방법 목록 */
+.wc-ways { padding: 0 var(--space-16); }
+
+.wc-ways li + li { border-top: 1px solid var(--color-divider); }
+
+.wc-ways__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    padding: var(--space-14) 0;
+}
+
+.wc-ways__row .icon { color: var(--color-text-sub); }
+
 /* 질문 제목 (legend) */
 .section-question {
     float: left;

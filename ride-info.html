@@ -91,10 +91,10 @@
                 <button type="button" class="boarding-guide__link" data-open-other aria-haspopup="dialog">다른 탑승 방법이 필요해요 ›</button>
             </div>
 
-            <a href="#" class="card link-row" data-wheelchair-only>
+            <a href="wheelchair.html" class="card link-row" data-wheelchair-only data-open-wc aria-haspopup="dialog">
                 <span class="choice-list__text">
                     <span class="choice-list__title">휠체어 정보 추가하기</span>
-                    <span class="field-title__sub">선택 사항 · 지금 안 해도 돼요</span>
+                    <span class="field-title__sub" data-wc-summary>선택 사항 · 지금 안 해도 돼요</span>
                 </span>
                 <span class="icon icon--chevron-right" aria-hidden="true"></span>
             </a>
@@ -103,6 +103,40 @@
         <div class="bottom-action">
             <!-- 호출 전 확인에서 '수정'으로 들어오면 "저장" → 호출 전 확인으로 돌아감 -->
             <a href="ride-info-contact.html" class="btn btn--primary" data-return data-return-label="저장" data-save-device>다음</a>
+        </div>
+    </div>
+
+    <!-- 탑승정보_v12_01s_휠체어정보추가_시트 ("휠체어 정보 추가하기"에서 · 사진 / 모델명 / 규격 / 지금은 몰라요) -->
+    <div class="modal-sheet" id="wc-sheet" role="dialog" aria-modal="true" aria-labelledby="wc-title" hidden>
+        <div class="modal-sheet__panel other-sheet">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <h2 class="other-sheet__title" id="wc-title">휠체어 정보를 더 알려주실래요?</h2>
+            <p class="modal-sheet__desc">선택 사항이에요. 미리 알려두면 차량을 부를 때 확인이 빨라져요.</p>
+            <ul class="card wc-ways">
+                <li><a href="wheelchair.html#a0" class="wc-ways__row">
+                    <span class="choice-list__text">
+                        <span class="choice-list__title">사진으로 찾기</span>
+                        <span class="choice-list__desc">라벨이나 휠체어 사진으로 모델 후보를 찾아요</span>
+                    </span>
+                    <span class="icon icon--chevron-right" aria-hidden="true"></span>
+                </a></li>
+                <li><a href="wheelchair.html#a2m" class="wc-ways__row">
+                    <span class="choice-list__text">
+                        <span class="choice-list__title">모델명 검색</span>
+                        <span class="choice-list__desc">제조사나 모델명 일부로 찾아요</span>
+                    </span>
+                    <span class="icon icon--chevron-right" aria-hidden="true"></span>
+                </a></li>
+                <li><a href="wheelchair.html#b1" class="wc-ways__row">
+                    <span class="choice-list__text">
+                        <span class="choice-list__title">규격을 알고 있어요</span>
+                        <span class="choice-list__desc">설명서·라벨 값이나 직접 잰 값</span>
+                    </span>
+                    <span class="icon icon--chevron-right" aria-hidden="true"></span>
+                </a></li>
+            </ul>
+            <button type="button" class="btn btn--outline" data-wc-later>지금은 몰라요</button>
+            <p class="other-sheet__foot">지금 안 알려주셔도 호출할 수 있어요. "규격 미확인"으로 저장돼요.</p>
         </div>
     </div>
 
@@ -168,6 +202,37 @@
             if (text) Toast.show('다른 탑승 방법을 저장했어요', { check: true });
         });
         renderOther();
+
+        // 휠체어 정보 추가 시트: 사진 / 모델명 / 규격 → 휠체어 정보 화면 · 지금은 몰라요 → "규격 미확인"
+        var wcSheet = document.getElementById('wc-sheet');
+        var wcOpener = document.querySelector('[data-open-wc]');
+        var wcSummary = document.querySelector('[data-wc-summary]');
+        function renderWc() {
+            var wc = (RideInfo.load() || {}).wheelchair;
+            if (wc && wc.label) wcSummary.textContent = wc.label;
+        }
+        function closeWc() {
+            wcSheet.hidden = true;
+            document.body.classList.remove('is-modal-open');
+            wcOpener.focus();
+        }
+        wcOpener.addEventListener('click', function (e) {
+            e.preventDefault();
+            wcSheet.hidden = false;
+            document.body.classList.add('is-modal-open');
+            wcSheet.querySelector('a').focus();
+        });
+        wcSheet.addEventListener('click', function (e) { if (e.target === wcSheet) closeWc(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !wcSheet.hidden) closeWc(); });
+        // 휠체어 정보 화면으로 갈 때 지금 고른 보조기기를 먼저 저장 (돌아와도 그대로)
+        wcSheet.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', RideInfo.saveDevice); });
+        wcSheet.querySelector('[data-wc-later]').addEventListener('click', function () {
+            RideInfo.save({ wheelchair: { status: 'unknown', label: '규격 미확인 · 나중에 추가할 수 있어요' } });
+            renderWc();
+            closeWc();
+            Toast.show('"규격 미확인"으로 저장했어요', { check: true });
+        });
+        renderWc();
 
         // 저장해 둔 값이 있으면 채워 넣고, 다음/저장 누를 때 저장
         RideInfo.fillDevice();
