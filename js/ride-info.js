@@ -109,7 +109,41 @@ var RideInfo = (function () {
         return result;
     }
 
+    // 접수할 때 함께 전달되는 짧은 꼬리표 (차량 찾는 중 화면 · 저장 안 했으면 null)
+    //  [{ text, tone: 'primary' | 'warning' | '' }]
+    var REQUEST_SHORT = {
+        'slow-explain': '천천히 설명',
+        'text-guide': '글로 안내',
+        'tell-before-help': '돕기 전에 먼저 말하기',
+        'wait-answer': '답변 기다려 주기'
+    };
+    var CONTACT_SHORT = {
+        'message': '문자·앱 메시지 · 전화 가능',
+        'message-only': '문자·앱 메시지로 연락',
+        'phone': '전화로 연락'
+    };
+
+    function tags() {
+        var data = load();
+        if (!data || !data.device) return null;
+        var list = [{ text: DEVICES[data.device], tone: '' }];
+        var wc = data.wheelchair || {};
+        if (WHEELCHAIRS.indexOf(data.device) > -1) {
+            if (data.otherBoarding) list.push({ text: '다른 탑승 방법 요청', tone: 'warning' });
+            if (wc.status === 'over') list.push({ text: '규격 접수 전 확인', tone: 'warning' });
+            else if (wc.status === 'model') list.push({ text: wc.model, tone: '' });
+            else if (wc.status === 'size') list.push({ text: '폭 ' + wc.w + ' · 길이 ' + wc.l + 'mm', tone: '' });
+            else list.push({ text: '규격 미확인', tone: '' });
+            if (wc.status !== 'over' && !data.otherBoarding) list.push({ text: 'UD 가능', tone: 'primary' });
+        }
+        (data.requests || []).forEach(function (v) { if (REQUEST_SHORT[v]) list.push({ text: REQUEST_SHORT[v], tone: '' }); });
+        if (data.requestEtc) list.push({ text: '기타 요청 있음', tone: '' });
+        if (data.contact) list.push({ text: CONTACT_SHORT[data.contact], tone: '' });
+        return list;
+    }
+
     return {
+        tags: tags,
         load: load,
         save: save,
         fillDevice: fillDevice,

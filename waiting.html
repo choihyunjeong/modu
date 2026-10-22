@@ -13,6 +13,7 @@
     <script src="js/push.js"></script>
     <script src="js/actions.js"></script>
     <script src="js/stats.js"></script>
+    <script src="js/ride-info.js"></script>
 </head>
 <body>
     <div id="wrap" class="map-page" data-auto-next="assigned.html" data-delay="8000" data-next-notice="UD택시가 배정됐어요" data-cancel-stage="before">
@@ -92,7 +93,7 @@
                     <li class="route-list__line" role="presentation"><img src="image/route-line.svg" alt=""></li>
                 </ul>
 
-                <ul class="tag-list" aria-label="함께 전달된 정보">
+                <ul class="tag-list" aria-label="함께 전달된 정보" data-ride-tags>
                     <li class="tag" data-trip="riders">본인 + 동승자 1명</li>
                     <li class="tag">수동 휠체어</li>
                     <li class="tag tag--primary">UD 가능</li>
@@ -146,6 +147,22 @@
     </div>
 
     <script>
+        // 함께 전달된 정보: 접수할 때 담은 탑승 정보 (없으면 지금 저장된 탑승 정보 · 그것도 없으면 디자인 예시 그대로)
+        (function () {
+            var tags = Trip.get().ride || RideInfo.tags();
+            if (!tags) return;
+            var box = document.querySelector('[data-ride-tags]');
+            var riders = box.querySelector('[data-trip="riders"]');
+            box.innerHTML = '';
+            box.appendChild(riders);
+            tags.forEach(function (tag) {
+                var li = document.createElement('li');
+                li.className = 'tag' + (tag.tone ? ' tag--' + tag.tone : '');
+                li.textContent = tag.text;
+                box.appendChild(li);
+            });
+        })();
+
         // 대기 현황 시트 열기/닫기 (#detail로 들어오면 바로 열림 · N3 알림에서)
         var sheet = document.getElementById('wait-sheet');
         var opener = document.querySelector('[data-open-wait]');

@@ -278,6 +278,13 @@
 }
 
 /* 강조 배지 (UD 가능) — 테두리 없음 */
+.tag--warning {
+    border: 0;
+    background: var(--color-warning-bg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-warning);
+}
+
 .tag--primary {
     border: 0;
     background: var(--color-primary-soft);
