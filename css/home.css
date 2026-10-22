@@ -285,6 +285,10 @@
     color: var(--color-text-sub);
 }
 
+/* 연락 방법 시트 */
+.contact-sheet { padding-bottom: var(--space-24); }
+.contact-sheet__options { margin: 0; padding: 0; border: 0; }
+
 /* 부르기 */
 .call {
     display: flex;

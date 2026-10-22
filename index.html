@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221309">
-    <link rel="stylesheet" href="css/home.css?v=2610221309">
-    <script src="js/common.js?v=2610221309"></script>
-    <script src="js/config.js?v=2610221309"></script>
-    <script src="js/ride-info.js?v=2610221309"></script>
-    <script src="js/stats.js?v=2610221309"></script>
-    <script src="js/reader.js?v=2610221309"></script>
-    <script src="js/trip.js?v=2610221309"></script>
-    <script src="js/actions.js?v=2610221309"></script>
-    <script src="js/push.js?v=2610221309"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221315">
+    <link rel="stylesheet" href="css/home.css?v=2610221315">
+    <script src="js/common.js?v=2610221315"></script>
+    <script src="js/config.js?v=2610221315"></script>
+    <script src="js/ride-info.js?v=2610221315"></script>
+    <script src="js/stats.js?v=2610221315"></script>
+    <script src="js/reader.js?v=2610221315"></script>
+    <script src="js/trip.js?v=2610221315"></script>
+    <script src="js/actions.js?v=2610221315"></script>
+    <script src="js/push.js?v=2610221315"></script>
 </head>
 <body>
     <div id="wrap">
@@ -92,6 +92,13 @@
                     </li>
                     <li class="ride-info__row">
                         <div class="ride-info__text" data-read>
+                            <p class="ride-info__title">연락 방법</p>
+                            <p class="ride-info__desc" data-home-contact>기사님이 연락할 방법을 정해 두세요.</p>
+                        </div>
+                        <button type="button" class="btn-sm" data-open-contact aria-haspopup="dialog">등록</button>
+                    </li>
+                    <li class="ride-info__row">
+                        <div class="ride-info__text" data-read>
                             <p class="ride-info__title">보호자 연결</p>
                             <p class="ride-info__desc" data-home-guardian>보호자와 차량 도착·이동 상황을 공유해요.</p>
                         </div>
@@ -143,6 +150,41 @@
                 설정
             </a>
         </nav>
+    </div>
+
+    <!-- 연락 방법 시트 (내 탑승 정보 · 호출 전 확인의 연락 방법과 같은 값) -->
+    <div class="modal-sheet" id="contact-sheet" role="dialog" aria-modal="true" aria-labelledby="contact-title" hidden>
+        <div class="modal-sheet__panel contact-sheet">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div>
+                <h2 class="modal-sheet__title" id="contact-title">연락은 어떻게 받으시겠어요?</h2>
+                <p class="modal-sheet__desc">기사님이 이 방법으로 연락드려요. 호출할 때 함께 전달돼요.</p>
+            </div>
+            <fieldset class="contact-sheet__options">
+                <legend class="blind">연락받을 방법</legend>
+                <div class="card choice-list">
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="home-contact" value="message">
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">문자·앱 메시지</span>
+                            <span class="choice-list__desc">전화도 받을 수 있어요</span>
+                        </span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="home-contact" value="message-only">
+                        <span class="choice-list__text">
+                            <span class="choice-list__title">문자·앱 메시지만</span>
+                            <span class="choice-list__desc">통화가 어려워요 · 위치를 바꿀 때도 문자로</span>
+                        </span>
+                    </label>
+                    <label class="choice-list__item">
+                        <input type="radio" class="radio" name="home-contact" value="phone">
+                        <span class="choice-list__title">전화</span>
+                    </label>
+                </div>
+            </fieldset>
+            <button type="button" class="btn btn--primary" data-save-contact disabled>이 방법으로 저장</button>
+        </div>
     </div>
 
     <!-- 평균 대기 기준 안내 팝업 (지금 상황의 ? 에서 열림 · 가운데 창) -->
@@ -225,6 +267,47 @@
                 document.querySelector('[data-home-ride]').textContent = ride.device;
                 document.querySelector('[data-home-ride-btn]').textContent = '수정';
             }
+            // 연락 방법: 저장했으면 그 방법 · 시트에서 고르고 저장
+            var CONTACT_TEXT = {
+                'message': '문자·앱 메시지 · 전화도 받을 수 있어요',
+                'message-only': '문자·앱 메시지만 · 통화가 어려워요',
+                'phone': '전화로 연락받아요'
+            };
+            var contactSheet = document.getElementById('contact-sheet');
+            var contactOpener = document.querySelector('[data-open-contact]');
+            var contactSave = contactSheet.querySelector('[data-save-contact]');
+            function renderContact() {
+                var c = (RideInfo.load() || {}).contact;
+                if (!c) return;
+                document.querySelector('[data-home-contact]').textContent = CONTACT_TEXT[c];
+                contactOpener.textContent = '수정';
+            }
+            function closeContact() {
+                contactSheet.hidden = true;
+                document.body.classList.remove('is-modal-open');
+                contactOpener.focus();
+            }
+            contactOpener.addEventListener('click', function () {
+                var c = (RideInfo.load() || {}).contact;
+                contactSheet.querySelectorAll('input[name="home-contact"]').forEach(function (r) { r.checked = r.value === c; });
+                contactSave.disabled = !c;
+                contactSheet.hidden = false;
+                document.body.classList.add('is-modal-open');
+                (contactSheet.querySelector('input:checked') || contactSheet.querySelector('input')).focus();
+            });
+            contactSheet.addEventListener('change', function () { contactSave.disabled = false; });
+            contactSave.addEventListener('click', function () {
+                var picked = contactSheet.querySelector('input[name="home-contact"]:checked');
+                if (!picked) return;
+                RideInfo.save({ contact: picked.value });
+                renderContact();
+                closeContact();
+                Toast.show('연락 방법을 저장했어요', { check: true });
+            });
+            contactSheet.addEventListener('click', function (e) { if (e.target === contactSheet) closeContact(); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !contactSheet.hidden) closeContact(); });
+            renderContact();
+
             function renderGuardians() {
                 var list = Guardians.list();
                 if (!list.length) return;
