@@ -196,6 +196,95 @@
     font-weight: var(--font-weight-bold);
 }
 
+/* 현재 호출 (홈_v15_05·07) */
+.current-call {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-20);
+}
+
+.current-call__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+}
+
+.current-call__badge {
+    padding: 2px var(--space-8);
+    border-radius: var(--radius-sm);
+    background: var(--color-success-bg);
+    font-size: var(--fs-12);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-17);
+    color: var(--color-success-icon);
+}
+
+.current-call__badge--wait {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.current-call__title {
+    font-size: var(--fs-24);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-32);
+}
+
+.current-call__desc {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+    white-space: pre-line;
+}
+
+.current-call__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding: var(--space-16);
+}
+
+.current-call__car {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+}
+
+.current-call__car img {
+    width: 70px;
+    height: 47px;
+    object-fit: cover;
+}
+
+.current-call__plate {
+    font-size: var(--fs-24);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-32);
+}
+
+.current-call__type {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.current-call__btns {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.current-call__btns .btn { flex: 1; min-width: 0; min-height: var(--touch-size); font-size: var(--fs-14); }
+
+.current-call__cancel {
+    align-self: center;
+    min-height: var(--touch-size);
+    padding: 0 var(--space-12);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-sub);
+}
+
 /* 부르기 */
 .call {
     display: flex;

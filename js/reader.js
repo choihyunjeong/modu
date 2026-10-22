@@ -14,6 +14,8 @@
         queue = [];
         var partEls = document.querySelectorAll('[data-read-part]');
         parts = partEls.length;
+        partEls = Array.prototype.filter.call(partEls, function (part) { return !part.closest('[hidden]'); });
+        parts = partEls.length;
         partEls.forEach(function (part, p) {
             var items = part.hasAttribute('data-read') ? [part] : Array.prototype.slice.call(part.querySelectorAll('[data-read]'));
             items.forEach(function (el) { queue.push({ el: el, part: part.dataset.readPart, partIndex: p }); });

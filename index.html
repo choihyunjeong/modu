@@ -11,6 +11,8 @@
     <script src="js/ride-info.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/reader.js"></script>
+    <script src="js/trip.js"></script>
+    <script src="js/actions.js"></script>
 </head>
 <body>
     <div id="wrap">
@@ -25,8 +27,31 @@
                     </button>
                 </div>
 
-                <!-- 지금 상황 -->
-                <section class="now" data-read-part="호출 안내">
+                <!-- 현재 호출 (홈_v15_05·07 · 호출이 진행 중일 때만 · 지금 상황·부르기 대신 보임) -->
+                <section class="current-call" data-current-call hidden aria-labelledby="current-call-title">
+                    <div class="current-call__head">
+                        <span class="current-call__badge" data-cc-badge>차를 찾는 중</span>
+                        <h1 class="current-call__title" id="current-call-title" data-cc-title>차량을 찾고 있어요</h1>
+                        <p class="current-call__desc" data-cc-desc></p>
+                    </div>
+                    <div class="card current-call__card">
+                        <div class="current-call__car" data-cc-car hidden>
+                            <img src="image/pv5-side.png" alt="">
+                            <div>
+                                <p class="current-call__plate" data-cc-plate>33바 5521</p>
+                                <p class="current-call__type">흰색 UD택시 · 옆문 경사로</p>
+                            </div>
+                        </div>
+                        <a href="waiting.html" class="btn btn--primary" data-cc-go>대기 현황 보기</a>
+                        <div class="current-call__btns" data-cc-contact hidden>
+                            <a href="chat.html" class="btn btn--outline btn--md" data-cc-chat>메시지</a>
+                            <button type="button" class="btn btn--outline btn--md" data-action="call-driver">전화</button>
+                        </div>
+                    </div>
+                    <button type="button" class="current-call__cancel" data-action="cancel" data-cc-cancel aria-haspopup="dialog">호출 취소</button>
+                </section>
+
+                <!-- 지금 상황 -->                <section class="now" data-read-part="호출 안내" data-now>
                     <!-- 오늘 요일의 평균 대기 (js/stats.js · 2026년 1월 통계) -->
                     <h1 class="now__title" data-read>
                         <span><span data-stat="day">목요일</span>에는</span>
@@ -45,7 +70,7 @@
             </div>
 
             <!-- 부르기 -->
-            <div class="call">
+            <div class="call" data-now>
                 <a href="search.html" class="btn btn--primary">바로 부르기</a>
                 <a href="voice.html" class="btn btn--outline">
                     <span class="icon icon--microphone" aria-hidden="true"></span>
@@ -215,6 +240,45 @@
                 }
             }
             renderGuardians();
+        })();
+
+        // 현재 호출: 진행 중인 호출이 있으면 지금 상황·부르기 대신 카드로 (누르면 그 진행 화면으로)
+        (function () {
+            var trip = Trip.get();
+            var STAGES = {
+                waiting: { badge: '차를 찾는 중', tone: 'wait', title: '차량을 찾고 있어요', go: '대기 현황 보기', url: 'waiting.html', cancel: 'before' },
+                assigned: { badge: '차가 정해졌어요', title: '차량이 배정됐어요', desc: '약 8분 후 도착 예정', go: '차량 위치·탑승 안내 보기', url: 'assigned.html', chat: 'before', cancel: 'after' },
+                arriving: { badge: '곧 도착', title: '차가 거의 다 왔어요', desc: '약 3분 후 도착 예정', go: '차량 위치·탑승 안내 보기', url: 'arriving.html', chat: 'soon', cancel: 'after' },
+                arrived: { badge: '도착', title: '차량이 도착했어요', desc: '탑승 위치에 차가 섰어요', go: '차량 위치·탑승 안내 보기', url: 'arrived.html', chat: 'arrived', cancel: 'after' },
+                riding: { badge: '이동 중', title: '목적지로 이동 중', go: '이동 상황 보기', url: 'riding.html', chat: 'riding' }
+            };
+            var s = trip.calledAt && STAGES[trip.stage];
+            if (!s) return;
+            var box = document.querySelector('[data-current-call]');
+            var pickup = '탑승 위치 · ' + (trip.pickupSpot || '정문 · 경사로 쪽');
+            var dest = (trip.destination && trip.destination.name) || '은평성모병원';
+            var desc = trip.stage === 'waiting'
+                ? '승차까지 예상 약 ' + WaitStats.forDay().avg + '분 · 접수번호 1125'
+                : trip.stage === 'riding' ? dest + '(으)로 가고 있어요' : s.desc + '\n' + pickup;
+            document.querySelectorAll('[data-now]').forEach(function (el) { el.hidden = true; });
+            box.hidden = false;
+            var badge = box.querySelector('[data-cc-badge]');
+            badge.textContent = s.badge;
+            badge.classList.toggle('current-call__badge--wait', s.tone === 'wait');
+            box.querySelector('[data-cc-title]').textContent = s.title;
+            box.querySelector('[data-cc-desc]').textContent = desc;
+            var go = box.querySelector('[data-cc-go]');
+            go.textContent = s.go;
+            go.href = s.url;
+            var driver = (window.APP_CONFIG && APP_CONFIG.driver) || {};
+            box.querySelector('[data-cc-car]').hidden = trip.stage === 'waiting';
+            if (driver.plate) box.querySelector('[data-cc-plate]').textContent = driver.plate;
+            box.querySelector('[data-cc-contact]').hidden = !s.chat;
+            if (s.chat) box.querySelector('[data-cc-chat]').href = 'chat.html?stage=' + s.chat;
+            // 호출 취소 (탑승 뒤엔 없음) · 취소 확인 창이 배정 전/후 문구를 고름
+            var cancel = box.querySelector('[data-cc-cancel]');
+            cancel.hidden = !s.cancel;
+            document.getElementById('wrap').dataset.cancelStage = s.cancel || 'before';
         })();
     </script>
 </body>

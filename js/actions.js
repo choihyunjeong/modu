@@ -243,7 +243,7 @@ var Actions = (function () {
             box.querySelector('[data-keep]').addEventListener('click', function () { close(); });
             box.querySelector('[data-confirm]').addEventListener('click', function () {
                 close(true);
-                saveTrip({ share: null, chat: [], helpRequests: [] });
+                saveTrip({ share: null, chat: [], helpRequests: [], stage: 'canceled' });
                 StateNotice.leave('호출을 취소했어요');
                 location.replace('index.html');
             });

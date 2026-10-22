@@ -337,7 +337,7 @@
         // 호출하기: 접수 시각과 인원을 저장하고 진행 화면으로
         document.querySelector('[data-call]').addEventListener('click', function () {
             // 새 호출: 지난 호출의 대화·도움 요청·보호자 공유·차 방향은 지움
-            Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null,
+            Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting',
                 // 저장한 탑승 정보를 이번 접수에 담음 (차량 찾는 중 화면에 그대로 보임)
                 ride: RideInfo.tags() });
         });

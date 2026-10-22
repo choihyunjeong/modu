@@ -135,7 +135,7 @@
             var chosen = { name: name, addr: addr, lat: Number(lat), lng: Number(lng) };
             var start = Trip.places().pickup;
             if (Math.abs(start.lat - chosen.lat) < 0.0005 && Math.abs(start.lng - chosen.lng) < 0.0005) {
-                alert('지금 계신 곳이에요. 다른 목적지를 골라 주세요.');
+                Toast.show('지금 계신 곳이에요. 다른 목적지를 골라 주세요.');
                 return;
             }
             Trip.start(chosen);

@@ -95,7 +95,10 @@
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         var text = field.value.trim();
-        if (!text) return field.focus();
+        if (!text) {
+            Toast.show('보낼 말을 입력하거나 위의 자주 쓰는 말을 눌러 주세요');
+            return field.focus();
+        }
         Chat.send(text);
         field.value = '';
     });

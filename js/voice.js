@@ -155,7 +155,7 @@
         stopSpeaking();
         Trip.start({ name: picked.name, addr: picked.addr, lat: picked.lat, lng: picked.lng });
         // 저장한 탑승 정보로 바로 접수
-        Trip.set({ calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null,
+        Trip.set({ calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting',
             ride: window.RideInfo ? RideInfo.tags() : null });
         StateNotice.leave(picked.name + ro(picked.name) + ' 호출했어요');
         location.href = 'waiting.html';

@@ -228,6 +228,7 @@ var Trip = (function () {
     }
 
     function recordDone() {
+        set({ stage: 'done' });
         var t = load();
         var id = t.calledAt || t.boardedAt;
         if (!id) return;

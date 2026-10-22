@@ -176,30 +176,29 @@ var MapKit = (function () {
         canvas.className = 'map-view__canvas';
         view.prepend(canvas);
 
-        // 내 위치 표시가 있는 화면은 내 위치가 지도 한가운데
-        var me = view.querySelector('[data-place="me"]') ? toLatLng('me') : null;
+        // 처음엔 경로·장소 전체가 보이게 맞춤 (내 위치를 가운데로 옮기는 건 '내 위치' 버튼을 눌렀을 때만)
         var map = new kakao.maps.Map(canvas, {
-            center: me || toLatLng(view.dataset.center || 'pickup'),
+            center: toLatLng(view.dataset.center || 'pickup'),
             level: Number(view.dataset.level || 3)
         });
         view.classList.add('is-kakao');
         var overlays = {};
-        mounted.push({ map: map, overlays: overlays, me: me });
+        mounted.push({ map: map, overlays: overlays });
         var pad = view.dataset.fitPad ? Number(view.dataset.fitPad) : null;
 
         // 경로: 먼저 직선으로 그리고, 도로 경로를 받으면 그 길로 바꿈
         if (view.dataset.route) {
             var straight = view.dataset.route.split(',').map(toLatLng).filter(Boolean);
             var line = new kakao.maps.Polyline(Object.assign({ map: map, path: straight }, ROUTE_STYLE));
-            fit(map, straight, pad, me);
+            fit(map, straight, pad);
             withRoute(function (route) {
                 if (!route) return;
                 var road = toPath(route.path);
                 line.setPath(road);
-                fit(map, road, pad, me);
+                fit(map, road, pad);
             });
         } else if (view.dataset.fit) {
-            fit(map, view.dataset.fit.split(',').map(toLatLng).filter(Boolean), pad, me);
+            fit(map, view.dataset.fit.split(',').map(toLatLng).filter(Boolean), pad);
         }
 
         // 핀·내 위치 표시를 지도 좌표에 붙임 (점이 좌표에 오도록 아래 끝 기준)
@@ -223,7 +222,7 @@ var MapKit = (function () {
                     var road = route ? toPath(route.path) : [toLatLng('car'), toLatLng('pickup')];
                     var drive = route ? Trip.driveMinutes(route) : null;
                     // 차가 오는 길 전체가 보이게 (data-fit 장소들과 함께)
-                    if (view.dataset.fit) fit(map, road.concat(view.dataset.fit.split(',').map(toLatLng).filter(Boolean)), pad, me);
+                    if (view.dataset.fit) fit(map, road.concat(view.dataset.fit.split(',').map(toLatLng).filter(Boolean)), pad);
                     // 남은 길만 그림 (차가 지나간 길은 지워짐) · 도착까지 남은 시간도 같이 바뀜
                     var line = new kakao.maps.Polyline(Object.assign({ map: map, path: road }, ROUTE_STYLE));
                     move(overlay, road, el, function (ratio) {
@@ -240,17 +239,28 @@ var MapKit = (function () {
         });
 
         // 내 위치 버튼: 실제 위치로 지도를 옮기고 내 위치 표시도 그 자리로
+        //  위치 권한이 없거나 못 받으면 저장된 내 위치(예시)를 가운데로
         var locate = view.querySelector('[data-locate]');
-        if (locate && navigator.geolocation) {
+        if (locate) {
             locate.addEventListener('click', function () {
+                function fallback() {
+                    map.panTo(toLatLng('me'));
+                    if (window.Toast) Toast.show('위치 권한을 허용하면 실제 내 위치로 옮겨요');
+                }
+                if (!navigator.geolocation) return fallback();
                 navigator.geolocation.getCurrentPosition(function (pos) {
                     setPlace('me', { lat: pos.coords.latitude, lng: pos.coords.longitude });
-                }, function () {
-                    alert('내 위치를 확인하려면 위치 권한을 허용해 주세요.');
-                });
+                }, fallback, { timeout: 5000, maximumAge: 60000 });
             });
         }
     }
+
+    // 카카오 지도를 못 불러온 화면(정적 지도)의 내 위치 버튼
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-locate]');
+        if (!btn || btn.closest('.is-kakao')) return;
+        if (window.Toast) Toast.show('지도를 불러오지 못해 내 위치로 옮길 수 없어요');
+    });
 
     // 실제 내 위치를 받아 저장 (실패·거부하면 예시 좌표 그대로)
     function withGps(callback) {

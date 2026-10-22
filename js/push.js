@@ -5,6 +5,11 @@
 //  <div id="wrap" data-auto-next="assigned.html" data-delay="8000" data-next-notice="UD택시가 배정됐어요">
 //    data-next-notice : 다음 화면에서 보여 줄 안내 (없으면 안내 없이 바뀜)
 document.addEventListener('DOMContentLoaded', function () {
+    // 지금 진행 단계를 기록 (홈의 "현재 호출" 카드가 이 화면으로 돌아오게)
+    var page = location.pathname.split('/').pop();
+    var STAGES = { 'waiting.html': 'waiting', 'assigned.html': 'assigned', 'arriving.html': 'arriving', 'arrived.html': 'arrived', 'riding.html': 'riding' };
+    if (STAGES[page] && window.Trip && Trip.get().calledAt) Trip.set({ stage: STAGES[page] });
+
     // 시간은 APP_CONFIG.demoScale만큼 늘림 (config.js에서 한 번에 조절)
     var scale = (window.APP_CONFIG && APP_CONFIG.demoScale) || 1;
     var auto = document.querySelector('[data-auto-next]');
