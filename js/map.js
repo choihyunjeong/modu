@@ -21,9 +21,13 @@ var MapKit = (function () {
     var ROUTE_STYLE = { strokeWeight: 5, strokeColor: '#0b5ed7', strokeOpacity: 0.9 };
 
     // 카카오 지도 SDK 불러오기 (장소 검색 services 포함 · 한 번만)
-    function load(callback) {
-        if (!config.kakaoMapKey) return;
+    //  onFail: 키가 없거나 불러오지 못했을 때 (등록 안 된 도메인 등)
+    var failed = false;
+    var failCallbacks = [];
+    function load(callback, onFail) {
+        if (!config.kakaoMapKey || failed) { if (onFail) onFail(); return; }
         if (window.kakao && window.kakao.maps && window.kakao.maps.services) return kakao.maps.load(callback);
+        if (onFail) failCallbacks.push(onFail);
         if (callbacks) return callbacks.push(callback);
         callbacks = [callback];
         var script = document.createElement('script');
@@ -31,7 +35,11 @@ var MapKit = (function () {
         script.onload = function () {
             kakao.maps.load(function () { callbacks.forEach(function (cb) { cb(); }); });
         };
-        script.onerror = function () { console.warn('카카오 지도를 불러오지 못해 정적 지도를 보여줘요.'); };
+        script.onerror = function () {
+            failed = true;
+            console.warn('카카오 지도를 불러오지 못해 정적 지도를 보여줘요. (developers.kakao.com에 이 사이트 도메인이 등록됐는지 확인)');
+            failCallbacks.forEach(function (cb) { cb(); });
+        };
         document.head.appendChild(script);
     }
 

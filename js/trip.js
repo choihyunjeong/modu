@@ -216,6 +216,38 @@ var Trip = (function () {
         }
     };
 
+    // 이용내역 (브라우저 localStorage · 이동 완료 화면에서 한 번씩 남김 · 최근 것이 앞)
+    var HISTORY_KEY = 'tripHistory';
+
+    function history() {
+        try {
+            return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function recordDone() {
+        var t = load();
+        var id = t.calledAt || t.boardedAt;
+        if (!id) return;
+        var list = history();
+        if (list.some(function (r) { return r.id === id; })) return;
+        list.unshift({
+            id: id,
+            boardedAt: t.boardedAt || null,
+            doneAt: t.boardedAt ? t.boardedAt + rideMinutes() * 60000 : Date.now(),
+            pickup: t.pickupName || '래미안베라힐즈 정문',
+            dest: (t.destination && t.destination.name) || '은평성모병원',
+            km: Math.round(rideKm() * 10) / 10,
+            fare: fare(),
+            riders: t.riders != null ? ridersText(t.riders) : '본인 1명',
+            helpRequests: t.helpRequests || [],
+            chatCount: (t.chat || []).filter(function (m) { return m.from === 'me'; }).length
+        });
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 50))); } catch (e) {}
+    }
+
     function bind(root) {
         var trip = load();
         (root || document).querySelectorAll('[data-trip]').forEach(function (el) {
@@ -240,6 +272,7 @@ var Trip = (function () {
     return {
         get: load, set: set, start: start, places: places, bind: bind,
         route: route, ensureRoute: ensureRoute, fetchRoute: fetchRoute,
-        approachRoute: approachRoute, driveMinutes: driveMinutes, fillEta: fillEta
+        approachRoute: approachRoute, driveMinutes: driveMinutes, fillEta: fillEta,
+        history: history, recordDone: recordDone, clock: clock
     };
 })();

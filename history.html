@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이용내역 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/tabs.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
+</head>
+<body>
+    <!-- 이용내역 (이동 완료 화면에서 남긴 기록 · 누르면 자세히) -->
+    <div id="wrap">
+        <header class="tab-page-head">
+            <h1 class="tab-page-head__title">이용내역</h1>
+        </header>
+
+        <main class="content tab-page">
+            <ul class="history-list" data-history></ul>
+
+            <div class="empty-card" data-history-empty hidden>
+                <p class="empty-card__title">아직 이용 내역이 없어요</p>
+                <p class="empty-card__desc">이동을 마치면 여기에서 다시 볼 수 있어요.</p>
+                <a href="search.html" class="btn btn--primary">바로 부르기</a>
+            </div>
+        </main>
+
+        <nav class="tab-bar" aria-label="주 메뉴">
+            <a href="index.html" class="tab-bar__item">
+                <span class="icon icon--home" aria-hidden="true"></span>
+                홈
+            </a>
+            <a href="reserve.html" class="tab-bar__item">
+                <span class="icon icon--calendar" aria-hidden="true"></span>
+                예약
+            </a>
+            <a href="history.html" class="tab-bar__item is-active" aria-current="page">
+                <span class="icon icon--time" aria-hidden="true"></span>
+                이용내역
+            </a>
+            <a href="#" class="tab-bar__item">
+                <span class="icon icon--settings" aria-hidden="true"></span>
+                설정
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        var DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+        var driver = (window.APP_CONFIG && APP_CONFIG.driver) || {};
+
+        function esc(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        function day(time) {
+            var d = new Date(time);
+            return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + DAYS[d.getDay()] + ')';
+        }
+        function hm(time) {
+            var d = new Date(time);
+            return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+        }
+
+        var items = Trip.history();
+        var list = document.querySelector('[data-history]');
+        document.querySelector('[data-history-empty]').hidden = items.length > 0;
+
+        list.innerHTML = items.map(function (r, i) {
+            var times = r.boardedAt ? hm(r.boardedAt) + ' 탑승 · ' + hm(r.doneAt) + ' 하차' : hm(r.doneAt) + ' 이동 완료';
+            var help = r.helpRequests && r.helpRequests.length
+                ? '<ul class="history-item__requests">' + r.helpRequests.map(function (q) {
+                    return '<li>' + hm(q.at) + ' · ' + esc(q.title) + (q.text ? ' · "' + esc(q.text) + '"' : '') + '</li>';
+                }).join('') + '</ul>'
+                : '<p class="history-item__none">보낸 도움 요청이 없어요</p>';
+            return '<li class="history-item">' +
+                '<button type="button" class="history-item__head" aria-expanded="false" aria-controls="history-' + i + '">' +
+                    '<span class="history-item__date">' + day(r.doneAt) + ' · 이동 완료</span>' +
+                    '<span class="history-item__route">' + esc(r.pickup) + ' <span aria-hidden="true">→</span><span class="blind">에서</span> ' + esc(r.dest) + '</span>' +
+                    '<span class="history-item__meta">' + times + ' · ' + r.km + 'km</span>' +
+                    '<span class="history-item__fare">' + r.fare.toLocaleString('ko-KR') + '원 <span class="history-item__fare-note">예상 · 바우처</span></span>' +
+                    '<span class="icon icon--sm icon--chevron-down history-item__arrow" aria-hidden="true"></span>' +
+                '</button>' +
+                '<div class="history-item__body" id="history-' + i + '" hidden>' +
+                    '<dl class="history-item__rows">' +
+                        '<div><dt>차량</dt><dd>' + esc([driver.plate, driver.car, driver.name].filter(Boolean).join(' · ')) + '</dd></div>' +
+                        '<div><dt>탑승 인원</dt><dd>' + esc(r.riders) + '</dd></div>' +
+                        '<div><dt>기사님께 보낸 말</dt><dd>' + (r.chatCount ? r.chatCount + '건' : '없음') + '</dd></div>' +
+                    '</dl>' +
+                    '<p class="history-item__label">도움 요청 내역</p>' + help +
+                    '<a href="feedback.html" class="btn btn--outline btn--md">탑승 경험 남기기</a>' +
+                '</div>' +
+            '</li>';
+        }).join('');
+
+        // 누르면 자세히 펼침 / 접힘
+        list.addEventListener('click', function (e) {
+            var head = e.target.closest('.history-item__head');
+            if (!head) return;
+            var open = head.getAttribute('aria-expanded') !== 'true';
+            head.setAttribute('aria-expanded', open);
+            document.getElementById(head.getAttribute('aria-controls')).hidden = !open;
+        });
+    </script>
+</body>
+</html>

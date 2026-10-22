@@ -23,7 +23,7 @@
                     <span class="icon icon--search" aria-hidden="true"></span>
                     <label for="destination" class="blind">목적지</label>
                     <input type="search" id="destination" class="search-box__input" placeholder="어디로 가세요?" autocomplete="off">
-                    <button type="button" class="search-box__voice" aria-label="말로 목적지 입력">
+                    <button type="button" class="search-box__voice" aria-label="말로 목적지 입력" data-voice-for="destination">
                         <span class="icon icon--microphone" aria-hidden="true"></span>
                     </button>
                 </form>
@@ -43,6 +43,7 @@
         <section class="place-block" data-search-results hidden>
             <h2 class="blind">검색 결과</h2>
             <ul class="place-list place-list--recent" data-result-list aria-live="polite"></ul>
+            <p class="search-empty" data-result-loading hidden>찾고 있어요…</p>
             <p class="search-empty" data-result-empty hidden>검색 결과가 없어요. 다른 이름으로 찾아보세요.</p>
         </section>
 
@@ -163,8 +164,11 @@
         var defaults = document.querySelector('[data-search-default]');
         var timer = null;
 
+        var loading = document.querySelector('[data-result-loading]');
+
         function render(items) {
             list.innerHTML = '';
+            loading.hidden = true;
             empty.hidden = items.length > 0;
             items.forEach(function (place) {
                 var li = document.createElement('li');
@@ -189,14 +193,55 @@
             });
         }
 
+        // 1) 카카오 장소 검색 (내 위치 가까운 곳 먼저)
+        // 2) 카카오를 못 쓰면 (키 없음 · 등록 안 된 도메인) OpenStreetMap 장소 검색으로 대신 찾음
         function search(query) {
+            var me = Trip.places().me;
             MapKit.load(function () {
-                var me = Trip.places().me;
                 new kakao.maps.services.Places().keywordSearch(query, function (data, status) {
                     if (input.value.trim() !== query) return;
                     render(status === kakao.maps.services.Status.OK ? data : []);
                 }, { location: new kakao.maps.LatLng(me.lat, me.lng), size: 10 });
+            }, function () { searchOsm(query, me); });
+        }
+
+        // OpenStreetMap(Nominatim) · 키 없이 무료 · 내 위치 주변(약 20km)을 먼저 보여줌
+        function searchOsm(query, me) {
+            var d = 0.2;
+            var url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=10' +
+                '&countrycodes=kr&accept-language=ko&q=' + encodeURIComponent(query) +
+                '&viewbox=' + [me.lng - d, me.lat + d, me.lng + d, me.lat - d].join(',');
+            fetch(url).then(function (res) { return res.json(); }).then(function (data) {
+                if (input.value.trim() !== query) return;
+                // 같은 건물이 점·면으로 여러 번 나오면 하나만 (이름이 같고 300m 안)
+                var seen = [];
+                render(data.map(function (r) {
+                    return {
+                        place_name: r.name || r.display_name.split(',')[0],
+                        road_address_name: osmAddress(r),
+                        y: r.lat,
+                        x: r.lon
+                    };
+                }).filter(function (p) {
+                    var dup = seen.some(function (q) {
+                        return q.place_name === p.place_name && Math.abs(q.y - p.y) < 0.003 && Math.abs(q.x - p.x) < 0.003;
+                    });
+                    if (!dup) seen.push(p);
+                    return !dup;
+                }));
+            }).catch(function () {
+                if (input.value.trim() !== query) return;
+                render([]);
+                empty.textContent = '검색하지 못했어요. 인터넷 연결을 확인해 주세요.';
             });
+        }
+
+        // 한국식 주소 순서로 (시·구·동·도로 · 건물번호)
+        function osmAddress(r) {
+            var a = r.address || {};
+            var parts = [a.city || a.province || a.state, a.borough || a.city_district || a.county, a.suburb || a.quarter || a.neighbourhood, a.road, a.house_number];
+            var text = parts.filter(Boolean).join(' ');
+            return text || r.display_name;
         }
 
         input.addEventListener('input', function () {
@@ -204,7 +249,12 @@
             clearTimeout(timer);
             results.hidden = !query;
             defaults.hidden = !!query;
-            if (query) timer = setTimeout(function () { search(query); }, 300);
+            if (!query) return;
+            list.innerHTML = '';
+            empty.hidden = true;
+            empty.textContent = '검색 결과가 없어요. 다른 이름으로 찾아보세요.';
+            loading.hidden = false;
+            timer = setTimeout(function () { search(query); }, 400);
         });
     </script>
 </body>

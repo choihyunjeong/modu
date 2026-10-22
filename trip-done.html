@@ -54,6 +54,7 @@
                 </a>
 
                 <a href="index.html" class="btn btn--primary btn--home">홈으로</a>
+                <a href="history.html" class="btn btn--text">이용내역에서 보기</a>
             </div>
         </main>
     </div>
@@ -65,6 +66,9 @@
     </p>
 
     <script>
+        // 이번 이동을 이용내역에 남김 (같은 호출은 한 번만)
+        Trip.recordDone();
+
         if (new URLSearchParams(location.search).get('sent') === '1') {
             var toast = document.querySelector('.toast');
             toast.hidden = false;

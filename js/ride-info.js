@@ -94,8 +94,9 @@ var RideInfo = (function () {
         var result = {};
 
         if (data.device) {
+            var wheelchair = WHEELCHAIRS.indexOf(data.device) > -1;
             result.device = DEVICES[data.device] +
-                (WHEELCHAIRS.indexOf(data.device) > -1 ? ' · 앉은 채 탑승 · 규격 미확인' : '');
+                (wheelchair ? (data.otherBoarding ? ' · 다른 탑승 방법 요청 · ' + data.otherBoarding : ' · 앉은 채 탑승 · 규격 미확인') : '');
         }
 
         var requests = (data.requests || []).map(function (v) { return REQUESTS[v]; });

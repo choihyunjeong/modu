@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/tabs.css">
+    <script src="js/common.js"></script>
+</head>
+<body>
+    <!-- 예약탭_v12 (하단 "예약" · 전일접수 / 정기접수) -->
+    <div id="wrap">
+        <header class="tab-page-head">
+            <h1 class="tab-page-head__title">예약</h1>
+        </header>
+
+        <main class="content tab-page">
+            <!-- 전일접수 -->
+            <section class="tab-section" aria-labelledby="day-before-title">
+                <div class="tab-section__head">
+                    <div class="tab-section__title-row">
+                        <h2 class="tab-section__title" id="day-before-title">전일접수</h2>
+                        <button type="button" class="btn-help-round" aria-label="전일접수 안내" aria-haspopup="dialog" data-open-info="day-before">?</button>
+                    </div>
+                    <p class="tab-section__desc">내일 오전 7시·8시·10시 배차 시간 중에서 신청해요. 차량은 이후 탑승 위치로 이동해요.</p>
+                </div>
+
+                <div class="date-line">
+                    <p class="date-line__date" data-tomorrow>내일</p>
+                    <p class="date-line__note">평일 시간대별 100명 선착순</p>
+                </div>
+
+                <ul class="slot-list" data-slots></ul>
+            </section>
+
+            <!-- 정기접수 -->
+            <section class="tab-section" aria-labelledby="regular-title">
+                <div class="tab-section__head">
+                    <div class="tab-section__title-row">
+                        <h2 class="tab-section__title" id="regular-title">정기접수</h2>
+                        <button type="button" class="btn-help-round" aria-label="정기접수 안내" aria-haspopup="dialog" data-open-info="regular">?</button>
+                    </div>
+                    <p class="tab-section__desc">같은 시각·같은 경로의 접수를 대신 반복해요. 차량·시각이 확정되는 예약은 아니에요.</p>
+                </div>
+
+                <div class="empty-card">
+                    <p class="empty-card__title">아직 정기접수가 없어요</p>
+                    <button type="button" class="btn btn--outline" data-regular-apply>정기접수 신청하기</button>
+                </div>
+            </section>
+        </main>
+
+        <nav class="tab-bar" aria-label="주 메뉴">
+            <a href="index.html" class="tab-bar__item">
+                <span class="icon icon--home" aria-hidden="true"></span>
+                홈
+            </a>
+            <a href="reserve.html" class="tab-bar__item is-active" aria-current="page">
+                <span class="icon icon--calendar" aria-hidden="true"></span>
+                예약
+            </a>
+            <a href="history.html" class="tab-bar__item">
+                <span class="icon icon--time" aria-hidden="true"></span>
+                이용내역
+            </a>
+            <a href="#" class="tab-bar__item">
+                <span class="icon icon--settings" aria-hidden="true"></span>
+                설정
+            </a>
+        </nav>
+    </div>
+
+    <!-- 안내 · 변경·취소 시트 (내용은 스크립트가 채움) -->
+    <div class="modal-sheet" id="reserve-sheet" role="dialog" aria-modal="true" aria-labelledby="reserve-sheet-title" hidden>
+        <div class="modal-sheet__panel reserve-sheet">
+            <span class="sheet__grabber" aria-hidden="true"></span>
+            <div>
+                <h2 class="modal-sheet__title" id="reserve-sheet-title"></h2>
+                <p class="modal-sheet__desc" data-sheet-desc></p>
+            </div>
+            <div class="reserve-sheet__actions" data-sheet-actions></div>
+        </div>
+    </div>
+
+    <script>
+        // 전일접수 신청 기록 (시연용 · 브라우저 localStorage · 내일 날짜 기준)
+        var KEY = 'reservations';
+        var DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        var dateKey = tomorrow.getFullYear() + '-' + (tomorrow.getMonth() + 1) + '-' + tomorrow.getDate();
+        var dateText = (tomorrow.getMonth() + 1) + '월 ' + tomorrow.getDate() + '일 (' + DAYS[tomorrow.getDay()] + ')';
+        document.querySelector('[data-tomorrow]').textContent = '내일 · ' + dateText;
+
+        // 배차 시각 · opensAt: 오늘 이 시각부터 신청할 수 있음
+        var SLOTS = [
+            { time: '07:00', label: '오전 7:00' },
+            { time: '08:00', label: '오전 8:00' },
+            { time: '10:00', label: '오전 10:00', opensAt: 10 }
+        ];
+
+        function load() {
+            try {
+                var data = JSON.parse(localStorage.getItem(KEY)) || {};
+                return data.date === dateKey ? data : { date: dateKey, slots: [] };
+            } catch (e) {
+                return { date: dateKey, slots: [] };
+            }
+        }
+        function save(data) {
+            try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+        }
+
+        var list = document.querySelector('[data-slots]');
+        function render() {
+            var booked = load().slots;
+            var hour = new Date().getHours();
+            list.innerHTML = SLOTS.map(function (s) {
+                var waiting = s.opensAt != null && hour < s.opensAt;
+                var done = booked.indexOf(s.time) > -1;
+                var status = done ? '접수 완료' : waiting ? '오늘 오전 ' + s.opensAt + '시부터 접수' : '신청 가능';
+                var cls = done ? 'slot--done' : waiting ? 'slot--waiting' : '';
+                var btn = done
+                    ? '<button type="button" class="slot__btn slot__btn--line" data-change="' + s.time + '">변경·취소</button>'
+                    : '<button type="button" class="slot__btn" data-apply="' + s.time + '"' + (waiting ? ' disabled' : '') + '>' + (waiting ? '대기' : '신청') + '</button>';
+                return '<li class="slot ' + cls + '">' +
+                    '<div class="slot__text"><p class="slot__time">' + s.label + '</p><p class="slot__status">' + status + '</p></div>' +
+                    btn + '</li>';
+            }).join('');
+        }
+        render();
+
+        function labelOf(time) {
+            return SLOTS.filter(function (s) { return s.time === time; })[0].label;
+        }
+
+        // 시트 (안내 · 변경·취소)
+        var sheet = document.getElementById('reserve-sheet');
+        var opener = null;
+        function openSheet(title, desc, actions, from) {
+            opener = from;
+            sheet.querySelector('#reserve-sheet-title').textContent = title;
+            sheet.querySelector('[data-sheet-desc]').textContent = desc;
+            var box = sheet.querySelector('[data-sheet-actions]');
+            box.innerHTML = '';
+            actions.forEach(function (a) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'btn ' + (a.cls || 'btn--primary');
+                b.textContent = a.label;
+                b.addEventListener('click', function () { closeSheet(); if (a.run) a.run(); });
+                box.appendChild(b);
+            });
+            sheet.hidden = false;
+            document.body.classList.add('is-modal-open');
+            box.querySelector('button').focus();
+        }
+        function closeSheet() {
+            sheet.hidden = true;
+            document.body.classList.remove('is-modal-open');
+            if (opener && document.body.contains(opener)) opener.focus();
+        }
+        sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+
+        list.addEventListener('click', function (e) {
+            var apply = e.target.closest('[data-apply]');
+            var change = e.target.closest('[data-change]');
+            if (apply) {
+                var data = load();
+                data.slots.push(apply.dataset.apply);
+                save(data);
+                render();
+                Toast.show('내일 ' + labelOf(apply.dataset.apply) + ' 전일접수를 신청했어요', { check: true });
+            } else if (change) {
+                var time = change.dataset.change;
+                openSheet('내일 ' + labelOf(time) + ' 신청', '다른 시간으로 바꾸려면 이 신청을 취소한 뒤 원하는 시간에 다시 신청해 주세요.', [
+                    { label: '신청 취소하기', cls: 'btn--outline btn--danger-text', run: function () {
+                        var data = load();
+                        data.slots = data.slots.filter(function (t) { return t !== time; });
+                        save(data);
+                        render();
+                        Toast.show('내일 ' + labelOf(time) + ' 신청을 취소했어요', { check: true });
+                    } },
+                    { label: '닫기', cls: 'btn--text' }
+                ], change);
+            }
+        });
+
+        var INFO = {
+            'day-before': ['전일접수', '이용 전날 정해진 배차 시간(오전 7시·8시·10시) 중 하나를 골라 미리 신청해요. 시간대마다 선착순으로 받아요.'],
+            'regular': ['정기접수', '같은 시각·같은 경로로 자주 이동할 때, 접수를 대신 반복해 드려요. 차량이나 시각이 확정되는 예약은 아니에요.']
+        };
+        document.querySelectorAll('[data-open-info]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var info = INFO[btn.dataset.openInfo];
+                openSheet(info[0], info[1], [{ label: '확인' }], btn);
+            });
+        });
+
+        document.querySelector('[data-regular-apply]').addEventListener('click', function () {
+            Toast.show('정기접수 신청 화면은 아직 준비 중이에요');
+        });
+    </script>
+</body>
+</html>

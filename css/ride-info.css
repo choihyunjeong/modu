@@ -120,6 +120,36 @@
     color: var(--color-primary);
 }
 
+.boarding-guide__saved {
+    align-self: stretch;
+    padding: var(--space-10) var(--space-12);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+}
+
+button.boarding-guide__link { text-align: left; }
+
+/* 다른 탑승 방법 시트 (탑승정보_v12_01s_다른탑승방법_시트) */
+.other-sheet { gap: var(--space-12); padding-bottom: var(--space-24); }
+
+.other-sheet__title {
+    font-size: var(--fs-22);
+    font-weight: var(--font-weight-bold);
+    line-height: calc(30px * var(--font-scale));
+}
+
+.other-sheet .modal-sheet__desc { margin-top: 0; }
+
+.other-sheet__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.other-sheet__actions .btn--text { font-weight: var(--font-weight-bold); }
+
 /* 질문 제목 (legend) */
 .section-question {
     float: left;
