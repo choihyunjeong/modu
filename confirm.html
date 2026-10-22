@@ -12,14 +12,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>호출 전 확인 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221437">
-    <link rel="stylesheet" href="css/call.css?v=2610221437">
-    <script src="js/common.js?v=2610221437"></script>
-    <script src="js/ride-info.js?v=2610221437"></script>
-    <script src="js/config.js?v=2610221437"></script>
-    <script src="js/trip.js?v=2610221437"></script>
-    <script src="js/map.js?v=2610221437"></script>
-    <script src="js/stats.js?v=2610221437"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221442">
+    <link rel="stylesheet" href="css/call.css?v=2610221442">
+    <script src="js/common.js?v=2610221442"></script>
+    <script src="js/ride-info.js?v=2610221442"></script>
+    <script src="js/config.js?v=2610221442"></script>
+    <script src="js/trip.js?v=2610221442"></script>
+    <script src="js/map.js?v=2610221442"></script>
+    <script src="js/stats.js?v=2610221442"></script>
 </head>
 <body>
     <!-- E3b 호출 전 확인 (목적지를 고르면 바로 이 화면) -->
@@ -343,7 +343,12 @@
         });
 
         // 호출하기: 접수 시각과 인원을 저장하고 진행 화면으로
-        document.querySelector('[data-call]').addEventListener('click', function () {
+        document.querySelector('[data-call]').addEventListener('click', function (e) {
+            // 출발지와 도착지가 너무 가까우면 (집에서 집 등) 부르지 않고 안내 시트
+            if (Trip.tooClose()) {
+                e.preventDefault();
+                return NearSheet.show(e.currentTarget);
+            }
             // 새 호출: 지난 호출의 대화·도움 요청·보호자 공유·차 방향은 지움
             Trip.set({ riders: applied, calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting', stageAt: Date.now(),
                 // 저장한 탑승 정보를 이번 접수에 담음 (차량 찾는 중 화면에 그대로 보임)

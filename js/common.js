@@ -284,6 +284,50 @@ var SheetDrag = (function () {
     return { init: init, panel: modalPanel };
 })();
 
+// 출발지와 도착지가 너무 가까울 때 (집에서 집 등) · 딤 위로 아래에서 올라오는 안내 시트
+//  NearSheet.show(누른 버튼) · 바깥·닫기·Esc·아래로 끌면 닫힘 · "도착지 다시 고르기"는 검색 화면으로
+var NearSheet = (function () {
+    function show(opener) {
+        if (document.querySelector('.modal-sheet--near')) return;
+        var dist = window.Trip && Trip.distText ? Trip.distText() : '';
+        var layer = document.createElement('div');
+        layer.className = 'modal-sheet modal-sheet--near';
+        layer.setAttribute('role', 'alertdialog');
+        layer.setAttribute('aria-modal', 'true');
+        layer.setAttribute('aria-labelledby', 'near-title');
+        layer.setAttribute('aria-describedby', 'near-desc');
+        layer.innerHTML =
+            '<div class="modal-sheet__panel near-sheet">' +
+                '<span class="sheet__grabber" aria-hidden="true"></span>' +
+                '<span class="near-sheet__icon" aria-hidden="true">!</span>' +
+                '<h2 class="near-sheet__title" id="near-title" tabindex="-1">출발지와 도착지를 다시 확인해 주세요</h2>' +
+                '<p class="near-sheet__desc" id="near-desc">두 곳이 너무 가까워서' + (dist ? '(' + dist + ')' : '') + ' 호출할 수 없어요.<br>출발지나 도착지를 바꾼 뒤 다시 호출해 주세요.</p>' +
+                '<div class="near-sheet__actions">' +
+                    '<a href="search.html" class="btn btn--primary">도착지 다시 고르기</a>' +
+                    '<button type="button" class="btn btn--text" data-near-close>닫기</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(layer);
+        document.body.classList.add('is-modal-open');
+        SheetDrag.panel(layer.firstChild);
+
+        function close() {
+            layer.remove();
+            document.removeEventListener('keydown', onKey);
+            if (!document.querySelector('.modal-sheet:not([hidden])')) document.body.classList.remove('is-modal-open');
+            if (opener && opener.focus) opener.focus();
+        }
+        function onKey(e) { if (e.key === 'Escape') close(); }
+        layer.addEventListener('click', function (e) { if (e.target === layer) close(); });
+        layer.querySelector('[data-near-close]').addEventListener('click', close);
+        document.addEventListener('keydown', onKey);
+        // 올라오는 움직임 뒤 제목으로 초점 (화면 읽기 프로그램이 바로 읽도록)
+        requestAnimationFrame(function () { layer.classList.add('is-open'); });
+        layer.querySelector('#near-title').focus();
+    }
+    return { show: show };
+})();
+
 // 앱 안 짧은 안내 (보냈어요 · 배정됐어요 등) · 하나씩만 보이고 잠시 뒤 사라짐
 //  Toast.show('관제센터에 메시지를 보냈어요', { check: true })  ·  Toast.show('UD택시가 배정됐어요', { top: true })
 var Toast = (function () {

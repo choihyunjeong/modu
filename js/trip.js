@@ -298,6 +298,9 @@ var Trip = (function () {
         get: load, set: set, start: start, places: places, bind: bind,
         route: route, ensureRoute: ensureRoute, fetchRoute: fetchRoute,
         approachRoute: approachRoute, driveMinutes: driveMinutes, fillEta: fillEta,
+        rideKm: rideKm, distText: distText,
+        // 출발지와 도착지가 너무 가까워 부를 수 없음 (100m 미만 · 집에서 집 등)
+        tooClose: function () { return rideKm() < 0.1; },
         history: history, recordDone: recordDone, updateHistory: updateHistory, removeHistory: removeHistory, clock: clock
     };
 })();

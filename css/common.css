@@ -773,6 +773,60 @@ fieldset {
 
 body.is-modal-open { overflow: hidden; }
 
+/* 출발지·도착지가 너무 가까울 때 안내 시트 (common.js NearSheet) · 딤이 깔리고 아래에서 올라옴 */
+.modal-sheet--near { opacity: 0; transition: opacity 0.2s ease; }
+.modal-sheet--near.is-open { opacity: 1; }
+.modal-sheet--near .near-sheet { transform: translateY(40px); transition: transform 0.25s ease; }
+.modal-sheet--near.is-open .near-sheet { transform: none; }
+
+.near-sheet {
+    align-items: center;
+    gap: var(--space-12);
+    padding-bottom: calc(var(--space-16) + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+}
+
+.near-sheet__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-top: var(--space-12);
+    border-radius: var(--radius-full);
+    background: var(--color-text-sub);
+    font-size: 26px;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+    color: var(--color-text-inverse);
+}
+
+.near-sheet__title {
+    font-size: var(--fs-20);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-28);
+}
+
+.near-sheet__title:focus { outline: none; }
+
+.near-sheet__desc {
+    font-size: var(--fs-15);
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+}
+
+.near-sheet__actions {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    gap: var(--space-4);
+    margin-top: var(--space-12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-sheet--near, .modal-sheet--near .near-sheet { transition: none; }
+}
+
 /* =========================================================
    앱 알림 카드 (잠금 화면 / 알림 센터 · 앱 위 배너)
    ========================================================= */

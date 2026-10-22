@@ -150,6 +150,8 @@
         stopListening();
         stopSpeaking();
         Trip.start({ name: picked.name, addr: picked.addr, lat: picked.lat, lng: picked.lng });
+        // 출발지와 도착지가 너무 가까우면 부르지 않고 안내 시트
+        if (Trip.tooClose()) return NearSheet.show();
         // 저장한 탑승 정보로 바로 접수
         Trip.set({ calledAt: Date.now(), boardedAt: null, chat: [], helpRequests: [], share: null, carHeading: null, stage: 'waiting', stageAt: Date.now(),
             ride: window.RideInfo ? RideInfo.tags() : null });
