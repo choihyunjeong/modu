@@ -71,7 +71,12 @@ var Actions = (function () {
         layer.addEventListener('click', function (e) { if (e.target === layer) dismiss(); });
         document.addEventListener('keydown', onKey);
         bind(panel, close);
-        var first = panel.querySelector('[data-autofocus]') || panel.querySelector('button, input, textarea, a[href]');
+        // 처음 초점: 지정한 칸 → 없으면 시트 제목 (버튼이 미리 골라진 것처럼 보이지 않게)
+        var first = panel.querySelector('[data-autofocus]');
+        if (!first && title) {
+            title.setAttribute('tabindex', '-1');
+            first = title;
+        }
         if (first) first.focus();
         return close;
     }
@@ -234,7 +239,12 @@ var Actions = (function () {
     // ---------- F6a / F6b 도움 요청 ----------
     function help(opener) {
         var riding = wrapData('stage') === 'riding';
+        var count = requests().length;
         var html =
+            // 이번 이동의 요청 내역은 제목 오른쪽 위 (보낸 요청이 있으면 개수도)
+            '<button type="button" class="help-history-top" data-help="requests" aria-haspopup="dialog">' +
+                '요청 내역' + (count ? ' <span class="help-history-top__count">' + count + '</span>' : '') +
+                '<span class="icon icon--xs icon--chevron-right" aria-hidden="true"></span></button>' +
             '<div class="action-sheet__head">' +
                 '<h2 class="action-sheet__title action-sheet__title--lg">어떤 도움이 필요하세요?</h2>' +
                 '<p class="action-sheet__desc">' + (riding
@@ -250,11 +260,10 @@ var Actions = (function () {
                       '<button type="button" class="help-card help-card--row" data-help="compose">' +
                           '<span class="help-card__title">관제센터에만 알리기</span>' +
                           '<span class="help-card__desc">관제센터에만 전달 · 기사님 모르게 상담원이 먼저 확인해요</span></button>'
-                    : helpCard('탑승 장소까지 가기 어려워요', '상황을 기사님과 관제센터에 알려요.', 'send') +
+                    : helpCard('탑승 장소까지 가기 어려워요', '상황을 기사님과 관제센터에 알려요.', 'send', true) +
                       '<button type="button" class="help-card help-card--row" data-help="compose">' +
                           '<span class="help-card__title">관제센터에 메시지 보내기</span>' +
                           '<span class="help-card__desc">기사님께 말하기 어려운 상황을 글로 보내요</span></button>') +
-                '<button type="button" class="help-history" data-help="requests">이번 이동의 요청 내역<span aria-hidden="true">›</span></button>' +
                 '<a class="help-119" href="tel:119">' +
                     '<span class="help-119__icon" aria-hidden="true"><span class="icon icon--warning-alt"></span></span>' +
                     '<span class="help-119__text">' +
@@ -283,8 +292,9 @@ var Actions = (function () {
         }, opener);
     }
 
-    function helpCard(title, desc, kind) {
-        return '<button type="button" class="help-card" data-help="' + kind + '">' +
+    // row: 한 줄 가득 쓰는 카드는 왼쪽 정렬 (둘씩 놓는 카드만 가운데)
+    function helpCard(title, desc, kind, row) {
+        return '<button type="button" class="help-card' + (row ? ' help-card--row' : '') + '" data-help="' + kind + '">' +
             '<span class="help-card__title">' + esc(title) + '</span>' +
             '<span class="help-card__desc">' + esc(desc) + '</span></button>';
     }
