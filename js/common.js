@@ -1,3 +1,9 @@
+// 사이트를 http로 열면 https로 다시 엶 (마이크·내 위치는 https에서만 쓸 수 있음 · 내 컴퓨터에서 열 땐 그대로)
+(function () {
+    var local = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    if (location.protocol === 'http:' && !local) location.replace('https:' + location.href.slice(5));
+})();
+
 // 저장된 글자 크기를 화면이 그려지기 전에 적용 (html[data-font-size] → :root --font-scale)
 (function () {
     try {

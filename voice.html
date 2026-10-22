@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음성으로 부르기 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/voice.css">
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/trip.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/places.js"></script>
+    <script src="js/stats.js"></script>
+</head>
+<body>
+    <div id="wrap" class="voice-page">
+        <!-- 말로하기_v17_A_듣는중 -->
+        <section class="voice-listen" data-voice-step="listen">
+            <div class="voice-listen__body">
+                <h1 class="voice-listen__title" data-voice-title>어디로 갈까요?</h1>
+                <p class="voice-listen__desc" data-voice-desc aria-live="polite">말씀하신 내용을 확인한 뒤 진행해요.</p>
+                <p class="voice-listen__heard" data-voice-heard aria-live="polite" hidden></p>
+                <div class="voice-examples" data-voice-examples>
+                    <p class="blind">이렇게 말해 보세요 (눌러도 돼요)</p>
+                    <button type="button" class="voice-example">"은평성모병원으로 지금 불러줘"</button>
+                    <button type="button" class="voice-example">"녹번역 가는 차"</button>
+                    <button type="button" class="voice-example">"내일 10시 병원"</button>
+                    <button type="button" class="voice-example">"차 어디쯤 왔어?"</button>
+                </div>
+            </div>
+
+            <div class="voice-controls">
+                <div class="voice-controls__item">
+                    <a href="search.html" class="voice-round" aria-label="글자로 입력하기">
+                        <span class="icon icon--keyboard" aria-hidden="true"></span>
+                    </a>
+                    <span class="voice-controls__label">키보드</span>
+                </div>
+                <div class="voice-controls__item">
+                    <button type="button" class="voice-mic" data-voice-mic aria-pressed="false" aria-label="말하기">
+                        <span class="icon icon--microphone" aria-hidden="true"></span>
+                    </button>
+                    <span class="voice-controls__label voice-controls__label--mic" data-voice-mic-label>눌러서 말하기</span>
+                </div>
+                <div class="voice-controls__item">
+                    <a href="index.html" class="voice-round" data-history-back aria-label="닫기">
+                        <span class="icon icon--close" aria-hidden="true"></span>
+                    </a>
+                    <span class="voice-controls__label">닫기</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 말로하기_v17_B_확인 -->
+        <section class="voice-confirm" data-voice-step="confirm" hidden>
+            <div class="voice-confirm__top">
+                <button type="button" class="voice-round voice-round--sm" data-voice-close aria-label="닫기">
+                    <span class="icon icon--close" aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="voice-confirm__heard">
+                <p class="voice-confirm__heard-label">이렇게 들었어요</p>
+                <p class="voice-confirm__heard-text" data-confirm-heard></p>
+            </div>
+            <div class="voice-confirm__card">
+                <h1 class="voice-confirm__question" data-confirm-question></h1>
+                <p class="voice-confirm__sub" data-confirm-sub></p>
+                <button type="button" class="btn btn--primary voice-confirm__yes" data-confirm-yes>네, 부르기</button>
+                <button type="button" class="btn btn--outline" data-confirm-no>아니요, 다시 말할게요</button>
+            </div>
+            <p class="voice-confirm__note">
+                <span class="icon icon--speak" aria-hidden="true"></span>
+                질문을 소리로도 읽어드려요. "네"라고 말하면 바로 부르고, "아니요"라고 말하면 다시 들어요.
+            </p>
+            <a href="search.html" class="voice-confirm__edit" data-confirm-edit>목적지를 글자로 고치기</a>
+        </section>
+    </div>
+
+    <script src="js/voice.js"></script>
+</body>
+</html>
