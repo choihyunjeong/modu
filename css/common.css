@@ -1174,7 +1174,6 @@ body.is-modal-open { overflow: hidden; }
 /* 팝업 오른쪽 위 닫기 (X) · 가운데 팝업·확인 창 공통 */
 .icon--close { --icon-url: url("../image/close.svg"); }
 
-.popup__box,
 /* 가운데 확인 창 (F1 · F2 · 이용내역 삭제 · 평가) · actions.js openLayer('dialog') */
 .confirm-dialog {
     position: fixed;
@@ -1274,6 +1273,8 @@ body.is-modal-open { overflow: hidden; }
 
 .confirm-dialog__box h2[tabindex="-1"]:focus { outline: none; }
 
+/* X 버튼 자리 기준 */
+.popup__box,
 .confirm-dialog__box { position: relative; }
 
 .popup-x {
