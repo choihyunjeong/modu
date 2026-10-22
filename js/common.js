@@ -495,6 +495,32 @@ document.addEventListener('input', function (e) {
 });
 
 // 화면이 다음 상태로 바뀔 때 남긴 안내를 새 화면에서 보여 줌 (push.js · 호출 취소)
+// 앞서 열었던 화면으로 되돌아가기 (새로 열지 않음 → 뒤로 가기가 두 화면 사이를 오가며 반복되지 않게)
+//  화면마다 열릴 때 방문 기록 위치를 적어 두고, Nav.backTo('favorites.html')면 그 위치까지 뒤로
+//  적어 둔 기록이 없으면(바로 연 경우) 그 화면으로 바꿔 열기
+var Nav = (function () {
+    var KEY = 'navPos';
+    function positions() {
+        try { return JSON.parse(sessionStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
+    }
+    function page(url) {
+        return url.split('/').pop().split(/[?#]/)[0] || 'index.html';
+    }
+    function mark() {
+        var all = positions();
+        all[page(location.pathname)] = history.length;
+        try { sessionStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {}
+    }
+    function backTo(url) {
+        var pos = positions()[page(url)];
+        var steps = pos ? pos - history.length : 0;
+        if (steps < 0) history.go(steps);
+        else location.replace(url);
+    }
+    return { mark: mark, backTo: backTo };
+})();
+Nav.mark();
+
 var StateNotice = (function () {
     var KEY = 'stateNotice';
     function leave(text) {
@@ -517,6 +543,8 @@ var StateNotice = (function () {
 document.addEventListener('DOMContentLoaded', function () {
     SheetDrag.init();
     StateNotice.show();
+    // 뒤로 가기로 돌아온 화면(브라우저가 그대로 보여 줌)에서도 남겨 둔 안내를 보여 줌
+    window.addEventListener('pageshow', function (e) { if (e.persisted) StateNotice.show(); });
     // 다른 안내와 겹치지 않게 조금 뒤에
     setTimeout(Guardians.announceAccepted, 1200);
 

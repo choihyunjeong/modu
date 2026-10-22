@@ -4,13 +4,28 @@
 var Favorites = (function () {
     var KEY = 'favorites';
     var HOME = { id: 'home', type: 'home', name: '집', addr: '은평구 통일로 630 · 래미안베라힐즈', lat: 37.60277, lng: 126.93638 };
+    // 처음부터 들어 있는 자주 가는 곳 (집 말고)
+    var SEEDS = [
+        { id: 'seed-hospital', type: 'place', name: '은평성모병원', addr: '은평구 통일로 1021 · 본관 정문', lat: 37.63361, lng: 126.91630 }
+    ];
+    var SEEDED = 'favoritesSeeded';
 
     function read() {
-        try {
-            var list = JSON.parse(localStorage.getItem(KEY));
-            if (Array.isArray(list) && list.length) return list;
-        } catch (e) {}
-        return [HOME];
+        var list = null;
+        try { list = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+        if (!Array.isArray(list) || !list.length) list = [HOME];
+        // 기본 장소는 한 번만 넣음 (이미 저장된 목록에도 · 지우면 다시 안 생김)
+        var seeded = null;
+        try { seeded = localStorage.getItem(SEEDED); } catch (e) {}
+        if (!seeded) {
+            SEEDS.forEach(function (seed) {
+                var has = list.some(function (f) { return f.id === seed.id || f.name === seed.name; });
+                if (!has) list.push(seed);
+            });
+            write(list);
+            try { localStorage.setItem(SEEDED, '1'); } catch (e) {}
+        }
+        return list;
     }
     function write(list) {
         try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}

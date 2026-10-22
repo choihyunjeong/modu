@@ -12,14 +12,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>자주 가는 곳 추가 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221631">
-    <link rel="stylesheet" href="css/fav.css?v=2610221631">
-    <script src="js/common.js?v=2610221631"></script>
-    <script src="js/config.js?v=2610221631"></script>
-    <script src="js/trip.js?v=2610221631"></script>
-    <script src="js/map.js?v=2610221631"></script>
-    <script src="js/places.js?v=2610221631"></script>
-    <script src="js/favorites.js?v=2610221631"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221940">
+    <link rel="stylesheet" href="css/fav.css?v=2610221940">
+    <script src="js/common.js?v=2610221940"></script>
+    <script src="js/config.js?v=2610221940"></script>
+    <script src="js/trip.js?v=2610221940"></script>
+    <script src="js/map.js?v=2610221940"></script>
+    <script src="js/places.js?v=2610221940"></script>
+    <script src="js/favorites.js?v=2610221940"></script>
 </head>
 <body>
     <!-- 자주 가는 곳 추가 (?edit=home 이면 집 주소 바꾸기)
@@ -28,7 +28,7 @@
         <!-- ① 장소 찾기 -->
         <section class="fav-step" data-step="search">
             <header class="app-header">
-                <a href="favorites.html" class="app-header__back" aria-label="뒤로">
+                <a href="favorites.html" class="app-header__back" aria-label="뒤로" data-back-to>
                     <span class="icon icon--chevron-left" aria-hidden="true"></span>
                 </a>
                 <h1 class="app-header__title" data-search-title>자주 가는 곳 추가</h1>
@@ -102,7 +102,7 @@
             if (isHome) {
                 Favorites.update('home', { addr: place.addr ? place.name + ' · ' + place.addr : place.name, lat: place.lat, lng: place.lng });
                 StateNotice.leave('집 위치를 바꿨어요');
-                return location.replace('favorites.html');
+                return Nav.backTo('favorites.html');
             }
             showName();
         }
@@ -119,6 +119,11 @@
             stepSearch.hidden = false;
             document.getElementById('fav-query').focus();
         }
+        // 뒤로: 목록을 새로 열지 않고 들어왔던 목록으로 되돌아감
+        document.querySelector('[data-back-to]').addEventListener('click', function (e) {
+            e.preventDefault();
+            Nav.backTo('favorites.html');
+        });
         document.querySelector('[data-back-search]').addEventListener('click', function (e) {
             e.preventDefault();
             if (location.hash === '#name') history.replaceState(null, '', location.pathname + location.search);
@@ -133,7 +138,7 @@
             if (!name || !picked) return;
             Favorites.add({ name: name, addr: picked.addr || (picked.name !== name ? picked.name : ''), lat: picked.lat, lng: picked.lng });
             StateNotice.leave(name + '을(를) 자주 가는 곳에 추가했어요');
-            location.replace('favorites.html');
+            Nav.backTo('favorites.html');
         });
 
         // 지도에서 고르고 돌아왔으면 (#name) 이름 입력부터

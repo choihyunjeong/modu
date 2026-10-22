@@ -150,7 +150,8 @@
             location.href = 'confirm.html';
         } else {
             try { sessionStorage.setItem('favPick', JSON.stringify(picked)); } catch (e) {}
-            location.href = 'fav-add.html' + (edit ? '?edit=' + edit : '') + '#name';
+            // 지도 화면을 기록에 남기지 않음 (이름 입력에서 뒤로 → 목록)
+            location.replace('fav-add.html' + (edit ? '?edit=' + edit : '') + '#name');
         }
     });
 })();
