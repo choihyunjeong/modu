@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="image/favicon-32.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="모두의 이동">
+    <title>연결 확인 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css?v=2610221340">
+    <style>
+        .offline { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; min-height: 100vh; min-height: 100dvh; padding: 24px; text-align: center; background: #fff; }
+        .offline img { width: 88px; height: 88px; }
+        .offline h1 { font-size: 22px; font-weight: 700; line-height: 1.4; }
+        .offline p { font-size: 16px; line-height: 1.5; color: #484a4e; }
+        .offline .btn { max-width: 320px; }
+    </style>
+</head>
+<body>
+    <!-- 인터넷이 끊겼을 때 (sw.js) -->
+    <main class="offline">
+        <img src="image/app-logo.svg" alt="">
+        <h1>인터넷에 연결되어 있지 않아요</h1>
+        <p>와이파이나 모바일 데이터를 확인한 뒤<br>다시 시도해 주세요.</p>
+        <button type="button" class="btn btn--primary" onclick="location.reload()">다시 시도</button>
+    </main>
+</body>
+</html>

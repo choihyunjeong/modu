@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="image/favicon-32.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>알림 흐름 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610221327">
-    <link rel="stylesheet" href="css/notice.css?v=2610221327">
-    <script src="js/common.js?v=2610221327"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610221340">
+    <link rel="stylesheet" href="css/notice.css?v=2610221340">
+    <script src="js/common.js?v=2610221340"></script>
 </head>
 <body class="lock-screen">
     <!-- F · 알림 흐름: 앱 밖(잠금 화면 / 알림 센터)에서 받는 알림. 누르면 해당 호출의 최신 상태로 이동 -->
@@ -15,7 +23,7 @@
             <h1 class="lock-item__label">F1 호출할 시각 → 홈에서 대기 확인</h1>
             <a href="index.html" class="push-card">
                 <span class="push-card__head">
-                    <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
+                    <span class="push-card__app"><img src="image/app-logo.svg" alt="">모두의 이동</span>
                     <span>14:20</span>
                 </span>
                 <span class="push-card__title">등록한 일정의 호출 알림이에요</span>
@@ -27,7 +35,7 @@
             <h2 class="lock-item__label">F2 차량 배정 → 차량 진행 화면</h2>
             <a href="assigned.html" class="push-card">
                 <span class="push-card__head">
-                    <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
+                    <span class="push-card__app"><img src="image/app-logo.svg" alt="">모두의 이동</span>
                     <span>지금</span>
                 </span>
                 <span class="push-card__title">UD택시가 배정됐어요</span>
@@ -39,7 +47,7 @@
             <h2 class="lock-item__label">F3 곧 도착 → 도착 임박 화면</h2>
             <a href="arriving.html" class="push-card">
                 <span class="push-card__head">
-                    <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
+                    <span class="push-card__app"><img src="image/app-logo.svg" alt="">모두의 이동</span>
                     <span>15:47</span>
                 </span>
                 <span class="push-card__title">UD택시가 약 3분 후 도착해요</span>
@@ -51,7 +59,7 @@
             <h2 class="lock-item__label">F4 배정 지연 → 배차 대기·상세</h2>
             <a href="waiting.html#detail" class="push-card">
                 <span class="push-card__head">
-                    <span class="push-card__app"><img src="image/logo.svg" alt="">모두의 이동</span>
+                    <span class="push-card__app"><img src="image/app-logo.svg" alt="">모두의 이동</span>
                     <span>14:46</span>
                 </span>
                 <span class="push-card__title">차량 배정이 늦어지고 있어요</span>

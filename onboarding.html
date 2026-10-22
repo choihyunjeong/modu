@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="image/favicon-32.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="모두의 이동">
+    <title>시작하기 | 모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css?v=2610221340">
+    <link rel="stylesheet" href="css/onboarding.css?v=2610221340">
+    <script src="js/common.js?v=2610221340"></script>
+</head>
+<body>
+    <!-- 온보딩_v3 1~4 (언제 탈 수 있는지 · 말하면 자동 작성 · 차가 오면 알림 · 권한 허용) -->
+    <div id="wrap" class="onb">
+        <div class="onb__top">
+            <button type="button" class="onb__listen" data-onb-listen aria-pressed="false">
+                <span class="icon icon--sm icon--speak" aria-hidden="true"></span>
+                소리로 듣기
+            </button>
+            <button type="button" class="onb__skip" data-onb-skip>건너뛰기</button>
+        </div>
+
+        <!-- 1 -->
+        <section class="onb__slide" data-onb-slide aria-labelledby="onb-t1">
+            <div class="onb__text">
+                <h1 class="onb__title" id="onb-t1">부르기 전에<br><em>언제 탈 수 있는지</em> 알려드려요</h1>
+                <p class="onb__desc">배정까지 걸리는 시간과 주변 차량을 보고,<br>오래 걸리면 다른 방법도 고를 수 있어요.</p>
+            </div>
+            <img class="onb__art" src="image/onboarding-1.png" alt="홈 화면 예시 · 배정까지 평균 25분">
+        </section>
+
+        <!-- 2 -->
+        <section class="onb__slide" data-onb-slide aria-labelledby="onb-t2" hidden>
+            <div class="onb__text">
+                <h2 class="onb__title" id="onb-t2">말만 하면<br><em>자동으로</em> 적어드려요</h2>
+                <p class="onb__desc">날짜·시간·장소를 알아서 채워요.<br>틀린 부분만 눌러서 고치면 돼요.</p>
+            </div>
+            <img class="onb__art onb__art--lift" src="image/onboarding-2.png" alt="말로 부르기 예시 · “내일 오전 10시에 집에서 한양대병원”">
+        </section>
+
+        <!-- 3 -->
+        <section class="onb__slide" data-onb-slide aria-labelledby="onb-t3" hidden>
+            <div class="onb__text">
+                <h2 class="onb__title" id="onb-t3">차가 오면<br><em>알림으로</em> 알려드려요</h2>
+                <p class="onb__desc">차가 정해지면 도착 예정 시간과 차량 번호를,<br>도착 3분 전에는 알림과 진동으로 알려드려요.</p>
+            </div>
+            <img class="onb__art onb__art--lift onb__art--low" src="image/onboarding-3.png" alt="차량 배정 화면 예시 · 약 8분 후 도착 예정">
+        </section>
+
+        <!-- 4 권한 허용 -->
+        <section class="onb__slide" data-onb-slide data-onb-last aria-labelledby="onb-t4" hidden>
+            <div class="onb__text">
+                <h2 class="onb__title" id="onb-t4"><em>편리한 이용</em>을 위해<br>권한을 설정해 주세요</h2>
+                <p class="onb__desc">꼭 필요한 곳에만 써요.<br>설정에서 언제든 바꿀 수 있어요.</p>
+            </div>
+            <ul class="onb-perms">
+                <li class="onb-perm">
+                    <span class="onb-perm__icon" aria-hidden="true"><span class="icon icon--notification"></span></span>
+                    <span class="onb-perm__text">
+                        <span class="onb-perm__title">알림 <span class="onb-perm__badge">꼭 필요해요</span></span>
+                        <span class="onb-perm__desc">차가 배정되거나 도착할 때 알려드려요. 배차 뒤 10분 안에 연락이 안 되면 배차가 취소될 수 있어요.</span>
+                    </span>
+                </li>
+                <li class="onb-perm">
+                    <span class="onb-perm__icon" aria-hidden="true"><span class="icon icon--location"></span></span>
+                    <span class="onb-perm__text">
+                        <span class="onb-perm__title">위치</span>
+                        <span class="onb-perm__desc">지금 있는 곳에서 바로 부르고, 기사님이 나를 찾을 수 있어요.</span>
+                    </span>
+                </li>
+                <li class="onb-perm">
+                    <span class="onb-perm__icon" aria-hidden="true"><span class="icon icon--microphone"></span></span>
+                    <span class="onb-perm__text">
+                        <span class="onb-perm__title">마이크</span>
+                        <span class="onb-perm__desc">말로 목적지와 시간을 입력할 때만 써요.</span>
+                    </span>
+                </li>
+            </ul>
+        </section>
+
+        <div class="onb__bottom">
+            <div class="onb__dots" aria-hidden="true">
+                <span class="is-on"></span><span></span><span></span><span></span>
+            </div>
+            <p class="blind" aria-live="polite" data-onb-count>4쪽 중 1쪽</p>
+            <button type="button" class="btn btn--primary onb__next" data-onb-next>다음</button>
+        </div>
+    </div>
+
+    <script src="js/onboarding.js?v=2610221340"></script>
+</body>
+</html>

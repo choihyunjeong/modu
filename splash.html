@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="image/favicon-32.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="모두의 이동">
+    <title>모두의 이동</title>
+    <link rel="stylesheet" href="css/common.css?v=2610221340">
+    <link rel="stylesheet" href="css/onboarding.css?v=2610221340">
+    <script src="js/common.js?v=2610221340"></script>
+</head>
+<body class="splash-body">
+    <!-- 스플래시_v3_A_흰배경 · 잠깐 보여 주고 처음이면 온보딩, 아니면 홈으로 -->
+    <main class="splash" aria-label="모두의 이동">
+        <img class="splash__logo" src="image/splash-logo.svg" alt="모두의 이동 · 서울 교통약자 이동지원 택시">
+    </main>
+    <script>
+        (function () {
+            var onboarded = false;
+            try {
+                onboarded = !!localStorage.getItem('onboarded');
+                sessionStorage.setItem('splashShown', '1');
+            } catch (e) {}
+            setTimeout(function () {
+                location.replace(onboarded ? 'index.html' : 'onboarding.html');
+            }, 1600);
+        })();
+    </script>
+</body>
+</html>

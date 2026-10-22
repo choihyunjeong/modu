@@ -1,0 +1,207 @@
+/* =========================================================
+   스플래시 (스플래시_v3_A_흰배경)
+   ========================================================= */
+.splash-body { background: var(--color-bg); }
+
+.splash {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: 60px;
+    background: var(--color-bg);
+}
+
+.splash__logo {
+    width: 176px;
+    height: auto;
+    animation: splash-in 0.6s ease-out;
+}
+
+@keyframes splash-in {
+    from { opacity: 0; transform: translateY(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .splash__logo { animation: none; }
+}
+
+/* =========================================================
+   온보딩 (온보딩_v3 1~4)
+   ========================================================= */
+.onb {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--space-8) var(--page-padding) var(--space-24);
+}
+
+.onb__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 44px;
+}
+
+.onb__listen {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    height: 36px;
+    padding: 0 var(--space-12) 0 var(--space-10);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-gray);
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+}
+
+.onb__listen[aria-pressed="true"] {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+.onb__skip {
+    min-height: var(--touch-size);
+    padding: 0 var(--space-4) 0 var(--space-12);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-sub);
+}
+
+.onb__slide {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    min-height: 0;
+    padding-top: var(--space-24);
+}
+
+.onb__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    text-align: center;
+}
+
+.onb__title {
+    font-size: calc(26px * var(--font-scale));
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+    color: #111622;
+}
+
+.onb__title em {
+    font-style: normal;
+    color: var(--color-primary);
+}
+
+.onb__desc {
+    font-size: var(--fs-16);
+    line-height: 1.45;
+    color: var(--color-text-secondary);
+}
+
+/* 그림 (목업) */
+.onb__art {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    margin: var(--space-28) calc(var(--page-padding) * -1) 0;
+    object-fit: contain;
+}
+
+/* 말풍선이 그림 위로 18px 올라와 있는 그림 */
+.onb__art--lift { margin-top: 10px; }
+.onb__art--low { margin-top: 34px; }
+
+/* 4 권한 목록 */
+.onb-perms {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    width: 100%;
+    margin-top: var(--space-32);
+}
+
+.onb-perm {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-12);
+    padding: var(--space-14);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+}
+
+.onb-perm__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.onb-perm__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+}
+
+.onb-perm__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    font-size: var(--fs-17);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+}
+
+.onb-perm__badge {
+    padding: 1px var(--space-6);
+    border-radius: var(--radius-sm);
+    background: var(--color-primary-soft);
+    font-size: var(--fs-12);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.onb-perm__desc {
+    font-size: var(--fs-14);
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+}
+
+/* 아래 · 쪽 표시 + 다음 */
+.onb__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-20);
+    padding-top: var(--space-16);
+}
+
+.onb__dots {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.onb__dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: #d5dae2;
+    transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.onb__dots span.is-on {
+    width: 24px;
+    background: var(--color-primary);
+}
+
+.onb__next { font-size: var(--fs-18); }
+.onb__next[disabled] { opacity: 0.7; }

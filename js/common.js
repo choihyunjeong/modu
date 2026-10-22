@@ -4,6 +4,11 @@
     if (location.protocol === 'http:' && !local) location.replace('https:' + location.href.slice(5));
 })();
 
+// 웹앱(PWA): 서비스 워커 등록 (https에서만 · 항상 최신 화면을 먼저 받고, 끊기면 저장해 둔 화면)
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+
 // 저장된 글자 크기를 화면이 그려지기 전에 적용 (html[data-font-size] → :root --font-scale)
 (function () {
     try {
