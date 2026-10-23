@@ -15,9 +15,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231610">
-    <link rel="stylesheet" href="css/home.css?v=2610231610">
-    <script src="js/common.js?v=2610231610"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231624">
+    <link rel="stylesheet" href="css/home.css?v=2610231624">
+    <script src="js/common.js?v=2610231624"></script>
     <script>
         // 앱을 처음 열 때(바깥에서 들어올 때)는 스플래시부터 · 앱 안에서 홈으로 돌아올 땐 바로 홈
         try {
@@ -25,14 +25,14 @@
             if (!sessionStorage.getItem('splashShown') && !fromInside) location.replace('splash.html');
         } catch (e) {}
     </script>
-    <script src="js/config.js?v=2610231610"></script>
-    <script src="js/ride-info.js?v=2610231610"></script>
-    <script src="js/stats.js?v=2610231610"></script>
-    <script src="js/reader.js?v=2610231610"></script>
-    <script src="js/trip.js?v=2610231610"></script>
-    <script src="js/actions.js?v=2610231610"></script>
-    <script src="js/push.js?v=2610231610"></script>
-    <script src="js/notices.js?v=2610231610"></script>
+    <script src="js/config.js?v=2610231624"></script>
+    <script src="js/ride-info.js?v=2610231624"></script>
+    <script src="js/stats.js?v=2610231624"></script>
+    <script src="js/reader.js?v=2610231624"></script>
+    <script src="js/trip.js?v=2610231624"></script>
+    <script src="js/actions.js?v=2610231624"></script>
+    <script src="js/push.js?v=2610231624"></script>
+    <script src="js/notices.js?v=2610231624"></script>
 </head>
 <body>
     <div id="wrap">
@@ -47,7 +47,7 @@
                         <span data-home-area>은평구 불광동</span>
                     </p>
                     <span class="home-top__actions">
-                    <button type="button" class="btn-circle btn-circle--text" aria-label="글자 크기 바꾸기" aria-haspopup="dialog" aria-controls="font-size-sheet" data-open-font-size>가</button>
+                    <button type="button" class="btn-circle btn-circle--text" aria-label="글자 크기·화면 색 바꾸기" aria-haspopup="dialog" aria-controls="font-size-sheet" data-open-font-size>가</button>
                     <button type="button" class="btn-circle" aria-label="화면 읽어주기" aria-pressed="false" data-reader-toggle>
                         <span class="icon icon--speak" aria-hidden="true"></span>
                     </button>
@@ -284,8 +284,8 @@
         <div class="modal-sheet__panel font-sheet">
             <span class="sheet__grabber" aria-hidden="true"></span>
             <div class="font-sheet__head">
-                <h2 class="modal-sheet__title" id="font-size-title">글자 크기</h2>
-                <p class="modal-sheet__desc">앱 전체의 글자 크기가 바뀌어요</p>
+                <h2 class="modal-sheet__title" id="font-size-title">글자 크기 · 화면 색</h2>
+                <p class="modal-sheet__desc">앱 전체의 글자 크기와 화면 색이 바뀌어요</p>
             </div>
             <div class="font-sheet__body">
                 <div class="font-options" role="group" aria-label="글자 크기 선택">
@@ -306,6 +306,16 @@
                     <p class="font-preview__label">미리보기</p>
                     <p class="font-preview__title">승차까지 평균 <span data-stat="avg">32</span>분</p>
                     <p class="font-preview__desc">주변 배차 가능 차량 5대</p>
+                </div>
+                <!-- 화면 색 (누르면 바로 바뀜 · 자동은 휴대폰 다크모드를 따름) -->
+                <div class="theme-pick">
+                    <p class="theme-pick__label" id="theme-label">화면 색</p>
+                    <div class="theme-options" role="group" aria-labelledby="theme-label">
+                        <button type="button" class="theme-option" data-theme-option="auto" aria-pressed="true">자동</button>
+                        <button type="button" class="theme-option" data-theme-option="light" aria-pressed="false">밝게</button>
+                        <button type="button" class="theme-option" data-theme-option="dark" aria-pressed="false">어둡게</button>
+                    </div>
+                    <p class="theme-pick__note">자동은 휴대폰 다크모드를 따라요. 삼성 인터넷에서는 '어둡게'를 골라 주세요.</p>
                 </div>
             </div>
             <div class="font-sheet__apply">

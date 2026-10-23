@@ -17,6 +17,15 @@
     <title>모두의 이동</title>
     <!-- 스플래시는 바깥 파일을 기다리지 않고 바로 그려지게 스타일·로고를 이 파일 안에 둠
          (앱을 켤 때 안드로이드가 먼저 띄우는 아이콘+앱 이름 화면이 아주 잠깐만 보이게) -->
+    <script>
+        // 화면 색 (js/common.js의 Theme와 같은 규칙 · 스플래시는 그 파일을 늦게 불러서 여기서 먼저)
+        (function () {
+            var pick = "auto";
+            try { pick = localStorage.getItem("theme") || "auto"; } catch (e) {}
+            var dark = pick === "dark" || (pick === "auto" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+            document.documentElement.dataset.theme = dark ? "dark" : "light";
+        })();
+    </script>
     <style>
         html, body { margin: 0; height: 100%; background: #fff; }
         .splash {
@@ -31,19 +40,13 @@
         .splash__logo { width: 176px; height: auto; animation: splash-in 0.6s ease-out; }
         @keyframes splash-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
         @media (prefers-reduced-motion: reduce) { .splash__logo { animation: none; } }
-        /* 어두운 화면 (다크모드·절전모드): 바탕은 앱과 같은 #1F1F1F · 로고 뒤 흰 상자는 없애고 남색 글자는 밝게 */
-        @media (prefers-color-scheme: dark) {
-            html, body { background: #1f1f1f; }
-            .splash__logo [fill="white"],
-            .splash__logo [fill="#E5E5E5"],
-            .splash__logo [fill="#C9C9C9"],
-            .splash__logo > rect { fill: transparent; }
-            .splash__logo [fill="#181677"] { fill: #f2f3f5; }
-            .splash__logo [fill="#4B5563"] { fill: #c4c9d1; }
-            .splash__logo stop[stop-color="#181677"] { stop-color: #5a6cf2; }
-        }
+        /* 어두운 화면 (화면 색 "어둡게" · 자동이면 휴대폰 다크모드): 바탕 #1F1F1F · 남색 글자는 밝게 */
+        [data-theme="dark"], [data-theme="dark"] body { background: #1f1f1f; color-scheme: dark; }
+        [data-theme="dark"] .splash__logo [fill="#181677"] { fill: #f2f3f5; }
+        [data-theme="dark"] .splash__logo [fill="#4B5563"] { fill: #c4c9d1; }
+        [data-theme="dark"] .splash__logo stop[stop-color="#181677"] { stop-color: #5a6cf2; }
     </style>
-    <script src="js/common.js?v=2610231610" defer></script>
+    <script src="js/common.js?v=2610231624" defer></script>
 </head>
 <body class="splash-body">
     <!-- 스플래시_v3_A_흰배경 · 잠깐 보여 주고 처음이면 온보딩, 아니면 홈으로 -->

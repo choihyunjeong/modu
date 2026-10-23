@@ -17,6 +17,31 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     } catch (e) {}
 })();
 
+// 화면 색: 자동(휴대폰 설정) · 밝게 · 어둡게 → html[data-theme="light|dark"] (화면이 그려지기 전에)
+//  자동이면 휴대폰 다크모드가 바뀔 때도 따라감 · 위쪽 상태 표시줄 색(theme-color)도 맞춤
+var Theme = (function () {
+    var KEY = 'theme';
+    var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    function get() {
+        try { return localStorage.getItem(KEY) || 'auto'; } catch (e) { return 'auto'; }
+    }
+    function apply() {
+        var pick = get();
+        var dark = pick === 'dark' || (pick === 'auto' && !!(mq && mq.matches));
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+            m.setAttribute('content', dark ? '#1f1f1f' : '#ffffff');
+        });
+    }
+    function set(pick) {
+        try { localStorage.setItem(KEY, pick); } catch (e) {}
+        apply();
+    }
+    apply();
+    if (mq && mq.addEventListener) mq.addEventListener('change', apply);
+    return { get: get, set: set };
+})();
+
 // 바텀시트 끌어 올리기·내리기
 // 1) 지도 아래 시트(.sheet): 손잡이를 위아래로 끌면 지도 높이가 바뀌어 시트가 올라가거나 내려감
 //    놓은 자리에 그대로 멈춤 (맨 위·맨 아래까지만) · 손잡이를 누르면 기본 ↔ 접힘
@@ -640,6 +665,22 @@ document.addEventListener('DOMContentLoaded', function () {
         fontSheet.querySelector('[data-apply-font-size]').addEventListener('click', function () {
             applyFontSize(fontPicked);
             closeFontSheet();
+        });
+        // 화면 색: 누르면 바로 바뀜 (글자 크기와 달리 '적용하기'를 기다리지 않음 · 바뀐 색을 바로 보며 고름)
+        var themeOptions = fontSheet.querySelectorAll('[data-theme-option]');
+        var syncTheme = function () {
+            themeOptions.forEach(function (o) { o.setAttribute('aria-pressed', o.dataset.themeOption === Theme.get()); });
+        };
+        themeOptions.forEach(function (o) {
+            o.addEventListener('click', function () {
+                Theme.set(o.dataset.themeOption);
+                syncTheme();
+            });
+        });
+        syncTheme();
+        // 열 때마다 지금 고른 화면 색으로 표시 (다른 화면에서 바꿨을 수도 있음)
+        document.querySelectorAll('[data-open-font-size]').forEach(function (btn) {
+            btn.addEventListener('click', syncTheme);
         });
         // 바깥(딤) 누르기 · Esc → 적용하지 않고 닫기
         fontSheet.addEventListener('click', function (e) { if (e.target === fontSheet) closeFontSheet(); });

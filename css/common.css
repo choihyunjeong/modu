@@ -139,78 +139,80 @@
    - 카드·회색 면은 바탕보다 조금 밝게 · 글자는 바탕 대비 4.5:1 이상
    - 파랑: 글자용(#6AA7FF)과 흰 글자를 얹는 면(#2F6FE0)을 나눔
    ========================================================= */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-primary: #6aa7ff;
-        --color-primary-fill: #2f6fe0;
-        --color-primary-bg: #1b2636;
-        --color-primary-soft: #203352;
+/* html[data-theme="dark"] · js/common.js가 "화면 색" 선택(자동·밝게·어둡게)과 휴대폰 설정으로 정함
+   (삼성 인터넷은 다크모드여도 "밝은 화면"이라고 알려 줘서, 자동으로는 못 알아챔 → "어둡게"를 직접 고르면 됨) */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-primary: #6aa7ff;
+    --color-primary-fill: #2f6fe0;
+    --color-primary-bg: #1b2636;
+    --color-primary-soft: #203352;
 
-        --color-text: #f2f3f5;
-        --color-text-secondary: #d0d2d6;
-        --color-text-sub: #a3a6ad;
-        --color-text-placeholder: #7c7f86;
-        --color-text-inverse: #ffffff;
-        --color-icon: #a3a6ad;
+    --color-text: #f2f3f5;
+    --color-text-secondary: #d0d2d6;
+    --color-text-sub: #a3a6ad;
+    --color-text-placeholder: #7c7f86;
+    --color-text-inverse: #ffffff;
+    --color-icon: #a3a6ad;
 
-        --color-bg: #1f1f1f;
-        --color-bg-gray: #2a2a2c;
-        --color-bg-tile: #333336;
-        --color-bg-page: #141414;
+    --color-bg: #1f1f1f;
+    --color-bg-gray: #2a2a2c;
+    --color-bg-tile: #333336;
+    --color-bg-page: #141414;
 
-        --color-border: #38383b;
-        --color-border-strong: #4a4a4e;
-        --color-divider: #2e2e30;
+    --color-border: #38383b;
+    --color-border-strong: #4a4a4e;
+    --color-divider: #2e2e30;
 
-        --color-success: #5bd08f;
-        --color-success-icon: #5bd08f;
-        --color-success-bg: #17301f;
-        --color-danger: #ff7b72;
-        --color-warning: #ffb454;
-        --color-warning-bg: #3a2c14;
-        --color-error: #ff7b72;
-        --color-error-bg: #3a1c1c;
+    --color-success: #5bd08f;
+    --color-success-icon: #5bd08f;
+    --color-success-bg: #17301f;
+    --color-danger: #ff7b72;
+    --color-warning: #ffb454;
+    --color-warning-bg: #3a2c14;
+    --color-error: #ff7b72;
+    --color-error-bg: #3a1c1c;
 
-        --color-scrim: rgba(0, 0, 0, 0.6);
-        --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.5);
-        --shadow-sheet: 0 -4px 16px rgba(0, 0, 0, 0.5);
-        --color-toast: rgba(58, 58, 61, 0.96);
+    --color-scrim: rgba(0, 0, 0, 0.6);
+    --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-sheet: 0 -4px 16px rgba(0, 0, 0, 0.5);
+    --color-toast: rgba(58, 58, 61, 0.96);
 
-        --color-star: #f5c33b;
-        --color-star-bg: #3a3018;
+    --color-star: #f5c33b;
+    --color-star-bg: #3a3018;
 
-        --home-loc: #c4c9d1;
-        --home-hero: #f2f3f5;
-        --home-ink: #f2f3f5;
-        --home-sub: #a3a6ad;
-        --home-faint: #8c9098;
-        --home-fill: #2a2a2c;
-        --home-line: #38383b;
-        --home-bar: #5a5e66;
-    }
+    --home-loc: #c4c9d1;
+    --home-hero: #f2f3f5;
+    --home-ink: #f2f3f5;
+    --home-sub: #a3a6ad;
+    --home-faint: #8c9098;
+    --home-fill: #2a2a2c;
+    --home-line: #38383b;
+    --home-bar: #5a5e66;
+}
 
-    /* 지도(카카오)는 밝은 그림 그대로라, 지도 위 핀·말풍선·버튼은 밝은 화면 색을 그대로 씀 */
-    .map-view,
-    .pick__pin,
-    .pick__back,
-    .pick__locate {
-        --color-primary: #0b5ed7;
-        --color-primary-fill: #0b5ed7;
-        --color-primary-bg: #f3f8ff;
-        --color-primary-soft: #e3f0ff;
-        --color-text: #1f2124;
-        --color-text-secondary: #484a4e;
-        --color-text-sub: #68696f;
-        --color-text-inverse: #ffffff;
-        --color-icon: #68696f;
-        --color-bg: #ffffff;
-        --color-bg-gray: #f5f6f7;
-        --color-border: #e5e5e5;
-        --color-border-strong: #d4d6da;
-        --color-danger: #c62828;
-        --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.12);
-        color-scheme: light;
-    }
+/* 지도(카카오)는 밝은 그림 그대로라, 지도 위 핀·말풍선·버튼은 밝은 화면 색을 그대로 씀 */
+[data-theme="dark"] .map-view,
+[data-theme="dark"] .pick__pin,
+[data-theme="dark"] .pick__back,
+[data-theme="dark"] .pick__locate {
+    --color-primary: #0b5ed7;
+    --color-primary-fill: #0b5ed7;
+    --color-primary-bg: #f3f8ff;
+    --color-primary-soft: #e3f0ff;
+    --color-text: #1f2124;
+    --color-text-secondary: #484a4e;
+    --color-text-sub: #68696f;
+    --color-text-inverse: #ffffff;
+    --color-icon: #68696f;
+    --color-bg: #ffffff;
+    --color-bg-gray: #f5f6f7;
+    --color-border: #e5e5e5;
+    --color-border-strong: #d4d6da;
+    --color-danger: #c62828;
+    --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.12);
+    color-scheme: light;
 }
 
 /* =========================================================

@@ -667,3 +667,47 @@
     line-height: normal;
     color: var(--color-text-sub);
 }
+
+/* 화면 색 (글자 크기 시트 안 · 자동 / 밝게 / 어둡게) */
+.theme-pick {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-top: var(--space-8);
+}
+
+.theme-pick__label {
+    font-size: 15px;
+    font-weight: var(--font-weight-bold);
+    line-height: normal;
+}
+
+.theme-options {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.theme-option {
+    flex: 1;
+    min-width: 0;
+    height: var(--touch-size);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 12px;
+    background: var(--color-bg);
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+
+.theme-option[aria-pressed="true"] {
+    border: 2px solid var(--color-primary);
+    background: var(--color-primary-bg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.theme-pick__note {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text-sub);
+}
