@@ -12,10 +12,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>탑승 정보 등록 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231302">
-    <link rel="stylesheet" href="css/ride-info.css?v=2610231302">
-    <script src="js/common.js?v=2610231302"></script>
-    <script src="js/ride-info.js?v=2610231302"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231344">
+    <link rel="stylesheet" href="css/ride-info.css?v=2610231344">
+    <script src="js/common.js?v=2610231344"></script>
+    <script src="js/ride-info.js?v=2610231344"></script>
 </head>
 <body>
     <div id="wrap">
@@ -69,6 +69,18 @@
                 </label>
             </fieldset>
 
+            <!-- 다른 이동 보조기기를 고르면 (탑승정보_v12_01x) · 기기 이름 · UD택시에 못 타는 기기면 주의 상자 -->
+            <div class="other-device" data-other-only hidden>
+                <div class="text-field">
+                    <label for="other-device" class="text-field__label">기기 이름</label>
+                    <input type="text" id="other-device" class="text-field__input" maxlength="30" placeholder="예: 보행 보조차, 전동 스쿠터" autocomplete="off" aria-describedby="other-device-warn">
+                </div>
+                <div class="device-warn" id="other-device-warn" role="alert" hidden>
+                    <p class="device-warn__title" data-warn-title>전동스쿠터는 UD택시에 탑승할 수 없어요</p>
+                    <p class="device-warn__desc" data-warn-desc>전동스쿠터를 이용한 탑승은 지원하지 않아요. 다른 보조기기를 사용하신다면 선택을 변경해 주세요.</p>
+                </div>
+            </div>
+
             <!-- 휠체어 선택 시에만 -->
             <fieldset class="section" data-wheelchair-only>
                 <legend class="field-title__main section-question">
@@ -92,7 +104,7 @@
             </fieldset>
 
             <div class="boarding-guide" data-wheelchair-only>
-                <img class="boarding-guide__img" src="image/pv5-ramp.png" alt="차량 옆문 경사로로 휠체어가 탑승하는 모습">
+                <img class="boarding-guide__img" src="image/boarding-ramp.png" alt="기사님이 휠체어를 밀어 차량 옆문 경사로로 탑승하는 모습">
                 <p class="boarding-guide__title">휠체어에 앉은 채 탑승해요</p>
                 <p class="boarding-guide__desc">옆문 경사로로 들어간 뒤 차량 안에서 휠체어를 고정해요.</p>
                 <p class="boarding-guide__saved" data-other-saved hidden></p>
@@ -263,6 +275,51 @@
         }
         devices.forEach(function (d) { d.addEventListener('change', updateWheelchairOnly); });
         updateWheelchairOnly();
+
+        // 다른 이동 보조기기: 기기 이름 칸 · UD택시에 못 타는 기기(전동 스쿠터 등)면 주의 상자 + 아래 버튼이 "보조기기 다시 선택하기"
+        var otherOnly = document.querySelector('[data-other-only]');
+        var otherName = document.getElementById('other-device');
+        var warn = document.getElementById('other-device-warn');
+        var nextBtn = document.querySelector('[data-save-device]');
+        var nextLabel = null;
+        function isOther() {
+            var checked = document.querySelector('input[name="device"]:checked');
+            return !!checked && checked.value === 'other';
+        }
+        function currentBlock() { return isOther() ? RideInfo.blocked(otherName.value) : null; }
+        function updateOther(focusField) {
+            otherOnly.hidden = !isOther();
+            var block = currentBlock();
+            warn.hidden = !block;
+            if (block) {
+                warn.querySelector('[data-warn-title]').textContent = block.title;
+                warn.querySelector('[data-warn-desc]').textContent = block.desc;
+            }
+            // 원래 글자("다음" 또는 호출 전 확인에서 왔을 때 "저장")는 바꾸기 직전에 기억
+            if (block && nextLabel === null) nextLabel = nextBtn.textContent;
+            if (block) nextBtn.textContent = '보조기기 다시 선택하기';
+            else if (nextLabel !== null) { nextBtn.textContent = nextLabel; nextLabel = null; }
+            if (focusField && isOther()) otherName.focus();
+        }
+        devices.forEach(function (d) { d.addEventListener('change', function () { updateOther(true); }); });
+        otherName.addEventListener('input', function () { updateOther(false); });
+        // 먼저 확인 (저장·다음 화면보다 앞에서): 못 타는 기기면 위 선택으로 돌아감 · 이름을 안 적었으면 칸으로
+        nextBtn.addEventListener('click', function (e) {
+            if (!isOther()) return;
+            var block = currentBlock();
+            if (!block && otherName.value.trim()) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (block) {
+                var tiles = document.querySelector('.device-tiles');
+                tiles.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.querySelector('input[name="device"]:checked').focus({ preventScroll: true });
+            } else {
+                Toast.show('기기 이름을 적어 주세요');
+                otherName.focus();
+            }
+        }, true);
+        updateOther(false);
     </script>
 </body>
 </html>

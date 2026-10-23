@@ -110,16 +110,53 @@ var RideInfo = (function () {
         );
     }
 
+    // UD택시에 탈 수 없는 보조기기 (이용 가능 휠체어: 폭 670 × 길이 1,180 × 높이 1,300mm 이내
+    //  → 넘는 대형 전동휠체어 · 전동 스쿠터 등은 탑승 불가) · 다른 이동 보조기기의 "기기 이름"으로 판단
+    var NOT_ALLOWED = [
+        { re: /스쿠터|scooter/i,
+          title: '전동스쿠터는 UD택시에 탑승할 수 없어요',
+          desc: '전동스쿠터를 이용한 탑승은 지원하지 않아요. 다른 보조기기를 사용하신다면 선택을 변경해 주세요.' },
+        { re: /대형/,
+          title: '대형 전동휠체어는 UD택시에 탑승할 수 없어요',
+          desc: 'UD택시는 폭 670mm × 길이 1,180mm × 높이 1,300mm 이내의 휠체어만 탈 수 있어요. 이 크기 안이라면 전동 휠체어를 선택해 주세요.' },
+        { re: /침대|베드|들것|스트레처|눕는|누운/,
+          title: '누운 채로는 UD택시에 탑승할 수 없어요',
+          desc: 'UD택시는 휠체어에 앉은 채 타는 차량이에요. 누워서 이동해야 한다면 콜센터로 문의해 주세요.' }
+    ];
+
+    // 기기 이름이 탈 수 없는 기기면 { title, desc } · 아니면 null
+    function blocked(name) {
+        var text = String(name || '').replace(/\s+/g, '');
+        if (!text) return null;
+        for (var i = 0; i < NOT_ALLOWED.length; i++) if (NOT_ALLOWED[i].re.test(text)) return NOT_ALLOWED[i];
+        return null;
+    }
+
+    function otherNameField() { return document.getElementById('other-device'); }
+
     // ① 이동 보조기기 화면
     function fillDevice() {
         var data = load();
         if (!data) return;
         if (data.device) check('device', data.device);
         if (data.refused) check('refused', data.refused);
+        var field = otherNameField();
+        if (field && data.otherDevice) field.value = data.otherDevice;
     }
 
     function saveDevice() {
-        save({ device: checkedValue('device'), refused: checkedValue('refused') });
+        var device = checkedValue('device');
+        var field = otherNameField();
+        save({
+            device: device,
+            refused: checkedValue('refused'),
+            otherDevice: device === 'other' && field ? field.value.trim() : ''
+        });
+    }
+
+    // 화면에 보일 보조기기 이름 (다른 이동 보조기기는 적은 이름)
+    function deviceName(data) {
+        return data.device === 'other' && data.otherDevice ? data.otherDevice : DEVICES[data.device];
     }
 
     // ② 연락 방법·요청 화면
@@ -151,7 +188,7 @@ var RideInfo = (function () {
             var wheelchair = WHEELCHAIRS.indexOf(data.device) > -1;
             // 휠체어 정보 추가에서 찾은 모델·규격 (없으면 규격 미확인)
             var wc = data.wheelchair && data.wheelchair.status !== 'unknown' ? data.wheelchair.label : '규격 미확인';
-            result.device = DEVICES[data.device] +
+            result.device = deviceName(data) +
                 (wheelchair ? (data.otherBoarding ? ' · 다른 탑승 방법 요청 · ' + data.otherBoarding : ' · 앉은 채 탑승 · ' + wc) : '');
         }
 
@@ -180,7 +217,7 @@ var RideInfo = (function () {
     function tags() {
         var data = load();
         if (!data || !data.device) return null;
-        var list = [{ text: DEVICES[data.device], tone: '' }];
+        var list = [{ text: deviceName(data), tone: '' }];
         var wc = data.wheelchair || {};
         if (WHEELCHAIRS.indexOf(data.device) > -1) {
             if (data.otherBoarding) list.push({ text: '다른 탑승 방법 요청', tone: 'warning' });
@@ -204,6 +241,7 @@ var RideInfo = (function () {
         saveDevice: saveDevice,
         fillContact: fillContact,
         saveContact: saveContact,
+        blocked: blocked,
         describe: describe
     };
 })();

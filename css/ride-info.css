@@ -304,3 +304,81 @@ fieldset.section { display: block; }
     font-weight: var(--font-weight-bold);
     color: var(--color-primary);
 }
+
+/* 휠체어 앉은 채 탑승 그림 (기사님 · 경사로 · 휠체어) */
+.boarding-guide__img {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    aspect-ratio: 840 / 557;
+    object-fit: contain;
+}
+
+/* 다른 이동 보조기기 · 기기 이름 (탑승정보_v12_01x) */
+.other-device {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+}
+
+.other-device[hidden] { display: none; }
+
+.text-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.text-field__label {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.text-field__input {
+    width: 100%;
+    height: var(--button-height-lg);
+    padding: 0 var(--space-8) 0 var(--space-16);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    font: inherit;
+    font-size: var(--fs-17);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-24);
+    color: var(--color-text);
+}
+
+.text-field__input::placeholder { font-weight: var(--font-weight-regular, 400); color: var(--color-text-sub); }
+
+.text-field__input:focus {
+    border: 2px solid var(--color-primary);
+    padding-left: calc(var(--space-16) - 1px);
+    outline: 0;
+}
+
+/* UD택시에 탈 수 없는 기기 (주황 주의 상자) */
+.device-warn {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-14) var(--space-16);
+    border-radius: var(--radius-lg);
+    background: var(--color-warning-bg);
+}
+
+.device-warn[hidden] { display: none; }
+
+.device-warn__title {
+    font-size: var(--fs-16);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lh-22);
+    color: var(--color-warning);
+}
+
+.device-warn__desc {
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    color: var(--color-text);
+}
