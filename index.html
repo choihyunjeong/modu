@@ -15,9 +15,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231555">
-    <link rel="stylesheet" href="css/home.css?v=2610231555">
-    <script src="js/common.js?v=2610231555"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231604">
+    <link rel="stylesheet" href="css/home.css?v=2610231604">
+    <script src="js/common.js?v=2610231604"></script>
     <script>
         // 앱을 처음 열 때(바깥에서 들어올 때)는 스플래시부터 · 앱 안에서 홈으로 돌아올 땐 바로 홈
         try {
@@ -25,14 +25,14 @@
             if (!sessionStorage.getItem('splashShown') && !fromInside) location.replace('splash.html');
         } catch (e) {}
     </script>
-    <script src="js/config.js?v=2610231555"></script>
-    <script src="js/ride-info.js?v=2610231555"></script>
-    <script src="js/stats.js?v=2610231555"></script>
-    <script src="js/reader.js?v=2610231555"></script>
-    <script src="js/trip.js?v=2610231555"></script>
-    <script src="js/actions.js?v=2610231555"></script>
-    <script src="js/push.js?v=2610231555"></script>
-    <script src="js/notices.js?v=2610231555"></script>
+    <script src="js/config.js?v=2610231604"></script>
+    <script src="js/ride-info.js?v=2610231604"></script>
+    <script src="js/stats.js?v=2610231604"></script>
+    <script src="js/reader.js?v=2610231604"></script>
+    <script src="js/trip.js?v=2610231604"></script>
+    <script src="js/actions.js?v=2610231604"></script>
+    <script src="js/push.js?v=2610231604"></script>
+    <script src="js/notices.js?v=2610231604"></script>
 </head>
 <body>
     <div id="wrap">
@@ -462,6 +462,17 @@
             var tel = ((window.APP_CONFIG && APP_CONFIG.callCenter && APP_CONFIG.callCenter.tel) || '1588-4388').replace(/[^0-9]/g, '');
             document.querySelectorAll('[data-center-tel]').forEach(function (a) { a.href = 'tel:' + tel; });
             document.querySelector('[data-center-sms]').href = 'sms:' + tel;
+        })();
+
+        // 점검용 (임시): 맨 위 동네 이름을 2초 안에 5번 누르면 앱 안에서 다크모드 확인 화면
+        (function () {
+            var place = document.querySelector('.home-top__place');
+            var taps = [];
+            place.addEventListener('click', function () {
+                var now = Date.now();
+                taps = taps.filter(function (t) { return now - t < 2000; }).concat(now);
+                if (taps.length >= 5) location.href = 'darkcheck.html';
+            });
         })();
 
         // 공지사항: 최근 3개 · 누르면 공지사항 화면에서 그 공지가 펼쳐짐
