@@ -12,14 +12,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>호출 전 확인 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231141">
-    <link rel="stylesheet" href="css/call.css?v=2610231141">
-    <script src="js/common.js?v=2610231141"></script>
-    <script src="js/ride-info.js?v=2610231141"></script>
-    <script src="js/config.js?v=2610231141"></script>
-    <script src="js/trip.js?v=2610231141"></script>
-    <script src="js/map.js?v=2610231141"></script>
-    <script src="js/stats.js?v=2610231141"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231146">
+    <link rel="stylesheet" href="css/call.css?v=2610231146">
+    <script src="js/common.js?v=2610231146"></script>
+    <script src="js/ride-info.js?v=2610231146"></script>
+    <script src="js/config.js?v=2610231146"></script>
+    <script src="js/trip.js?v=2610231146"></script>
+    <script src="js/map.js?v=2610231146"></script>
+    <script src="js/stats.js?v=2610231146"></script>
 </head>
 <body>
     <!-- E3b 호출 전 확인 (목적지를 고르면 바로 이 화면) -->
@@ -89,17 +89,18 @@
                 <li class="summary-list__row">
                     <div class="summary-list__text">
                         <p class="summary-list__title">탑승 정보 · 함께 전달</p>
-                        <p class="summary-list__value" data-ride-device>수동 휠체어 · 앉은 채 탑승 · 폭 65cm</p>
-                        <p class="summary-list__value" data-ride-requests>미리 전할 요청 · 천천히 설명해 주세요</p>
+                        <!-- 홈에서 등록한 값 · 등록 안 했으면 "아직 등록하지 않았어요" + 등록 버튼 -->
+                        <p class="summary-list__value" data-ride-device>아직 등록하지 않았어요</p>
+                        <p class="summary-list__value" data-ride-requests hidden></p>
                     </div>
-                    <button type="button" class="summary-list__edit" data-open-ride aria-haspopup="dialog">수정</button>
+                    <button type="button" class="summary-list__edit" data-open-ride aria-haspopup="dialog">등록</button>
                 </li>
                 <li class="summary-list__row">
                     <div class="summary-list__text">
                         <p class="summary-list__title">연락 방법</p>
-                        <p class="summary-list__value" data-ride-contact>문자·앱 메시지로 연락</p>
+                        <p class="summary-list__value" data-ride-contact>아직 정하지 않았어요</p>
                     </div>
-                    <button type="button" class="summary-list__edit" data-open-contact aria-haspopup="dialog">수정</button>
+                    <button type="button" class="summary-list__edit" data-open-contact aria-haspopup="dialog">등록</button>
                 </li>
             </ul>
         </section>
@@ -157,7 +158,7 @@
                 <legend class="edit-group__title">이동 보조기기</legend>
                 <!-- 2개씩 배치 -->
                 <div class="choice-grid">
-                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="manual-wheelchair" checked><span class="choice-tile__title">수동 휠체어</span></label>
+                    <label class="choice-tile"><input type="radio" class="radio" name="device" value="manual-wheelchair"><span class="choice-tile__title">수동 휠체어</span></label>
                     <label class="choice-tile"><input type="radio" class="radio" name="device" value="power-wheelchair"><span class="choice-tile__title">전동 휠체어</span></label>
                     <label class="choice-tile"><input type="radio" class="radio" name="device" value="walker"><span class="choice-tile__title">보행기</span></label>
                     <label class="choice-tile"><input type="radio" class="radio" name="device" value="cane"><span class="choice-tile__title">지팡이·목발</span></label>
@@ -168,7 +169,7 @@
             <fieldset class="edit-group">
                 <legend class="edit-group__title">기사님께 미리 전할 요청 <span class="edit-group__sub">선택 사항</span></legend>
                 <div class="card choice-list">
-                    <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="slow-explain" checked><span class="choice-list__title">천천히 설명해 주세요</span></label>
+                    <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="slow-explain"><span class="choice-list__title">천천히 설명해 주세요</span></label>
                     <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="text-guide"><span class="choice-list__title">글로 안내해 주세요</span></label>
                     <label class="choice-list__item"><input type="checkbox" class="checkbox" name="request" value="tell-before-help"><span class="choice-list__title">도와주시기 전에 먼저 말씀해 주세요</span></label>
                     <label class="choice-list__item"><input type="checkbox" class="checkbox" data-request-etc-toggle aria-controls="ride-etc"><span class="choice-list__title">기타</span></label>
@@ -189,7 +190,7 @@
                 </div>
             </fieldset>
             <div class="edit-foot">
-                <button type="button" class="btn btn--primary" data-apply-ride>이 정보로 적용</button>
+                <button type="button" class="btn btn--primary" data-apply-ride disabled>이 정보로 적용</button>
                 <a href="ride-info.html?from=confirm" class="edit-foot__link">휠체어 크기까지 자세히 등록하기</a>
             </div>
         </div>
@@ -214,7 +215,7 @@
                         </span>
                     </label>
                     <label class="choice-list__item">
-                        <input type="radio" class="radio" name="contact" value="message-only" checked>
+                        <input type="radio" class="radio" name="contact" value="message-only">
                         <span class="choice-list__text">
                             <span class="choice-list__title">문자·앱 메시지만</span>
                             <span class="choice-list__desc">통화가 어려워요 · 위치를 바꿀 때도 문자로</span>
@@ -226,7 +227,7 @@
                     </label>
                 </div>
             </fieldset>
-            <button type="button" class="btn btn--primary" data-apply-contact>이 방법으로 적용</button>
+            <button type="button" class="btn btn--primary" data-apply-contact disabled>이 방법으로 적용</button>
         </div>
     </div>
 
@@ -258,12 +259,13 @@
 
         // 저장한 탑승 정보·연락 방법이 있으면 요약 문구를 바꿈 (없으면 기본 문구 그대로)
         function renderRide() {
-            var ride = RideInfo.describe();
-            if (!ride) return;
-            if (ride.device) document.querySelector('[data-ride-device]').textContent = ride.device;
-            document.querySelector('[data-ride-requests]').textContent = ride.requests;
+            var ride = RideInfo.describe() || {};
+            document.querySelector('[data-ride-device]').textContent = ride.device || '아직 등록하지 않았어요';
+            document.querySelector('[data-ride-requests]').textContent = ride.requests || '';
             document.querySelector('[data-ride-requests]').hidden = !ride.requests;
-            if (ride.contact) document.querySelector('[data-ride-contact]').textContent = ride.contact;
+            document.querySelector('[data-open-ride]').textContent = ride.device ? '수정' : '등록';
+            document.querySelector('[data-ride-contact]').textContent = ride.contact || '아직 정하지 않았어요';
+            document.querySelector('[data-open-contact]').textContent = ride.contact ? '수정' : '등록';
         }
         renderRide();
 
@@ -308,19 +310,24 @@
             syncEtc();
             if (etcToggle.checked) etcInput.focus();
         });
+        // 열 때마다 저장된 값으로 되돌림 (적용하지 않고 닫았던 선택은 남지 않음 · 저장한 게 없으면 모두 빈칸)
+        var applyRide = rideSheet.querySelector('[data-apply-ride]');
+        function syncApplyRide() { applyRide.disabled = !rideSheet.querySelector('input[name="device"]:checked'); }
+        rideSheet.addEventListener('change', syncApplyRide);
         var closeRide = setupSheet(rideSheet, document.querySelector('[data-open-ride]'), function () {
             var data = RideInfo.load() || {};
-            if (data.device) check(rideSheet, 'device', data.device);
-            if (data.requests) {
-                rideSheet.querySelectorAll('input[name="request"]').forEach(function (input) {
-                    input.checked = data.requests.indexOf(input.value) > -1;
-                });
-            }
+            rideSheet.querySelectorAll('input[name="device"]').forEach(function (input) {
+                input.checked = input.value === data.device;
+            });
+            rideSheet.querySelectorAll('input[name="request"]').forEach(function (input) {
+                input.checked = (data.requests || []).indexOf(input.value) > -1;
+            });
             etcInput.value = data.requestEtc || '';
             etcToggle.checked = !!data.requestEtc;
             syncEtc();
+            syncApplyRide();
         });
-        rideSheet.querySelector('[data-apply-ride]').addEventListener('click', function () {
+        applyRide.addEventListener('click', function () {
             RideInfo.save({
                 device: rideSheet.querySelector('input[name="device"]:checked').value,
                 requests: Array.prototype.map.call(rideSheet.querySelectorAll('input[name="request"]:checked'), function (input) { return input.value; }),
@@ -332,12 +339,19 @@
 
         // 연락 방법
         var contactSheet = document.getElementById('contact-sheet');
+        var applyContact = contactSheet.querySelector('[data-apply-contact]');
+        contactSheet.addEventListener('change', function () { applyContact.disabled = false; });
         var closeContact = setupSheet(contactSheet, document.querySelector('[data-open-contact]'), function () {
             var data = RideInfo.load() || {};
-            if (data.contact) check(contactSheet, 'contact', data.contact);
+            contactSheet.querySelectorAll('input[name="contact"]').forEach(function (input) {
+                input.checked = input.value === data.contact;
+            });
+            applyContact.disabled = !data.contact;
         });
-        contactSheet.querySelector('[data-apply-contact]').addEventListener('click', function () {
-            RideInfo.save({ contact: contactSheet.querySelector('input[name="contact"]:checked').value });
+        applyContact.addEventListener('click', function () {
+            var picked = contactSheet.querySelector('input[name="contact"]:checked');
+            if (!picked) return;
+            RideInfo.save({ contact: picked.value });
             renderRide();
             closeContact();
         });

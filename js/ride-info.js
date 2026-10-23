@@ -1,7 +1,50 @@
 // 탑승 정보 저장/불러오기 (브라우저 localStorage)
 // 등록·수정 화면에서 고른 값을 저장하고, 호출 전 확인 화면에 보여줌
+//
+// 등록 흐름(이동 보조기기 → 휠체어 크기 → 연락 방법 → 완료)은 임시 저장(sessionStorage)에만 씀
+//  완료 화면에 닿아야 진짜로 저장 · 중간에 흐름 밖(홈·호출 전 확인 등)으로 나가면 임시 저장은 버림
 var RideInfo = (function () {
     var KEY = 'rideInfo';
+    var DRAFT_KEY = 'rideInfoDraft';
+    var FLOW_PAGES = ['ride-info.html', 'ride-info-contact.html', 'wheelchair.html'];
+    var page = location.pathname.split('/').pop() || 'index.html';
+    var inFlow = FLOW_PAGES.indexOf(page) > -1;
+
+    function readSaved() {
+        try {
+            return JSON.parse(localStorage.getItem(KEY)) || null;
+        } catch (e) {
+            return null;
+        }
+    }
+    function readDraft() {
+        try {
+            return JSON.parse(sessionStorage.getItem(DRAFT_KEY));
+        } catch (e) {
+            return null;
+        }
+    }
+    function writeDraft(data) {
+        try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+    function dropDraft() {
+        try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    }
+
+    if (inFlow) {
+        // 흐름에 처음 들어오면 지금 저장된 값에서 시작
+        if (!readDraft()) writeDraft(readSaved() || {});
+    } else if (page === 'ride-info-done.html') {
+        // 완료: 임시 저장을 진짜로 저장
+        var done = readDraft();
+        if (done) {
+            try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {}
+        }
+        dropDraft();
+    } else {
+        // 흐름 밖: 끝내지 않은 등록은 버림
+        dropDraft();
+    }
 
     var DEVICES = {
         'manual-wheelchair': '수동 휠체어',
@@ -26,16 +69,18 @@ var RideInfo = (function () {
         'wait-answer': '답변을 조금 기다려 주세요'
     };
 
+    // 등록 흐름 안에서는 임시 저장을, 밖에서는 저장된 값을 읽고 씀
     function load() {
-        try {
-            return JSON.parse(localStorage.getItem(KEY)) || null;
-        } catch (e) {
-            return null;
+        if (inFlow) {
+            var draft = readDraft();
+            return draft && Object.keys(draft).length ? draft : null;
         }
+        return readSaved();
     }
 
     function save(patch) {
         var data = Object.assign({}, load(), patch);
+        if (inFlow) return writeDraft(data);
         try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
     }
 
