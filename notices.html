@@ -12,9 +12,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>공지사항 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231137">
-    <script src="js/common.js?v=2610231137"></script>
-    <script src="js/notices.js?v=2610231137"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231140">
+    <script src="js/common.js?v=2610231140"></script>
+    <script src="js/notices.js?v=2610231140"></script>
     <style>
         .notices { padding-top: 0; }
         .notice-row { border-bottom: 1px solid var(--color-divider); }
@@ -53,8 +53,9 @@
         var box = document.querySelector('[data-notices]');
         function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
         box.innerHTML = NOTICES.map(function (n) {
-            return '<li class="notice-row">' +
-                '<button type="button" class="notice-row__head" id="' + n.id + '" aria-expanded="false" aria-controls="' + n.id + '-body">' +
+            // id는 버튼이 아닌 줄(li)에 · 버튼에 두면 #n1로 열 때 브라우저가 버튼에 포커스해 파란 테두리가 생김
+            return '<li class="notice-row" id="' + n.id + '">' +
+                '<button type="button" class="notice-row__head" aria-expanded="false" aria-controls="' + n.id + '-body">' +
                     '<span class="notice-row__meta"><span class="notice-row__tag">' + esc(n.tag) + '</span><span>' + n.date + '</span></span>' +
                     '<span class="notice-row__title">' + esc(n.title) + '</span>' +
                 '</button>' +
@@ -70,8 +71,8 @@
             if (head) toggle(head, head.getAttribute('aria-expanded') !== 'true');
         });
         // 홈에서 공지 하나를 눌러 왔으면 그 공지를 펼쳐 둠
-        var target = location.hash && document.getElementById(location.hash.slice(1));
-        if (target) { toggle(target, true); target.scrollIntoView({ block: 'center' }); }
+        var row = location.hash && document.getElementById(location.hash.slice(1));
+        if (row) { toggle(row.querySelector('.notice-row__head'), true); row.scrollIntoView({ block: 'center' }); }
     </script>
 </body>
 </html>
