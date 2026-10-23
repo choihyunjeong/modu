@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="robots" content="noindex">
+    <title>다크모드 확인 | 모두의 이동</title>
+    <!-- 점검용 (휴대폰이 다크모드를 웹페이지에 알려 주는지 확인) · 확인이 끝나면 지워도 됨 -->
+    <style>
+        body { margin: 0; padding: 24px 20px; font: 17px/1.6 -apple-system, "Malgun Gothic", sans-serif; background: #fff; color: #1f2124; }
+        h1 { font-size: 22px; margin: 0 0 16px; }
+        .box { padding: 16px; border-radius: 14px; background: #f5f6f7; margin-bottom: 12px; word-break: break-all; }
+        .big { font-size: 22px; font-weight: 700; }
+        .muted { font-size: 13px; color: #68696f; }
+        @media (prefers-color-scheme: dark) {
+            body { background: #1f1f1f; color: #f2f3f5; }
+            .box { background: #2a2a2c; }
+            .muted { color: #a3a6ad; }
+        }
+    </style>
+</head>
+<body>
+    <h1>다크모드 확인</h1>
+    <div class="box">
+        <p class="muted">이 휴대폰 브라우저가 알려 준 화면 모드</p>
+        <p class="big" id="mode">확인 중…</p>
+    </div>
+    <div class="box">
+        <p class="muted">브라우저 정보</p>
+        <p id="ua"></p>
+    </div>
+    <div class="box">
+        <p class="muted">앱으로 열었나요?</p>
+        <p id="app"></p>
+    </div>
+    <script>
+        var dark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+        document.getElementById('mode').textContent = dark ? '어두운 화면 (dark) ✓' : '밝은 화면 (light)';
+        document.getElementById('ua').textContent = navigator.userAgent;
+        var standalone = window.matchMedia && matchMedia('(display-mode: standalone)').matches;
+        document.getElementById('app').textContent = standalone ? '예 · 홈 화면에 설치한 앱' : '아니요 · 브라우저에서 열림';
+    </script>
+</body>
+</html>
