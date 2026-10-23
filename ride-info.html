@@ -12,10 +12,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>탑승 정보 등록 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231344">
-    <link rel="stylesheet" href="css/ride-info.css?v=2610231344">
-    <script src="js/common.js?v=2610231344"></script>
-    <script src="js/ride-info.js?v=2610231344"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231349">
+    <link rel="stylesheet" href="css/ride-info.css?v=2610231349">
+    <script src="js/common.js?v=2610231349"></script>
+    <script src="js/ride-info.js?v=2610231349"></script>
 </head>
 <body>
     <div id="wrap">
@@ -40,12 +40,12 @@
             <fieldset class="device-tiles">
                 <legend class="blind">이동 보조기기</legend>
                 <label class="device-tile">
-                    <input type="radio" name="device" value="manual-wheelchair" data-wheelchair checked>
+                    <input type="radio" name="device" value="manual-wheelchair" data-wheelchair data-guide-img="image/boarding-ramp.png" data-guide-alt="기사님이 휠체어를 밀어 차량 옆문 경사로로 탑승하는 모습" checked>
                     <img class="device-tile__img" src="image/wheelchair-manual.png" alt="">
                     <span class="device-tile__label">수동 휠체어</span>
                 </label>
                 <label class="device-tile">
-                    <input type="radio" name="device" value="power-wheelchair" data-wheelchair>
+                    <input type="radio" name="device" value="power-wheelchair" data-wheelchair data-guide-img="image/pv5-ramp.png" data-guide-alt="차량 옆문 경사로로 휠체어가 탑승하는 모습">
                     <img class="device-tile__img" src="image/wheelchair-power.png" alt="">
                     <span class="device-tile__label">전동 휠체어</span>
                 </label>
@@ -272,6 +272,12 @@
             document.querySelectorAll('[data-wheelchair-only]').forEach(function (el) {
                 el.hidden = !isWheelchair;
             });
+            // 앉은 채 탑승 그림: 수동 휠체어 · 전동 휠체어마다 다름
+            if (isWheelchair && checked.dataset.guideImg) {
+                var img = document.querySelector('.boarding-guide__img');
+                img.src = checked.dataset.guideImg;
+                img.alt = checked.dataset.guideAlt || '';
+            }
         }
         devices.forEach(function (d) { d.addEventListener('change', updateWheelchairOnly); });
         updateWheelchairOnly();
