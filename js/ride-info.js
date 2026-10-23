@@ -31,6 +31,15 @@ var RideInfo = (function () {
         try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {}
     }
 
+    // 10/23 이전 버전은 수정 창의 기본 선택(수동 휠체어·문자 메시지만 등)이나 끝내지 않은 등록도 저장됐음
+    //  → 그때 저장된 값은 한 번 지우고 새로 시작 (이미 앱을 설치한 휴대폰 포함)
+    try {
+        if (localStorage.getItem('rideInfoVer') !== '2') {
+            localStorage.removeItem(KEY);
+            localStorage.setItem('rideInfoVer', '2');
+        }
+    } catch (e) {}
+
     if (inFlow) {
         // 흐름에 처음 들어오면 지금 저장된 값에서 시작
         if (!readDraft()) writeDraft(readSaved() || {});
