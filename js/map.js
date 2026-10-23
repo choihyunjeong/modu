@@ -148,6 +148,12 @@ var MapKit = (function () {
         var startTime = null;
         // 이 단계가 시작된 뒤 지난 시간만큼 앞에서 출발 (다른 화면에 갔다 와도 차가 처음으로 돌아가지 않게)
         var stageAt = window.Trip && Trip.get().stageAt;
+        // data-move-since="assigned": 배정부터 도착 임박까지 한 번에 움직이는 차 → 배정 단계가 시작된 때부터 잼
+        if (stageAt && el.dataset.moveSince && window.Progress && Trip.get().stage !== el.dataset.moveSince) {
+            var since = Progress.index(el.dataset.moveSince);
+            var now = Progress.index(Trip.get().stage);
+            for (var i = since; i < now; i++) stageAt -= Progress.FLOW[i].ms * (config.demoScale || 1);
+        }
         var already = stageAt ? Math.min(duration, Math.max(0, Date.now() - stageAt)) : 0;
         function step(now) {
             if (!startTime) startTime = now - already;

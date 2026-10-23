@@ -10,7 +10,8 @@ var Progress = (function () {
     var FLOW = [
         { stage: 'waiting', url: 'waiting.html', ms: 4000, notice: 'UD택시가 배정됐어요' },
         { stage: 'assigned', url: 'assigned.html', ms: 8000, notice: 'UD택시가 곧 도착해요' },
-        { stage: 'arriving', url: 'arriving.html', ms: 6000, notice: '차량이 도착했어요' },
+        // 배정 → 도착 임박은 같은 화면(assigned.html)에서 글자만 바뀜 (새로 열지 않음)
+        { stage: 'arriving', url: 'assigned.html', ms: 6000, notice: '차량이 도착했어요' },
         { stage: 'arrived', url: 'arrived.html', ms: 4000, notice: '탑승했어요 · 목적지로 출발해요' },
         { stage: 'riding', url: 'riding.html', ms: 8000, notice: '목적지에 도착했어요' },
         { stage: 'done', url: 'trip-done.html' }
@@ -75,18 +76,32 @@ document.addEventListener('DOMContentLoaded', function () {
     var wrap = document.querySelector('[data-progress-stage]');
     if (!wrap || !window.Trip) return;
     var stage = wrap.dataset.progressStage;
+    var page = location.pathname.split('/').pop() || 'index.html';
     var t = Trip.get();
     if (t.calledAt && !t.stageAt) Trip.set({ stageAt: Date.now() });
+
+    // 이 화면이 맡은 단계를 알림 · 화면이 글자를 바꿈 (initial: 처음 열 때라 효과 없이)
+    function announce(initial) {
+        wrap.dataset.progressStage = stage;
+        document.dispatchEvent(new CustomEvent('progress:stage', { detail: { stage: stage, initial: initial } }));
+    }
 
     // 진행 중인 호출이 없거나(화면을 바로 연 경우) 이 화면보다 앞 단계면 → 이 단계부터 시작
     var current = Progress.sync();
     if (!current || Progress.index(current.stage) < Progress.index(stage)) {
         Trip.set({ calledAt: t.calledAt || Date.now(), stage: stage, stageAt: Date.now() });
     } else if (current.stage !== stage) {
-        // 다른 화면에 있는 동안 진행됐으면 지금 단계 화면으로
-        StateNotice.leave(Progress.previousNotice(current.stage));
-        return location.replace(current.url);
+        if (current.url === page) {
+            // 같은 화면이 맡은 다음 단계 (배정 → 도착 임박) · 그 단계로 보여 줌
+            stage = current.stage;
+        } else {
+            // 다른 화면에 있는 동안 진행됐으면 지금 단계 화면으로
+            StateNotice.leave(Progress.previousNotice(current.stage));
+            return location.replace(current.url);
+        }
     }
+    // 화면 스크립트가 듣기 시작한 뒤에 알림
+    setTimeout(function () { announce(true); }, 0);
 
     var started = false;
     var told = false;
@@ -103,10 +118,24 @@ document.addEventListener('DOMContentLoaded', function () {
         if (started) return;
         started = true;
         // 그 사이 다른 화면에서 이미 다음 단계로 갔으면 그 화면으로 (단계를 건너뛰지 않게)
+        // 다음 단계도 이 화면이면: 새로 열지 않고 그 자리에서 글자만 바꾸고 계속 진행
+        function stayHere(next, notice) {
+            if (notice) Toast.show(notice, { top: true, duration: 3000 });
+            stage = next;
+            started = false;
+            told = false;
+            announce(false);
+            setTimeout(go, Progress.remaining());
+        }
         var now = Progress.sync();
-        if (now && now.stage !== stage) return location.replace(now.url);
+        if (now && now.stage !== stage) {
+            // 시간이 지나 이미 다음 단계로 넘어감 (같은 화면이면 그 자리에서)
+            if (now.url === page) return stayHere(now.stage, Progress.previousNotice(now.stage));
+            return location.replace(now.url);
+        }
         var moved = Progress.advance();
         if (!moved) return;
+        if (moved.next.url === page) return stayHere(moved.next.stage, moved.step.notice);
         if (moved.step.notice) StateNotice.leave(moved.step.notice);
         // replace: 자동으로 바뀐 상태는 뒤로 가기 기록에 남기지 않음
         location.replace(moved.next.url);
@@ -116,6 +145,9 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
     // 지도 위 차가 탑승 위치에 닿으면 바로 (지도를 못 쓰면 위 시간대로)
     if (wrap.hasAttribute('data-next-on-arrive')) {
-        document.addEventListener('mapkit:car-arrived', function () { setTimeout(go, 1200); });
+        document.addEventListener('mapkit:car-arrived', function () {
+            // 배정 화면에서는 도착 임박 단계일 때만 (차가 다 온 뒤 차량 도착으로)
+            if (stage === wrap.dataset.nextOnArrive || !wrap.dataset.nextOnArrive) setTimeout(go, 1200);
+        });
     }
 });

@@ -12,17 +12,19 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>차량 배정 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231221">
-    <link rel="stylesheet" href="css/progress.css?v=2610231221">
-    <script src="js/common.js?v=2610231221"></script>
-    <script src="js/config.js?v=2610231221"></script>
-    <script src="js/trip.js?v=2610231221"></script>
-    <script src="js/map.js?v=2610231221"></script>
-    <script src="js/push.js?v=2610231221"></script>
-    <script src="js/actions.js?v=2610231221"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231254">
+    <link rel="stylesheet" href="css/progress.css?v=2610231254">
+    <script src="js/common.js?v=2610231254"></script>
+    <script src="js/config.js?v=2610231254"></script>
+    <script src="js/trip.js?v=2610231254"></script>
+    <script src="js/map.js?v=2610231254"></script>
+    <script src="js/push.js?v=2610231254"></script>
+    <script src="js/actions.js?v=2610231254"></script>
 </head>
 <body>
-    <div id="wrap" class="map-page" data-progress-stage="assigned"
+    <!-- 배정 → 도착 임박을 이 한 화면에서 (단계가 바뀌면 새로 열지 않고 글자만 부드럽게 바뀜 · js/push.js)
+         차는 배정부터 탑승 위치까지 한 번에 움직이고, 남은 시간도 차를 따라 줄어듦 -->
+    <div id="wrap" class="map-page" data-progress-stage="assigned" data-next-on-arrive="arriving"
         data-stage="before" data-cancel-stage="after">
         <div class="map-view" style="--map-height: 304px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2" data-fit="car,pickup,me">
             <img class="map-view__static" src="image/map-static.png" alt="">
@@ -30,7 +32,7 @@
             <div class="map-me" data-static-pos data-place="me" style="--x: 126px; --y: 15px; --heading: 177deg;">
                 <img src="image/map-heading.svg" alt="">
             </div>
-            <div class="map-car" data-static-pos data-place="car" data-move-path="approach" data-move-range="0,0.6" data-move-ms="8000" style="--x: 236px; --y: 21px;">
+            <div class="map-car" data-static-pos data-place="car" data-move-path="approach" data-move-range="0,1" data-move-ms="14000" data-move-since="assigned" style="--x: 236px; --y: 21px;">
                 <img src="image/ud-taxi.png" alt="">
             </div>
             <span class="map-chip map-chip--primary" data-static-pos style="--x: 96px; --y: 54px;">탑승 위치</span>
@@ -52,7 +54,7 @@
                 <div class="assigned-head">
                     <div class="assigned-head__text">
                         <h1 class="assigned-title" data-eta="title">약 8분 후 도착 예정</h1>
-                        <p class="assigned-desc">차량이 배정됐어요</p>
+                        <p class="assigned-desc" data-soon-text="차가 거의 다 왔어요">차량이 배정됐어요</p>
                     </div>
                     <!-- 더보기: 보호자 공유 · 접수 취소 -->
                     <button type="button" class="btn-icon-round" aria-label="더보기" aria-haspopup="dialog" data-action="more">
@@ -82,7 +84,7 @@
             <div class="assigned-group">
                 <p class="boarding-note">
                     <span class="icon icon--sm icon--information" aria-hidden="true"></span>
-                    옆문 경사로가 있는 UD택시가 배차됐어요
+                    <span data-soon-text="차가 멈추면 기사님이 내려 탑승을 도와드려요.">옆문 경사로가 있는 UD택시가 배차됐어요</span>
                 </p>
 
                 <div class="driver-card">
@@ -98,7 +100,7 @@
             <!-- 연락 · 메시지 · 전화 · 도움 -->
             <div class="assigned-group assigned-group--contact">
                 <div class="btn-line-row">
-                    <a href="chat.html?stage=before" class="btn-line">
+                    <a href="chat.html?stage=before" class="btn-line" data-soon-href="chat.html?stage=soon">
                         <span class="icon icon--chat" aria-hidden="true"></span>
                         메시지
                     </a>
@@ -106,6 +108,23 @@
                         <span class="icon icon--phone" aria-hidden="true"></span>
                         전화
                     </button>
+                </div>
+                <!-- 도착 임박부터 · 자주 쓰는 말 바로 보내기 -->
+                <div class="soon-only" data-show-on="arriving" hidden>
+                    <div class="quick-msg">
+                        <p class="quick-msg__title">자주 쓰는 말 바로 보내기</p>
+                        <p class="quick-msg__desc">누르면 기사님께 바로 전송돼요.</p>
+                    </div>
+                    <div class="quick-msg__list">
+                        <button type="button" class="btn-line quick-msg__btn" data-action="quick-send">
+                            탑승 위치에서 기다리고 있어요
+                            <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn-line quick-msg__btn" data-action="quick-send">
+                            탑승 준비에 시간이 필요해요
+                            <span class="icon icon--sm icon--send" aria-hidden="true"></span>
+                        </button>
+                    </div>
                 </div>
                 <div class="help-row">
                     <button type="button" class="btn-help" aria-haspopup="dialog" data-action="help">
@@ -116,5 +135,54 @@
             </div>
         </section>
     </div>
+
+    <script>
+        // 단계에 맞춰 글자·버튼 바꾸기 (도착 임박이면 data-soon-text · data-soon-href · data-show-on)
+        //  처음 열 때는 바로, 화면을 보는 중에 바뀌면 잠깐 흐려졌다가 새 글자로
+        (function () {
+            var wrap = document.getElementById('wrap');
+            function apply(soon) {
+                wrap.dataset.stage = soon ? 'soon' : 'before';
+                document.querySelectorAll('[data-soon-text]').forEach(function (el) {
+                    if (!el.dataset.beforeText) el.dataset.beforeText = el.textContent.trim();
+                    el.textContent = soon ? el.dataset.soonText : el.dataset.beforeText;
+                });
+                document.querySelectorAll('[data-soon-href]').forEach(function (a) {
+                    if (!a.dataset.beforeHref) a.dataset.beforeHref = a.getAttribute('href');
+                    a.setAttribute('href', soon ? a.dataset.soonHref : a.dataset.beforeHref);
+                });
+                document.querySelectorAll('[data-show-on]').forEach(function (el) { el.hidden = !soon; });
+            }
+            document.addEventListener('progress:stage', function (e) {
+                var soon = e.detail.stage === 'arriving';
+                var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (e.detail.initial || reduce) return apply(soon);
+                var parts = document.querySelectorAll('[data-soon-text], [data-show-on]');
+                parts.forEach(function (el) { el.classList.add('is-swapping'); });
+                setTimeout(function () {
+                    apply(soon);
+                    // 흐려진 채로 바꾼 뒤 다음 그림에서 다시 또렷하게
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            parts.forEach(function (el) { el.classList.remove('is-swapping'); });
+                        });
+                    });
+                }, 250);
+            });
+
+            // 지도를 못 불러와 차가 안 움직이면: 남은 시간을 시간으로만 줄임 (배정 ~ 도착 임박 전체 기준)
+            setTimeout(function () {
+                if (document.querySelector('.is-kakao') || !window.Progress) return;
+                var scale = (window.APP_CONFIG && APP_CONFIG.demoScale) || 1;
+                var first = Progress.FLOW[Progress.index('assigned')].ms * scale;
+                var total = first + Progress.FLOW[Progress.index('arriving')].ms * scale;
+                setInterval(function () {
+                    var t = Trip.get();
+                    var start = t.stageAt - (t.stage === 'arriving' ? first : 0);
+                    Trip.fillEta(document, 8, Math.min(1, Math.max(0, (Date.now() - start) / total)));
+                }, 1000);
+            }, 3000);
+        })();
+    </script>
 </body>
 </html>

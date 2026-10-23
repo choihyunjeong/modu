@@ -12,12 +12,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>이용 상세 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231221">
-    <link rel="stylesheet" href="css/after.css?v=2610231221">
-    <script src="js/common.js?v=2610231221"></script>
-    <script src="js/config.js?v=2610231221"></script>
-    <script src="js/trip.js?v=2610231221"></script>
-    <script src="js/actions.js?v=2610231221"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231254">
+    <link rel="stylesheet" href="css/after.css?v=2610231254">
+    <script src="js/common.js?v=2610231254"></script>
+    <script src="js/config.js?v=2610231254"></script>
+    <script src="js/trip.js?v=2610231254"></script>
+    <script src="js/actions.js?v=2610231254"></script>
 </head>
 <body>
     <!-- 이용 상세 · 탑승 경험 (이동 완료 · 이용내역 카드에서 들어옴 · ?id=기록 · #rate면 평가 창을 바로 엶)
@@ -148,7 +148,7 @@
             function renderCard() {
                 paint(stars, rec.rating || 0);
                 if (!rec.rating) return;
-                title.textContent = '평가해 주셔서 고마워요';
+                title.textContent = '평가해 주셔서 감사합니다';
                 desc.textContent = rec.rating + '점 · ' + LABELS[rec.rating] +
                     (rec.issues && rec.issues.length ? ' · 불편했던 점: ' + rec.issues.join(', ') : '') +
                     ' · 별을 누르면 다시 평가할 수 있어요';
@@ -215,7 +215,7 @@
                         if (rec.id) Trip.updateHistory(rec.id, patch);
                         close();
                         renderCard();
-                        Toast.show('평가를 보냈어요. 고마워요', { check: true });
+                        Toast.show('평가를 보냈어요. 감사합니다', { check: true });
                     });
                 }, opener);
             }

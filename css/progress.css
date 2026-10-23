@@ -1666,7 +1666,8 @@
 }
 
 /* 탑승 중 시트를 올리면 보이는 묶음 (굵은 회색 띠로 나눔) */
-.sheet--riding .boarding-note { min-height: 0; }
+/* 시트가 좁을 때 눌려서 위아래 여백이 사라지지 않게 */
+.sheet--riding .boarding-note { min-height: 0; flex-shrink: 0; }
 
 .riding-section {
     display: flex;
@@ -1717,3 +1718,22 @@
 }
 
 .icon-img--22 { width: 22px; height: 22px; }
+
+/* 배정 → 도착 임박 (같은 화면) · 바뀌는 글자는 잠깐 흐려졌다가 새 글자로 */
+[data-soon-text],
+[data-show-on] { transition: opacity 0.25s ease; }
+.is-swapping { opacity: 0; }
+
+/* 도착 임박부터 보이는 자주 쓰는 말 */
+.soon-only {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.soon-only[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+    [data-soon-text],
+    [data-show-on] { transition: none; }
+}
