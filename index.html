@@ -12,9 +12,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610222102">
-    <link rel="stylesheet" href="css/home.css?v=2610222102">
-    <script src="js/common.js?v=2610222102"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231137">
+    <link rel="stylesheet" href="css/home.css?v=2610231137">
+    <script src="js/common.js?v=2610231137"></script>
     <script>
         // 앱을 처음 열 때(바깥에서 들어올 때)는 스플래시부터 · 앱 안에서 홈으로 돌아올 땐 바로 홈
         try {
@@ -22,23 +22,27 @@
             if (!sessionStorage.getItem('splashShown') && !fromInside) location.replace('splash.html');
         } catch (e) {}
     </script>
-    <script src="js/config.js?v=2610222102"></script>
-    <script src="js/ride-info.js?v=2610222102"></script>
-    <script src="js/stats.js?v=2610222102"></script>
-    <script src="js/reader.js?v=2610222102"></script>
-    <script src="js/trip.js?v=2610222102"></script>
-    <script src="js/actions.js?v=2610222102"></script>
-    <script src="js/push.js?v=2610222102"></script>
-    <script src="js/notices.js?v=2610222102"></script>
+    <script src="js/config.js?v=2610231137"></script>
+    <script src="js/ride-info.js?v=2610231137"></script>
+    <script src="js/stats.js?v=2610231137"></script>
+    <script src="js/reader.js?v=2610231137"></script>
+    <script src="js/trip.js?v=2610231137"></script>
+    <script src="js/actions.js?v=2610231137"></script>
+    <script src="js/push.js?v=2610231137"></script>
+    <script src="js/notices.js?v=2610231137"></script>
 </head>
 <body>
     <div id="wrap">
         <main class="content home">
             <!-- 맨 위 줄 + 지금 상황 (둘 사이 간격 없음) -->
             <div class="home-head">
-                <!-- 맨 위 줄 · 글자 크기 / 읽어주기 -->
+                <!-- 맨 위 줄 · 지금 동네 / 글자 크기 / 읽어주기 (홈_v23) -->
                 <div class="home-top">
-                    <img class="home-top__logo" src="image/home-logo.svg?v=2610222102" alt="모두의 이동" width="163" height="42">
+                    <p class="home-top__place">
+                        <span class="icon icon--location-filled" aria-hidden="true"></span>
+                        <span class="blind">지금 위치</span>
+                        <span data-home-area>은평구 불광동</span>
+                    </p>
                     <span class="home-top__actions">
                     <button type="button" class="btn-circle btn-circle--text" aria-label="글자 크기 바꾸기" aria-haspopup="dialog" aria-controls="font-size-sheet" data-open-font-size>가</button>
                     <button type="button" class="btn-circle" aria-label="화면 읽어주기" aria-pressed="false" data-reader-toggle>
@@ -71,38 +75,67 @@
                     <button type="button" class="current-call__cancel" data-action="cancel" data-cc-cancel aria-haspopup="dialog">호출 취소</button>
                 </section>
 
-                <!-- 지금 상황 -->                <section class="now" data-read-part="호출 안내" data-now>
-                    <!-- 오늘 요일의 평균 대기 (js/stats.js · 2026년 1월 통계) -->
-                    <h1 class="now__title" data-read>
-                        <span data-stat="slot">10월 22일(목) 오후 2~3시</span>
-                        <span>승차까지 평균 <span data-stat="avg">32</span>분</span>
-                    </h1>
-                    <p class="now__nearby" data-read>
-                        <img class="now__car" src="image/car.png" alt="">
-                        <span class="now__count">주변 배차 가능 차량 5대</span>
-                        <span class="now__time" data-stat="now">· 오후 2:25 기준</span>
-                    </p>
-                    <div class="now__basis">
-                        <span data-stat="basis" data-read>은평구 · 2026년 1월 같은 요일 평균</span>
-                        <button type="button" class="btn-help" aria-label="기준 안내 보기" aria-haspopup="dialog" data-open-basis>?</button>
-                    </div>
+                <!-- 인사 + 차 (홈_v23 히어로) -->
+                <section class="hero" data-now data-read-part="인사">
+                    <h1 class="hero__title" data-read><span class="hero__name" data-home-name>최현정</span> 님,<br>오늘은 어디로<br>갈까요?</h1>
+                    <span class="hero__car" aria-hidden="true">
+                        <img class="hero__shadow" src="image/home-car-shadow.svg" alt="">
+                        <img class="hero__img" src="image/home-car.png" alt="">
+                    </span>
                 </section>
             </div>
 
-            <!-- 부르기 -->
+            <!-- 부르기 · 바로콜 / 전화 -->
             <div class="call" data-now>
-                <a href="search.html" class="btn btn--primary">바로 부르기</a>
-                <a href="voice.html" class="btn btn--outline">
-                    <span class="icon icon--microphone" aria-hidden="true"></span>
-                    음성으로 부르기
+                <a href="search.html" class="btn btn--primary">바로콜 신청하기</a>
+                <a href="tel:15884388" class="btn btn--gray call__tel" data-center-tel>
+                    <img src="image/tossface-phone.svg" alt="" width="22" height="22">
+                    전화로 부르기
                 </a>
             </div>
 
+            <!-- 지금 대기 현황 (js/stats.js · 같은 요일 평균 · 시연용 지금 예상) -->
+            <section class="card wait-card" data-now data-read-part="예상 대기">
+                <div class="wait-card__head">
+                    <h2 class="wait-card__label" data-read>예상 대기 · 부르고 타기까지</h2>
+                    <p class="wait-card__clock">
+                        <span class="icon icon--sm icon--time" aria-hidden="true"></span>
+                        <span data-stat="clock">오후 2:25 기준</span>
+                    </p>
+                </div>
+                <p class="wait-card__value" data-read>
+                    <span class="wait-card__about">약</span>
+                    <span class="wait-card__num" data-stat="nowWait">27</span>
+                    <span class="wait-card__unit">분</span>
+                </p>
+                <div class="wait-bars" data-read>
+                    <p class="wait-bar wait-bar--now">
+                        <span class="wait-bar__label">지금</span>
+                        <span class="wait-bar__track"><span class="wait-bar__fill" data-bar="now"></span></span>
+                        <span class="wait-bar__value"><span class="blind">약 </span><span class="blind" data-stat="nowWait">27</span><span class="blind">분</span></span>
+                    </p>
+                    <p class="wait-bar">
+                        <span class="wait-bar__label" data-stat="window">15~17시</span>
+                        <span class="wait-bar__track"><span class="wait-bar__fill" data-bar="later"></span></span>
+                        <span class="wait-bar__value"><span data-stat="avg">32</span>분</span>
+                    </p>
+                </div>
+                <button type="button" class="wait-card__more" aria-haspopup="dialog" data-open-basis>
+                    <span class="wait-card__cars" data-read><span data-home-cars-label>내 휠체어로 탈 수 있는 차</span> <b>5대</b></span>
+                    <span class="wait-card__link">자세히 보기</span>
+                    <span class="icon icon--sm icon--chevron-right" aria-hidden="true"></span>
+                </button>
+            </section>
+
             <!-- 내 탑승 정보 -->
             <section class="section" data-read-part="내 탑승 정보">
-                <h2 class="section__title" data-read>내 탑승 정보</h2>
-                <ul class="card ride-info">
+                <div class="section__head-col">
+                    <h2 class="section__title" data-read>내 탑승 정보</h2>
+                    <p class="section__desc" data-read>호출하면 기사님께 자동으로 전달돼요.</p>
+                </div>
+                <ul class="ride-info">
                     <li class="ride-info__row">
+                        <span class="ride-info__icon" aria-hidden="true"><span class="icon icon--accessibility"></span></span>
                         <div class="ride-info__text" data-read>
                             <p class="ride-info__title">탑승 정보</p>
                             <p class="ride-info__desc" data-home-ride>이동 보조기기와 필요한 도움을 기사님께 미리 알려드려요.</p>
@@ -110,6 +143,7 @@
                         <a href="ride-info.html" class="btn-sm" data-home-ride-btn>등록</a>
                     </li>
                     <li class="ride-info__row">
+                        <span class="ride-info__icon" aria-hidden="true"><span class="icon icon--phone"></span></span>
                         <div class="ride-info__text" data-read>
                             <p class="ride-info__title">연락 방법</p>
                             <p class="ride-info__desc" data-home-contact>기사님이 연락할 방법을 정해 두세요.</p>
@@ -117,6 +151,7 @@
                         <button type="button" class="btn-sm" data-open-contact aria-haspopup="dialog">등록</button>
                     </li>
                     <li class="ride-info__row">
+                        <span class="ride-info__icon" aria-hidden="true"><span class="icon icon--user-multiple"></span></span>
                         <div class="ride-info__text" data-read>
                             <p class="ride-info__title">보호자 연결</p>
                             <p class="ride-info__desc" data-home-guardian>보호자와 차량 도착·이동 상황을 공유해요.</p>
@@ -125,12 +160,6 @@
                     </li>
                 </ul>
             </section>
-
-            <!-- 안내 줄 -->
-            <p class="notice home-notice" data-read-part="안내" data-read>
-                <span class="icon icon--checkmark-outline" aria-hidden="true"></span>
-                한 번 등록한 탑승정보는 다음 호출에도 사용할 수 있어요. 언제든 수정할 수 있어요.
-            </p>
 
             <!-- 콜센터 연결 (콜센터연결,공지사항 · 앱이 어려우면 사람이 도와드려요) -->
             <section class="section" data-read-part="콜센터 연결">
@@ -310,6 +339,13 @@
                 document.querySelector('[data-home-ride]').textContent = ride.device;
                 document.querySelector('[data-home-ride-btn]').textContent = '수정';
             }
+            // 대기 카드의 차량 수: 휠체어를 등록했으면 "내 휠체어로 탈 수 있는 차"
+            document.querySelector('[data-home-cars-label]').textContent =
+                ride && /휠체어/.test(ride.device || '') ? '내 휠체어로 탈 수 있는 차' : '지금 부를 수 있는 차';
+            // 인사 이름 · 동네 (config에 있으면)
+            var user = (window.APP_CONFIG && APP_CONFIG.user) || {};
+            if (user.name) document.querySelector('[data-home-name]').textContent = user.name;
+            if (user.area) document.querySelector('[data-home-area]').textContent = user.area;
             // 연락 방법: 저장했으면 그 방법 · 시트에서 고르고 저장
             var CONTACT_TEXT = {
                 'message': '문자·앱 메시지 · 전화도 받을 수 있어요',
@@ -359,7 +395,7 @@
                     if (g.status !== 'connected') return who + ' · 수락 대기 중';
                     return who + (g.notify ? ' · 이동 알림 받는 중' : ' · 연결됨');
                 }).join(' / ');
-                document.querySelector('[data-home-guardian-btn]').textContent = '수정';
+                document.querySelector('[data-home-guardian-btn]').textContent = '관리';
                 // 수락 대기 중이면 잠시 뒤 다시 확인 (시연용 · 수락되면 바로 바뀜)
                 if (list.some(function (g) { return g.status !== 'connected'; })) {
                     setTimeout(function () {
@@ -421,7 +457,7 @@
         // 콜센터 연결: 번호는 config (전화 앱 · 문자 앱이 번호가 채워진 채로 열림 · 바로 걸리지 않음)
         (function () {
             var tel = ((window.APP_CONFIG && APP_CONFIG.callCenter && APP_CONFIG.callCenter.tel) || '1588-4388').replace(/[^0-9]/g, '');
-            document.querySelector('[data-center-tel]').href = 'tel:' + tel;
+            document.querySelectorAll('[data-center-tel]').forEach(function (a) { a.href = 'tel:' + tel; });
             document.querySelector('[data-center-sms]').href = 'sms:' + tel;
         })();
 

@@ -68,13 +68,27 @@ var WaitStats = (function () {
             (h < 12 ? '오전 ' : '오후 ') + h12 + '~' + next + '시';
     }
 
+    // 홈 대기 카드 (홈_v23): 다음 2시간(지금 14시대 → 15~17시)은 같은 요일 평균,
+    //  지금 예상은 그보다 조금 짧게 (시연용 · 실시간 접수 자료를 받으면 바꿈)
+    function nowWait(date) {
+        return Math.max(5, Math.round(forDay(date).avg * 0.85));
+    }
+    function nextWindow(date) {
+        var h = (date || new Date()).getHours();
+        return ((h + 1) % 24) + '~' + ((h + 3) % 24) + '시';
+    }
+
     function fill(root) {
         var s = forDay();
         var now = new Date();
+        var clock = (now.getHours() < 12 ? '오전 ' : '오후 ') + (now.getHours() % 12 || 12) + ':' + ('0' + now.getMinutes()).slice(-2) + ' 기준';
         var texts = {
             slot: slot(),
             // 지금 시각 (· 오후 1:05 기준)
-            now: '· ' + (now.getHours() < 12 ? '오전 ' : '오후 ') + (now.getHours() % 12 || 12) + ':' + ('0' + now.getMinutes()).slice(-2) + ' 기준',
+            now: '· ' + clock,
+            clock: clock,
+            nowWait: String(nowWait()),
+            window: nextWindow(),
             day: s.day,
             avg: String(s.avg),
             range: s.min + '~' + s.max,
@@ -82,6 +96,12 @@ var WaitStats = (function () {
         };
         (root || document).querySelectorAll('[data-stat]').forEach(function (el) {
             if (texts[el.dataset.stat] != null) el.textContent = texts[el.dataset.stat];
+        });
+        // 막대 길이: 둘 중 긴 쪽이 100%
+        var bars = { now: nowWait(), later: s.avg };
+        var top = Math.max(bars.now, bars.later);
+        (root || document).querySelectorAll('[data-bar]').forEach(function (el) {
+            el.style.width = Math.round(bars[el.dataset.bar] / top * 100) + '%';
         });
     }
 
@@ -91,5 +111,5 @@ var WaitStats = (function () {
         setInterval(function () { fill(document); }, 60000);
     });
 
-    return { forDay: forDay, slot: slot, basis: basis, fill: fill, source: SOURCE };
+    return { forDay: forDay, slot: slot, basis: basis, fill: fill, nowWait: nowWait, source: SOURCE };
 })();

@@ -228,6 +228,8 @@ button {
 
 /* 여러 화면에서 쓰는 아이콘 (화면 전용 css에만 있으면 그 css가 없는 화면에서 빈칸이 됨) */
 .icon--help { --icon-url: url("../image/help.svg"); }
+.icon--accessibility { --icon-url: url("../image/accessibility.svg"); }
+.icon--location-filled { --icon-url: url("../image/location--filled.svg"); }
 .icon--user-multiple { --icon-url: url("../image/user--multiple.svg"); }
 .icon--warning-alt { --icon-url: url("../image/warning--alt.svg"); }
 .icon--home { --icon-url: url("../image/home.svg"); }
