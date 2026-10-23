@@ -162,6 +162,17 @@ var Trip = (function () {
         return Math.max(5, Math.round(rideKm() / 30 * 60 + 3));
     }
 
+    // 탑승 중 남은 분: 시연에서는 이동 단계가 짧게(push.js의 riding 시간) 지나가므로
+    //  그 단계가 얼마나 지났는지에 맞춰 전체 이동 시간(예: 14분)에서 1분까지 줄여 감 · 지도 위 차도 같은 시간 동안 움직임
+    function rideLeft(t) {
+        var total = rideMinutes();
+        var step = window.Progress && Progress.FLOW[Progress.index('riding')];
+        if (!t || t.stage !== 'riding' || !t.stageAt || !step) return total;
+        var scale = (window.APP_CONFIG && APP_CONFIG.demoScale) || 1;
+        var done = Math.min(1, Math.max(0, (Date.now() - t.stageAt) / (step.ms * scale)));
+        return Math.max(1, Math.ceil(total * (1 - done)));
+    }
+
     // 예시 요금: 10km까지 1,500원 · 이후 5km마다 200원
     function fare() {
         return 1500 + Math.max(0, Math.ceil((rideKm() - 10) / 5)) * 200;
@@ -198,9 +209,9 @@ var Trip = (function () {
             return t.destination ? '목적지까지 약 ' + rideMinutes() + '분 · ' + distText() + ' (차에 탄 뒤 기준)' : null;
         },
         'ride-pin': function (t) { return t.destination ? '목적지까지 이동 약 ' + rideMinutes() + '분' : null; },
-        // 탑승 중: 목적지를 안 골랐어도 예시 좌표로 계산해 도착 예상 시각과 맞춤
-        'ride-left': function () { return '약 ' + rideMinutes() + '분 남음'; },
-        'ride-arrive-pin': function () { return '도착 · 약 ' + rideMinutes() + '분'; },
+        // 탑승 중: 목적지를 안 골랐어도 예시 좌표로 계산 · 갈수록 줄어듦 (rideLeft)
+        'ride-left': function (t) { return '약 ' + rideLeft(t) + '분 남음'; },
+        'ride-arrive-pin': function (t) { return '도착 · 약 ' + rideLeft(t) + '분'; },
         'fare': function (t) { return t.destination ? fare().toLocaleString('ko-KR') + '원' : null; },
         'called-status': function (t) {
             if (!t.calledAt) return null;
@@ -287,6 +298,12 @@ var Trip = (function () {
 
     document.addEventListener('DOMContentLoaded', function () {
         bind(document);
+        // 탑승 중 남은 시간은 계속 다시 채움 (지도 핀 · 시트 둘 다)
+        var leftEls = document.querySelectorAll('[data-trip="ride-left"], [data-trip="ride-arrive-pin"]');
+        if (leftEls.length) setInterval(function () {
+            var t = load();
+            leftEls.forEach(function (el) { el.textContent = TEXTS[el.dataset.trip](t); });
+        }, 500);
         // 알림 미리보기(template) 안의 글자도 바꿈
         document.querySelectorAll('template').forEach(function (tpl) { bind(tpl.content); });
         // 고정 시점 남은 시간(data-eta-at)은 차가 오는 길을 받아 채움
