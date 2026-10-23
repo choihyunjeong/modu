@@ -12,7 +12,7 @@ var Progress = (function () {
         { stage: 'assigned', url: 'assigned.html', ms: 8000, notice: 'UD택시가 곧 도착해요' },
         // 배정 → 도착 임박은 같은 화면(assigned.html)에서 글자만 바뀜 (새로 열지 않음)
         { stage: 'arriving', url: 'assigned.html', ms: 6000, notice: '차량이 도착했어요' },
-        { stage: 'arrived', url: 'arrived.html', ms: 4000, notice: '탑승했어요 · 목적지로 출발해요' },
+        { stage: 'arrived', url: 'arrived.html', ms: 3200, notice: '탑승했어요 · 목적지로 출발해요' },
         { stage: 'riding', url: 'riding.html', ms: 8000, notice: '목적지에 도착했어요' },
         { stage: 'done', url: 'trip-done.html' }
     ];
