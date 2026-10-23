@@ -955,6 +955,67 @@
 
 .guardian-pick__row + .guardian-pick__row { border-top: 1px solid var(--color-border); }
 
+/* 연결된 보호자가 없을 때 · 번호를 넣어 바로 공유 (보호자 연결 화면의 입력칸과 같은 모양) */
+.share-new {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+}
+
+.share-new__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.share-new__label {
+    font-size: var(--fs-14);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--lh-20);
+    color: var(--color-text-sub);
+}
+
+.share-new__sub { margin-left: var(--space-4); font-size: var(--fs-13); color: var(--color-text-placeholder); }
+
+.share-new__input {
+    width: 100%;
+    height: var(--button-height-lg);
+    padding: 0 var(--space-8) 0 var(--space-16);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    font: inherit;
+    font-size: var(--fs-17);
+    line-height: var(--lh-24);
+    color: var(--color-text);
+}
+
+.share-new__input::placeholder { color: var(--color-text-sub); }
+
+.share-new__input:focus {
+    border: 2px solid var(--color-primary);
+    padding-left: calc(var(--space-16) - 1px);
+    outline: 0;
+}
+
+.share-new__field:has(.share-new__error:not([hidden])) .share-new__input { border-color: var(--color-error); }
+
+.share-new__error {
+    font-size: var(--fs-13);
+    line-height: var(--lh-18);
+    color: var(--color-error);
+}
+
+.share-new__error[hidden] { display: none; }
+
+.share-new__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+}
+
+.share-new__invite { padding: var(--space-4) 0; }
+
 .guardian-pick__avatar {
     flex-shrink: 0;
     width: 40px;

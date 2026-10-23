@@ -135,10 +135,7 @@ var Actions = (function () {
                 checked: g.notify
             });
         });
-        if (!guardians.length) {
-            Toast.show('연결된 보호자가 없어요 · 홈의 "보호자 연결"에서 먼저 초대해 주세요');
-            return;
-        }
+        if (!guardians.length) return shareNew(opener);
         var html = sheetTitle('보호자에게 이동 상황을 공유할까요?', '공유를 시작하면 보호자가 이번 이동을 같이 볼 수 있어요.') +
             '<p class="action-sheet__label" id="share-to">공유할 보호자</p>' +
             '<div class="guardian-pick" role="group" aria-labelledby="share-to">' +
@@ -176,6 +173,80 @@ var Actions = (function () {
                 saveTrip({ share: { names: names, at: Date.now() } });
                 close();
                 Toast.show(names.join(', ') + ' 님에게 이동 상황을 공유하기 시작했어요', { check: true });
+            });
+        }, opener);
+    }
+
+    // 연결된 보호자가 없을 때: 이 자리에서 번호를 넣어 바로 공유 (문자로 위치 보기 링크)
+    //  "보호자로도 연결"을 켜 두면 보호자 연결 초대도 같이 보냄 (수락하면 다음부터 목록에서 바로 고름)
+    function shareNew(opener) {
+        var pending = Guardians.list().filter(function (g) { return g.status !== 'connected'; });
+        var relations = ['가족', '활동지원사', '기타'];
+        var html = sheetTitle('누구에게 이동 상황을 보낼까요?',
+                pending.length
+                    ? pending.map(Guardians.label).join(', ') + ' 님은 아직 연결 수락 전이에요. 번호를 넣으면 문자로 바로 보내요.'
+                    : '연결된 보호자가 없어요. 번호를 넣으면 문자로 바로 보내요.') +
+            '<div class="share-new">' +
+                '<div class="share-new__field">' +
+                    '<label for="share-phone" class="share-new__label">휴대폰 번호</label>' +
+                    '<input type="tel" id="share-phone" class="share-new__input" placeholder="010-0000-0000" inputmode="numeric" autocomplete="tel" aria-describedby="share-phone-error" data-autofocus>' +
+                    '<p class="share-new__error" id="share-phone-error" role="alert" hidden>휴대폰 번호를 확인해 주세요.</p>' +
+                '</div>' +
+                '<div class="share-new__field">' +
+                    '<p class="share-new__label" id="share-relation">받는 분과의 관계 <span class="share-new__sub">선택 사항</span></p>' +
+                    '<div class="share-new__chips" role="group" aria-labelledby="share-relation">' +
+                        relations.map(function (r) {
+                            return '<button type="button" class="chip chip--md" aria-pressed="false">' + esc(r) + '</button>';
+                        }).join('') +
+                    '</div>' +
+                '</div>' +
+                '<label class="guardian-pick__row share-new__invite">' +
+                    '<span class="guardian-pick__text">' +
+                        '<span class="guardian-pick__name">보호자로도 연결하기</span>' +
+                        '<span class="guardian-pick__phone">수락하면 다음부터 이동 알림을 자동으로 받아요</span>' +
+                    '</span>' +
+                    '<input type="checkbox" class="checkbox" data-invite checked>' +
+                '</label>' +
+            '</div>' +
+            '<div class="info-box">' +
+                '<p>공유되는 것 · 차량 번호 · 기사님 · 도착 예정 시각 · 차량 위치</p>' +
+                '<p>끝나는 때 · 이번 이동이 끝나면(하차 뒤) 자동으로 종료돼요</p>' +
+            '</div>' +
+            '<button type="button" class="btn btn--primary" data-start disabled>이동 상황 공유하기</button>' +
+            '<p class="action-sheet__foot">문자로 차량 번호 · 도착 예정 · 위치 보기 링크를 보내요.</p>';
+        openLayer('sheet', html, function (panel, close) {
+            var input = panel.querySelector('#share-phone');
+            var error = panel.querySelector('#share-phone-error');
+            var start = panel.querySelector('[data-start]');
+            var chips = panel.querySelectorAll('.share-new__chips .chip');
+            function digits() { return input.value.replace(/\D/g, ''); }
+            function valid() { return /^01\d{8,9}$/.test(digits()); }
+            // 번호를 끝까지 넣어야 켜짐 · 다 넣었는데 형식이 틀리면 칸 아래 안내
+            function sync() {
+                start.disabled = !valid();
+                error.hidden = digits().length < 10 || valid();
+            }
+            input.addEventListener('input', sync);
+            // 관계: 하나만 (다시 누르면 해제)
+            chips.forEach(function (chip) {
+                chip.addEventListener('click', function () {
+                    var on = chip.getAttribute('aria-pressed') !== 'true';
+                    chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+                    chip.setAttribute('aria-pressed', on);
+                });
+            });
+            start.addEventListener('click', function () {
+                if (!valid()) return sync();
+                var phone = digits().replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
+                var picked = panel.querySelector('.share-new__chips [aria-pressed="true"]');
+                var relation = picked ? picked.textContent : '';
+                var who = Guardians.label({ relation: relation || '보호자', phone: phone });
+                if (panel.querySelector('[data-invite]').checked) {
+                    Guardians.invite({ relation: relation, phone: phone, notify: true, proxy: false });
+                }
+                saveTrip({ share: { names: [who], at: Date.now() } });
+                close();
+                Toast.show(who + ' 님에게 이동 상황을 문자로 보냈어요', { check: true });
             });
         }, opener);
     }
