@@ -29,7 +29,7 @@
     color: var(--color-primary);
 }
 
-.fav-item__icon--star { background: #fff6dc; color: #e0a100; }
+.fav-item__icon--star { background: var(--color-star-bg); color: var(--color-star); }
 
 .fav-item__text {
     display: flex;

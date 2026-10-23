@@ -342,7 +342,7 @@ body.wc-dark,
     color: var(--color-primary);
 }
 
-.wc-search__mic.is-listening { background: var(--color-primary); color: var(--color-text-inverse); }
+.wc-search__mic.is-listening { background: var(--color-primary-fill); color: var(--color-text-inverse); }
 
 .wc-empty {
     font-size: var(--fs-15);
@@ -483,7 +483,7 @@ body.wc-dark,
     width: 30px;
     height: 30px;
     border-radius: var(--radius-full);
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     color: var(--color-text-inverse);
 }
 

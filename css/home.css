@@ -30,7 +30,7 @@
     min-width: 0;
     font-size: var(--fs-18);
     font-weight: var(--font-weight-bold);
-    color: #4e5968;
+    color: var(--home-loc);
 }
 
 .home-top__place > span:last-child {
@@ -60,7 +60,7 @@
     font-size: var(--fs-24);
     font-weight: var(--font-weight-bold);
     line-height: 1.4;
-    color: #212839;
+    color: var(--home-hero);
 }
 
 .hero__name { font-size: calc(26px * var(--font-scale)); }
@@ -89,9 +89,11 @@
     height: 85px;
 }
 
-/* 글자를 크게 하면 차는 글자 뒤로 흐리게 (글자를 가리지 않게) */
-[data-font-size="large"] .hero__car,
-[data-font-size="xlarge"] .hero__car { opacity: 0.35; }
+/* 글자를 크게 하면 차를 조금 작게 (흐리게 하지 않고, 커진 글자와 겹치지 않게) */
+[data-font-size="large"] .hero__car { width: 150px; height: 107px; top: 30px; }
+[data-font-size="xlarge"] .hero__car { width: 124px; height: 88px; top: 44px; }
+[data-font-size="large"] .hero__shadow { top: 46px; width: 153px; height: 70px; }
+[data-font-size="xlarge"] .hero__shadow { top: 38px; width: 126px; height: 58px; }
 
 /* "가" 원 버튼 (글자 크기 시트 열기) */
 .btn-circle--text {
@@ -111,7 +113,7 @@
 /* 스피커 켜짐 */
 .btn-circle.is-on {
     border-color: var(--color-primary);
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     color: var(--color-text-inverse);
 }
 
@@ -177,7 +179,7 @@
 
 .reader-bar__btn--stop {
     border-color: var(--color-primary);
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     color: var(--color-text-inverse);
 }
 
@@ -304,7 +306,7 @@
 }
 
 .call__tel {
-    background: #f2f4f6;
+    background: var(--home-fill);
     color: var(--color-text);
 }
 
@@ -316,7 +318,7 @@
     flex-direction: column;
     gap: var(--space-2);
     padding: var(--space-20) var(--space-20) var(--space-16);
-    border-color: #e5e8eb;
+    border-color: var(--home-line);
     border-radius: 20px;
 }
 
@@ -333,7 +335,7 @@
     font-size: var(--fs-14);
     font-weight: var(--font-weight-medium);
     line-height: var(--lh-20);
-    color: #6b7684;
+    color: var(--home-sub);
 }
 
 .wait-card__clock {
@@ -350,9 +352,9 @@
     font-weight: var(--font-weight-bold);
 }
 
-.wait-card__about { font-size: var(--fs-18); color: #6b7684; }
-.wait-card__num { font-size: calc(44px * var(--font-scale)); line-height: 1.2; letter-spacing: -0.01em; color: #191f28; }
-.wait-card__unit { font-size: var(--fs-20); color: #8b95a1; }
+.wait-card__about { font-size: var(--fs-18); color: var(--home-sub); }
+.wait-card__num { font-size: calc(44px * var(--font-scale)); line-height: 1.2; letter-spacing: -0.01em; color: var(--home-ink); }
+.wait-card__unit { font-size: var(--fs-20); color: var(--home-faint); }
 
 .wait-bars {
     display: flex;
@@ -367,18 +369,18 @@
     gap: var(--space-10);
     font-size: var(--fs-13);
     line-height: var(--lh-18);
-    color: #6b7684;
+    color: var(--home-sub);
 }
 
 .wait-bar__label { flex-shrink: 0; width: 52px; font-weight: var(--font-weight-medium); }
-.wait-bar--now .wait-bar__label { font-weight: var(--font-weight-bold); color: #191f28; }
+.wait-bar--now .wait-bar__label { font-weight: var(--font-weight-bold); color: var(--home-ink); }
 
 .wait-bar__track {
     flex: 1;
     height: 8px;
     overflow: hidden;
     border-radius: 4px;
-    background: #f2f4f6;
+    background: var(--home-fill);
 }
 
 .wait-bar__fill {
@@ -386,10 +388,10 @@
     width: 100%;
     height: 100%;
     border-radius: 4px;
-    background: #b0b8c1;
+    background: var(--home-bar);
 }
 
-.wait-bar--now .wait-bar__fill { background: var(--color-primary); }
+.wait-bar--now .wait-bar__fill { background: var(--color-primary-fill); }
 .wait-bar__value { flex-shrink: 0; width: 34px; text-align: right; font-weight: var(--font-weight-medium); }
 
 /* 주변 차량 · 자세히 보기 (기준 안내 열기) */
@@ -401,16 +403,16 @@
     min-height: var(--touch-size);
     padding: var(--space-12) var(--space-10) var(--space-12) var(--space-14);
     border-radius: 12px;
-    background: #f2f4f6;
+    background: var(--home-fill);
     font-size: var(--fs-13);
     font-weight: var(--font-weight-medium);
     line-height: var(--lh-18);
-    color: #4e5968;
+    color: var(--home-loc);
     text-align: left;
 }
 
 .wait-card__cars { flex: 1; min-width: 0; }
-.wait-card__cars b { font-weight: var(--font-weight-bold); color: #191f28; }
+.wait-card__cars b { font-weight: var(--font-weight-bold); color: var(--home-ink); }
 .wait-card__link { flex-shrink: 0; }
 
 /* 내 탑승 정보 · 제목 + 한 줄 설명 */
@@ -423,7 +425,7 @@
 .section__desc {
     font-size: var(--fs-13);
     line-height: var(--lh-18);
-    color: #6b7684;
+    color: var(--home-sub);
 }
 
 /* 줄마다 왼쪽 선 아이콘 · 카드 테두리 없음 */

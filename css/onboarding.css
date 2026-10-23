@@ -56,7 +56,7 @@
 }
 
 .onb__listen[aria-pressed="true"] {
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     color: var(--color-text-inverse);
 }
 
@@ -88,7 +88,7 @@
     font-size: calc(26px * var(--font-scale));
     font-weight: var(--font-weight-bold);
     line-height: 1.4;
-    color: #111622;
+    color: var(--color-text);
 }
 
 .onb__title em {
@@ -194,13 +194,13 @@
     width: 8px;
     height: 8px;
     border-radius: 4px;
-    background: #d5dae2;
+    background: var(--color-border-strong);
     transition: width 0.2s ease, background-color 0.2s ease;
 }
 
 .onb__dots span.is-on {
     width: 24px;
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
 }
 
 .onb__next { font-size: var(--fs-18); }

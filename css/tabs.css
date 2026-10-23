@@ -144,7 +144,7 @@
     height: var(--touch-size);
     padding: 0 var(--space-10);
     border-radius: var(--radius-md);
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     font-size: var(--fs-15);
     font-weight: var(--font-weight-bold);
     line-height: 1.4;
@@ -245,7 +245,7 @@
 }
 
 .live-call__badge--wait { background: var(--color-primary-soft); color: var(--color-primary); }
-.live-call__badge--ride { background: var(--color-primary); color: var(--color-text-inverse); }
+.live-call__badge--ride { background: var(--color-primary-fill); color: var(--color-text-inverse); }
 
 .live-call__time {
     font-size: var(--fs-13);
@@ -323,7 +323,7 @@
 .live-steps li.is-done::before,
 .live-steps li.is-now::before,
 .live-steps li.is-done::after,
-.live-steps li.is-now::after { background: var(--color-primary); }
+.live-steps li.is-now::after { background: var(--color-primary-fill); }
 
 .live-steps li.is-now { font-weight: var(--font-weight-bold); color: var(--color-primary); }
 .live-steps li.is-now::before { box-shadow: 0 0 0 4px var(--color-primary-soft); }

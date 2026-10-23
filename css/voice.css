@@ -94,7 +94,7 @@
     min-width: 72px;
     height: 56px;
     border-radius: var(--radius-md);
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     font-size: var(--fs-16);
     font-weight: var(--font-weight-bold);
     color: var(--color-text-inverse);
@@ -164,7 +164,7 @@
     width: 96px;
     height: 96px;
     border-radius: var(--radius-full);
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     color: var(--color-text-inverse);
 }
 
@@ -176,7 +176,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     opacity: 0.35;
     animation: voice-pulse 1.4s ease-out infinite;
 }
@@ -344,7 +344,7 @@
 }
 
 .voice-hear[data-state="listening"] .voice-hear__dot {
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     animation: voice-hear-blink 1.2s ease-in-out infinite;
 }
 

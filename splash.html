@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 밝은 화면 전용: 절전모드·다크모드에서 브라우저가 색을 자동으로 뒤집어 글자가 안 보이는 것을 막음 -->
-    <meta name="color-scheme" content="only light">
+    <!-- 밝은·어두운 화면 둘 다 지원 (다크모드·절전모드면 앱의 어두운 색으로 · 브라우저가 색을 억지로 뒤집지 않음) -->
+    <meta name="color-scheme" content="light dark">
     <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
     <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1f1f1f" media="(prefers-color-scheme: dark)">
     <link rel="icon" href="image/favicon-32.png" type="image/png">
     <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -30,8 +31,19 @@
         .splash__logo { width: 176px; height: auto; animation: splash-in 0.6s ease-out; }
         @keyframes splash-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
         @media (prefers-reduced-motion: reduce) { .splash__logo { animation: none; } }
+        /* 어두운 화면 (다크모드·절전모드): 바탕은 앱과 같은 #1F1F1F · 로고 뒤 흰 상자는 없애고 남색 글자는 밝게 */
+        @media (prefers-color-scheme: dark) {
+            html, body { background: #1f1f1f; }
+            .splash__logo [fill="white"],
+            .splash__logo [fill="#E5E5E5"],
+            .splash__logo [fill="#C9C9C9"],
+            .splash__logo > rect { fill: transparent; }
+            .splash__logo [fill="#181677"] { fill: #f2f3f5; }
+            .splash__logo [fill="#4B5563"] { fill: #c4c9d1; }
+            .splash__logo stop[stop-color="#181677"] { stop-color: #5a6cf2; }
+        }
     </style>
-    <script src="js/common.js?v=2610231542" defer></script>
+    <script src="js/common.js?v=2610231555" defer></script>
 </head>
 <body class="splash-body">
     <!-- 스플래시_v3_A_흰배경 · 잠깐 보여 주고 처음이면 온보딩, 아니면 홈으로 -->

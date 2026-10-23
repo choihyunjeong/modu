@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 밝은 화면 전용: 절전모드·다크모드에서 브라우저가 색을 자동으로 뒤집어 글자가 안 보이는 것을 막음 -->
-    <meta name="color-scheme" content="only light">
-    <meta name="theme-color" content="#ffffff">
+    <!-- 밝은·어두운 화면 둘 다 지원 (다크모드·절전모드면 앱의 어두운 색으로 · 브라우저가 색을 억지로 뒤집지 않음) -->
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1f1f1f" media="(prefers-color-scheme: dark)">
     <title>도착 임박 | 모두의 이동</title>
     <!-- 도착 임박은 차량 배정 화면(assigned.html)에 합쳐졌어요 · 예전 링크·알림으로 들어와도 그 화면으로 -->
     <script>location.replace('assigned.html' + location.search + location.hash);</script>

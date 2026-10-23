@@ -220,7 +220,7 @@
 
 .checkbox-sm:checked {
     border-color: var(--color-primary);
-    background-color: var(--color-primary);
+    background-color: var(--color-primary-fill);
     background-image: url("../image/check-line-white.svg");
 }
 

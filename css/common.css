@@ -4,11 +4,13 @@
    :root — 공통 디자인 토큰
    ========================================================= */
 :root {
-    /* 밝은 화면 전용 (다크모드·절전모드에서도 입력칸·스크롤바까지 디자인한 밝은 색 그대로) */
-    color-scheme: only light;
+    /* 밝은 화면 · 어두운 화면 둘 다 지원 (휴대폰이 다크모드·절전모드면 아래 어두운 색으로 자동 전환) */
+    color-scheme: light dark;
 
     /* 색상 · 브랜드 */
     --color-primary: #0b5ed7;
+    /* 파란 면(버튼·배지 바탕) · 밝은 화면에선 primary와 같음, 어두운 화면에선 흰 글자가 잘 보이는 파랑 */
+    --color-primary-fill: var(--color-primary);
     --color-primary-bg: #f3f8ff;
     --color-primary-soft: #e3f0ff;
 
@@ -47,6 +49,21 @@
     --color-scrim: rgba(31, 33, 36, 0.5);
     --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.12);
     --shadow-sheet: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    --color-toast: rgba(31, 33, 36, 0.85);
+
+    /* 색상 · 별(자주 가는 곳) */
+    --color-star: #e0a100;
+    --color-star-bg: #fff6dc;
+
+    /* 색상 · 홈 (홈_v23 피그마 값 그대로) */
+    --home-loc: #4e5968;
+    --home-hero: #212839;
+    --home-ink: #191f28;
+    --home-sub: #6b7684;
+    --home-faint: #8b95a1;
+    --home-fill: #f2f4f6;
+    --home-line: #e5e8eb;
+    --home-bar: #b0b8c1;
 
     /* 글꼴 */
     --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
@@ -115,6 +132,86 @@
 
 :root[data-font-size="large"] { --font-scale: 1.15; }
 :root[data-font-size="xlarge"] { --font-scale: 1.3; }
+
+/* =========================================================
+   어두운 화면 (휴대폰 다크모드 · 절전모드에서 자동)
+   - 바탕은 안드로이드가 웹페이지를 어둡게 바꿀 때 쓰는 #1F1F1F에 맞춤
+   - 카드·회색 면은 바탕보다 조금 밝게 · 글자는 바탕 대비 4.5:1 이상
+   - 파랑: 글자용(#6AA7FF)과 흰 글자를 얹는 면(#2F6FE0)을 나눔
+   ========================================================= */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-primary: #6aa7ff;
+        --color-primary-fill: #2f6fe0;
+        --color-primary-bg: #1b2636;
+        --color-primary-soft: #203352;
+
+        --color-text: #f2f3f5;
+        --color-text-secondary: #d0d2d6;
+        --color-text-sub: #a3a6ad;
+        --color-text-placeholder: #7c7f86;
+        --color-text-inverse: #ffffff;
+        --color-icon: #a3a6ad;
+
+        --color-bg: #1f1f1f;
+        --color-bg-gray: #2a2a2c;
+        --color-bg-tile: #333336;
+        --color-bg-page: #141414;
+
+        --color-border: #38383b;
+        --color-border-strong: #4a4a4e;
+        --color-divider: #2e2e30;
+
+        --color-success: #5bd08f;
+        --color-success-icon: #5bd08f;
+        --color-success-bg: #17301f;
+        --color-danger: #ff7b72;
+        --color-warning: #ffb454;
+        --color-warning-bg: #3a2c14;
+        --color-error: #ff7b72;
+        --color-error-bg: #3a1c1c;
+
+        --color-scrim: rgba(0, 0, 0, 0.6);
+        --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.5);
+        --shadow-sheet: 0 -4px 16px rgba(0, 0, 0, 0.5);
+        --color-toast: rgba(58, 58, 61, 0.96);
+
+        --color-star: #f5c33b;
+        --color-star-bg: #3a3018;
+
+        --home-loc: #c4c9d1;
+        --home-hero: #f2f3f5;
+        --home-ink: #f2f3f5;
+        --home-sub: #a3a6ad;
+        --home-faint: #8c9098;
+        --home-fill: #2a2a2c;
+        --home-line: #38383b;
+        --home-bar: #5a5e66;
+    }
+
+    /* 지도(카카오)는 밝은 그림 그대로라, 지도 위 핀·말풍선·버튼은 밝은 화면 색을 그대로 씀 */
+    .map-view,
+    .pick__pin,
+    .pick__back,
+    .pick__locate {
+        --color-primary: #0b5ed7;
+        --color-primary-fill: #0b5ed7;
+        --color-primary-bg: #f3f8ff;
+        --color-primary-soft: #e3f0ff;
+        --color-text: #1f2124;
+        --color-text-secondary: #484a4e;
+        --color-text-sub: #68696f;
+        --color-text-inverse: #ffffff;
+        --color-icon: #68696f;
+        --color-bg: #ffffff;
+        --color-bg-gray: #f5f6f7;
+        --color-border: #e5e5e5;
+        --color-border-strong: #d4d6da;
+        --color-danger: #c62828;
+        --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.12);
+        color-scheme: light;
+    }
+}
 
 /* =========================================================
    Reset
@@ -287,7 +384,7 @@ button {
 }
 
 .btn--primary {
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     color: var(--color-text-inverse);
 }
 
@@ -580,7 +677,7 @@ button {
 
 .checkbox:checked {
     border-color: var(--color-primary);
-    background-color: var(--color-primary);
+    background-color: var(--color-primary-fill);
     background-image: url("../image/checkmark--white.svg");
 }
 
@@ -929,7 +1026,7 @@ body.is-modal-open { overflow: hidden; }
     max-width: calc(min(100vw, var(--app-width)) - 40px);
     padding: var(--space-12) var(--space-16);
     border-radius: var(--radius-md);
-    background: rgba(31, 33, 36, 0.85);
+    background: var(--color-toast);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
     font-size: var(--fs-15);
     font-weight: var(--font-weight-medium);
@@ -944,7 +1041,7 @@ body.is-modal-open { overflow: hidden; }
 .app-toast--top {
     top: var(--space-12);
     bottom: auto;
-    background: var(--color-primary);
+    background: var(--color-primary-fill);
     font-weight: var(--font-weight-bold);
     transform: translate(-50%, -12px);
 }

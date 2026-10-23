@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 밝은 화면 전용: 절전모드·다크모드에서 브라우저가 색을 자동으로 뒤집어 글자가 안 보이는 것을 막음 -->
-    <meta name="color-scheme" content="only light">
+    <!-- 밝은·어두운 화면 둘 다 지원 (다크모드·절전모드면 앱의 어두운 색으로 · 브라우저가 색을 억지로 뒤집지 않음) -->
+    <meta name="color-scheme" content="light dark">
     <!-- 웹앱(PWA) · 홈 화면에 추가하면 앱처럼 열림 -->
     <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1f1f1f" media="(prefers-color-scheme: dark)">
     <link rel="icon" href="image/favicon-32.png" type="image/png">
     <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>차량 찾는 중 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231542">
-    <link rel="stylesheet" href="css/progress.css?v=2610231542">
-    <script src="js/common.js?v=2610231542"></script>
-    <script src="js/config.js?v=2610231542"></script>
-    <script src="js/trip.js?v=2610231542"></script>
-    <script src="js/map.js?v=2610231542"></script>
-    <script src="js/push.js?v=2610231542"></script>
-    <script src="js/actions.js?v=2610231542"></script>
-    <script src="js/stats.js?v=2610231542"></script>
-    <script src="js/ride-info.js?v=2610231542"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610231555">
+    <link rel="stylesheet" href="css/progress.css?v=2610231555">
+    <script src="js/common.js?v=2610231555"></script>
+    <script src="js/config.js?v=2610231555"></script>
+    <script src="js/trip.js?v=2610231555"></script>
+    <script src="js/map.js?v=2610231555"></script>
+    <script src="js/push.js?v=2610231555"></script>
+    <script src="js/actions.js?v=2610231555"></script>
+    <script src="js/stats.js?v=2610231555"></script>
+    <script src="js/ride-info.js?v=2610231555"></script>
 </head>
 <body>
     <div id="wrap" class="map-page" data-progress-stage="waiting" data-cancel-stage="before">
