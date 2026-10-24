@@ -9,7 +9,7 @@
     var mode = params.get('mode') || 'dest';
     var edit = params.get('edit');
     var MODES = {
-        pickup: { title: '탑승할 위치를 골라 주세요', pin: '여기서 탑승', ok: '이 위치로 부를게요' },
+        pickup: { title: '탑승할 위치를 골라 주세요', pin: '여기서 탑승', ok: '이 위치에서 탈게요' },
         dest: { title: '도착할 곳을 골라 주세요', pin: '도착', ok: '이 위치로 정하기' },
         fav: { title: edit === 'home' ? '집 위치를 골라 주세요' : '자주 가는 곳을 골라 주세요', pin: '여기', ok: '위치 확인' }
     };
