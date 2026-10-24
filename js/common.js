@@ -221,6 +221,41 @@ var SheetDrag = (function () {
             setHeight(Math.min(l.max, Math.max(l.min, startHeight + dy)), true);
         });
 
+        // 처음 열 때 시트 내용이 다 보이게 (화면 틀에 data-sheet-fit · 호출 진행 화면)
+        //  지도를 줄여 시트를 늘리되 지도는 화면의 data-sheet-fit %(기본 15%)보다 작아지지 않음 · 내용이 길면 나머지는 시트 안에서 스크롤
+        //  기본 높이보다 지도를 키우지는 않음 · 진행에 따라 내용이 바뀌면 다시 맞춤 (사용자가 시트를 직접 움직였으면 그대로)
+        var fitMin = wrap.hasAttribute('data-sheet-fit') ? (Number(wrap.dataset.sheetFit) || 15) : 0;
+        var moved = false;
+        function fitContent() {
+            if (!fitMin || moved || !wrap.clientHeight) return;
+            limits();
+            // 시트 전체 = 손잡이·간격(시트 높이 - 내용 칸 높이) + 내용 전체 길이
+            var need = sheet.offsetHeight - scroller.clientHeight + scroller.scrollHeight;
+            var room = wrap.clientHeight - (action ? action.offsetHeight : 0) + OVERLAP;
+            var h = Math.round(Math.max(MAP_MIN, wrap.clientHeight * fitMin / 100, Math.min(base, room - need)));
+            if (Math.abs(h - map.offsetHeight) < 2) return;
+            sheetBase = 0;
+            setHeight(h, false);
+            base = h;
+            sheetBase = sheet.offsetHeight;
+        }
+        if (fitMin) {
+            ['pointerdown', 'touchstart', 'wheel'].forEach(function (type) {
+                handle.addEventListener(type, function () { moved = true; }, { passive: true });
+            });
+            scroller.addEventListener('touchmove', function () { if (sheet.classList.contains('is-resizing')) moved = true; }, { passive: true });
+            scroller.addEventListener('wheel', function () { if (sheet.classList.contains('is-resizing')) moved = true; }, { passive: true });
+            requestAnimationFrame(fitContent);
+            window.addEventListener('load', fitContent);
+            window.addEventListener('resize', fitContent);
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitContent);
+            // 그림이 늦게 뜨거나 진행 상태로 글이 바뀌어 내용 길이가 달라지면 다시
+            if (window.ResizeObserver) {
+                var watch = new ResizeObserver(function () { requestAnimationFrame(fitContent); });
+                Array.prototype.forEach.call(scroller.children, function (el) { watch.observe(el); });
+            }
+        }
+
         // 키보드(Enter·Space)·화면 읽기 프로그램으로 누를 때도 접기 ↔ 펼치기 (손가락·마우스는 위 끌기에서 처리)
         handle.setAttribute('aria-expanded', 'true');
         handle.addEventListener('click', function (e) {

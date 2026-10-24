@@ -15,19 +15,19 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>차량 배정 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610231624">
-    <link rel="stylesheet" href="css/progress.css?v=2610231624">
-    <script src="js/common.js?v=2610231624"></script>
-    <script src="js/config.js?v=2610231624"></script>
-    <script src="js/trip.js?v=2610231624"></script>
-    <script src="js/map.js?v=2610231624"></script>
-    <script src="js/push.js?v=2610231624"></script>
-    <script src="js/actions.js?v=2610231624"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241129">
+    <link rel="stylesheet" href="css/progress.css?v=2610241129">
+    <script src="js/common.js?v=2610241129"></script>
+    <script src="js/config.js?v=2610241129"></script>
+    <script src="js/trip.js?v=2610241129"></script>
+    <script src="js/map.js?v=2610241129"></script>
+    <script src="js/push.js?v=2610241129"></script>
+    <script src="js/actions.js?v=2610241129"></script>
 </head>
 <body>
     <!-- 배정 → 도착 임박을 이 한 화면에서 (단계가 바뀌면 새로 열지 않고 글자만 부드럽게 바뀜 · js/push.js)
          차는 배정부터 탑승 위치까지 한 번에 움직이고, 남은 시간도 차를 따라 줄어듦 -->
-    <div id="wrap" class="map-page" data-progress-stage="assigned" data-next-on-arrive="arriving"
+    <div id="wrap" class="map-page" data-sheet-fit data-progress-stage="assigned" data-next-on-arrive="arriving"
         data-stage="before" data-cancel-stage="after">
         <div class="map-view" style="--map-height: 304px; --map-img-top: -248px;" data-map data-center="pickup" data-level="2" data-fit="car,pickup,me">
             <img class="map-view__static" src="image/map-static.png" alt="">
