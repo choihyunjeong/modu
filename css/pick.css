@@ -108,3 +108,17 @@
 }
 
 .pick-card__note[hidden] { display: none; }
+
+/* 추천 위치에서 다시 고르기 (탑승 위치를 고를 때만) */
+.pick-card__alt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-size);
+    margin-top: calc(var(--space-4) * -1);
+    font-size: var(--fs-15);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}

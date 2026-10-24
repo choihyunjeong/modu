@@ -23,7 +23,16 @@
     document.querySelector('[data-pick-title]').textContent = m.title;
     document.querySelector('[data-pin-label]').textContent = m.pin;
     okBtn.textContent = m.ok;
-    if (mode === 'pickup') document.querySelector('.pick__back').href = 'pickup.html';
+    if (mode === 'pickup') {
+        document.querySelector('.pick__back').href = 'pickup.html';
+        // 추천 위치에서 다시 고르기 (탑승 위치 확인에서 왔으면 그 화면으로 되돌아감)
+        var alt = document.querySelector('[data-pick-alt]');
+        alt.hidden = false;
+        alt.addEventListener('click', function (e) {
+            e.preventDefault();
+            Nav.backTo('pickup.html');
+        });
+    }
     if (mode === 'fav') document.querySelector('.pick__back').href = 'fav-add.html' + (edit ? '?edit=' + edit : '');
 
     // 카드 높이만큼 내 위치 버튼을 위로

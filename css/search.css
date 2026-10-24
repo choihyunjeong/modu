@@ -83,12 +83,6 @@
     color: var(--color-text);
 }
 
-.search-area__help {
-    font-size: var(--fs-14);
-    line-height: var(--lh-20);
-    color: var(--color-text-sub);
-}
-
 /* 구분 띠 */
 .divider {
     height: 8px;
