@@ -219,16 +219,18 @@ var MapKit = (function () {
         }
 
         // 핀·내 위치 표시를 지도 좌표에 붙임 (점이 좌표에 오도록 아래 끝 기준)
+        var pins = [];
         view.querySelectorAll('[data-place]').forEach(function (el) {
             var position = toLatLng(el.dataset.place);
             if (!position) return;
             var overlay = new kakao.maps.CustomOverlay({
                 map: map, position: position, content: el,
                 yAnchor: el.classList.contains('map-pin') ? 1 : 0.5,
-                // 퍼지는 원은 맨 아래 · 내 위치 점은 핀 말풍선보다 위 (탑승 위치가 바로 옆이어도 보이게)
-                zIndex: el.classList.contains('map-pulse') ? 0 : (el.classList.contains('map-me') ? 2 : 1)
+                // 퍼지는 원은 맨 아래 · 내 위치 점 · 그 위에 핀·차 (핀 말풍선이 점을 덮으면 아래 dodge가 말풍선을 옆으로)
+                zIndex: el.classList.contains('map-pulse') ? 0 : (el.classList.contains('map-me') ? 1 : 2)
             });
             (overlays[el.dataset.place] = overlays[el.dataset.place] || []).push(overlay);
+            if (el.classList.contains('map-pin')) pins.push({ overlay: overlay, el: el });
 
             if (el.dataset.movePath === 'route') {
                 // 탑승 중: 차가 지나온 길은 지우고 남은 길만 그림
@@ -258,6 +260,31 @@ var MapKit = (function () {
                 turnCar(el, Trip.get().carHeading);
             }
         });
+
+        // 핀 말풍선이 내 위치 점을 덮으면 말풍선을 점 반대쪽 옆으로 비킴 (둘 다 보이게 · 지도를 움직일 때마다 다시)
+        function dodge() {
+            var me = (overlays.me || [])[0];
+            if (!me) return;
+            var proj = map.getProjection();
+            var R = 14;    // 내 위치 점 반지름 + 여유
+            var mp = proj.containerPointFromCoords(me.getPosition());
+            pins.forEach(function (p) {
+                var label = p.el.querySelector('.map-pin__label');
+                if (!label) return;
+                label.style.transform = '';
+                var pp = proj.containerPointFromCoords(p.overlay.getPosition());
+                var w = label.offsetWidth;
+                var top = pp.y - p.el.offsetHeight;
+                var hit = mp.x > pp.x - w / 2 - R && mp.x < pp.x + w / 2 + R &&
+                    mp.y > top - R && mp.y < top + label.offsetHeight + R;
+                if (!hit) return;
+                // 점이 왼쪽이면 말풍선 왼쪽 끝을 점 오른쪽으로, 오른쪽이면 반대로
+                var shift = mp.x <= pp.x ? (mp.x + R) - (pp.x - w / 2) : (mp.x - R) - (pp.x + w / 2);
+                label.style.transform = 'translateX(' + Math.round(shift) + 'px)';
+            });
+        }
+        kakao.maps.event.addListener(map, 'idle', dodge);
+        setTimeout(dodge, 300);
 
         // 내 위치 버튼: 실제 위치로 지도를 옮기고 내 위치 표시도 그 자리로
         //  위치 권한이 없거나 못 받으면 저장된 내 위치(예시)를 가운데로
