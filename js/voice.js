@@ -160,14 +160,13 @@
         confirmStep.hidden = false;
         var trip = Trip.get();
         var question = place.name + ro(place.name) + ' 지금 부를까요?';
-        var stats = WaitStats.forDay();
         document.querySelector('[data-confirm-heard]').textContent = '"' + heard + '"';
         document.querySelector('.voice-confirm__heard-label').textContent = viaVoice ? '이렇게 들었어요' : '이렇게 입력했어요';
         document.querySelector('[data-confirm-no]').textContent = viaVoice ? '아니요, 다시 말할게요' : '아니요, 다시 입력할게요';
         document.querySelector('.voice-confirm__note').hidden = !viaVoice;
         document.querySelector('[data-confirm-question]').textContent = question;
         document.querySelector('[data-confirm-sub]').textContent =
-            (trip.pickupName || '래미안베라힐즈 정문') + '에서 출발 · 보통 ' + stats.min + '~' + stats.max + '분 뒤 타요';
+            (trip.pickupName || '래미안베라힐즈 정문') + '에서 출발 · 약 ' + WaitStats.nowWait() + '분 뒤 타요';
         document.querySelector('[data-confirm-edit]').href = 'search.html?q=' + encodeURIComponent(query);
         document.querySelector('[data-confirm-yes]').focus();
 
