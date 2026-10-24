@@ -15,14 +15,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>목적지 검색 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241229">
-    <link rel="stylesheet" href="css/search.css?v=2610241229">
-    <script src="js/common.js?v=2610241229"></script>
-    <script src="js/config.js?v=2610241229"></script>
-    <script src="js/trip.js?v=2610241229"></script>
-    <script src="js/map.js?v=2610241229"></script>
-    <script src="js/places.js?v=2610241229"></script>
-    <script src="js/favorites.js?v=2610241229"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241240">
+    <link rel="stylesheet" href="css/search.css?v=2610241240">
+    <script src="js/common.js?v=2610241240"></script>
+    <script src="js/config.js?v=2610241240"></script>
+    <script src="js/trip.js?v=2610241240"></script>
+    <script src="js/map.js?v=2610241240"></script>
+    <script src="js/places.js?v=2610241240"></script>
+    <script src="js/favorites.js?v=2610241240"></script>
 </head>
 <body>
     <div id="wrap">
@@ -47,7 +47,7 @@
                     지도에서 직접 고르기
                 </a>
             </div>
-            <p class="search-area__help">장소를 고르면 호출 전 확인에서 탈 곳(정문 등)도 고를 수 있어요</p>
+            <p class="search-area__help">장소를 고르면 탈 곳(정문·2번 게이트 등)도 확인해요</p>
         </div>
 
         <hr class="divider">
@@ -87,12 +87,12 @@
     </div>
 
     <script>
-        // 목적지 고르기: 이번 호출의 목적지로 저장하고 호출 전 확인(E3b)으로
+        // 목적지 고르기: 이번 호출의 목적지로 저장하고 탑승 위치 확인으로 (→ 호출 전 확인)
         //  출발지와 같은 곳(집에서 집)이어도 막지 않고 그대로 진행 (일반 택시 앱처럼 · 거리 0m)
         function chooseDest(name, addr, lat, lng) {
             var chosen = { name: name, addr: addr, lat: Number(lat), lng: Number(lng) };
             Trip.start(chosen);
-            location.href = 'confirm.html';
+            location.href = 'pickup.html';
         }
 
         function esc(text) {

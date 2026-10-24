@@ -15,14 +15,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>호출 전 확인 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241229">
-    <link rel="stylesheet" href="css/call.css?v=2610241229">
-    <script src="js/common.js?v=2610241229"></script>
-    <script src="js/ride-info.js?v=2610241229"></script>
-    <script src="js/config.js?v=2610241229"></script>
-    <script src="js/trip.js?v=2610241229"></script>
-    <script src="js/map.js?v=2610241229"></script>
-    <script src="js/stats.js?v=2610241229"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241240">
+    <link rel="stylesheet" href="css/call.css?v=2610241240">
+    <script src="js/common.js?v=2610241240"></script>
+    <script src="js/ride-info.js?v=2610241240"></script>
+    <script src="js/config.js?v=2610241240"></script>
+    <script src="js/trip.js?v=2610241240"></script>
+    <script src="js/map.js?v=2610241240"></script>
+    <script src="js/stats.js?v=2610241240"></script>
 </head>
 <body>
     <!-- E3b 호출 전 확인 (목적지를 고르면 바로 이 화면) -->
@@ -48,7 +48,7 @@
                 <span class="map-pin__dot"></span>
             </div>
 
-            <a href="search.html" class="btn-float btn-float--back" data-history-back aria-label="뒤로">
+            <a href="pickup.html" class="btn-float btn-float--back" data-history-back aria-label="뒤로">
                 <span class="icon icon--arrow-left" aria-hidden="true"></span>
             </a>
             <button type="button" class="btn-float btn-float--locate" aria-label="내 위치로 이동" data-locate>
@@ -82,13 +82,6 @@
             <ul class="card summary-list">
                 <li class="summary-list__row">
                     <div class="summary-list__text">
-                        <p class="summary-list__title">탑승 위치</p>
-                        <p class="summary-list__value summary-list__value--strong" data-trip="pickup-spot">정문 · 경사로 쪽</p>
-                    </div>
-                    <button type="button" class="summary-list__edit" data-open-pickup aria-haspopup="dialog">변경</button>
-                </li>
-                <li class="summary-list__row">
-                    <div class="summary-list__text">
                         <p class="summary-list__title">탑승 인원</p>
                         <p class="summary-list__value summary-list__value--strong" data-riders-text data-trip="riders-confirm">본인 1명 · 동승자 없음</p>
                     </div>
@@ -115,41 +108,6 @@
 
         <div class="bottom-action bottom-action--call">
             <a href="waiting.html" class="btn btn--primary btn--call" data-call>호출하기</a>
-        </div>
-    </div>
-
-    <!-- 탑승 위치(출입구) 선택 시트 (피그마 2 탑승 위치 확인 · "변경"에서 열림 → 적용하면 지도 핀·경로·시간이 바뀜) -->
-    <div class="modal-sheet" id="pickup-sheet" role="dialog" aria-modal="true" aria-labelledby="pickup-title" hidden>
-        <div class="modal-sheet__panel modal-sheet__panel--edit">
-            <span class="sheet__grabber" aria-hidden="true"></span>
-            <div>
-                <h2 class="modal-sheet__title" id="pickup-title">어디서 타실 건가요?</h2>
-                <p class="modal-sheet__desc">추천 위치를 고르거나 지도에서 다른 위치를 골라 주세요. 기사님께 함께 전달돼요.</p>
-            </div>
-            <fieldset class="pickup-options">
-                <legend class="blind">탑승 위치</legend>
-                <label class="pickup-option">
-                    <input type="radio" class="radio" name="pickup" value="apt-main" data-name="래미안베라힐즈 정문" data-short="정문" data-spot="정문 · 경사로 쪽" data-lat="37.60277" data-lng="126.93638">
-                    <span class="pickup-option__text">
-                        <span class="pickup-option__title">
-                            정문
-                            <span class="badge badge--primary">추천</span>
-                        </span>
-                        <span class="pickup-option__desc">경사로 있어요 · 차가 설 자리 있어요 · 슬로프 펼칠 공간 있음 · 집에서 약 50m</span>
-                    </span>
-                </label>
-                <label class="pickup-option">
-                    <input type="radio" class="radio" name="pickup" value="back-parking" data-name="래미안베라힐즈 2번 게이트" data-short="2번 게이트" data-spot="2번 게이트" data-lat="37.60532" data-lng="126.93618">
-                    <span class="pickup-option__text">
-                        <span class="pickup-option__title">2번 게이트</span>
-                        <span class="pickup-option__desc">턱 없어요 · 차가 설 자리 좁아요 · 슬로프 공간 확인 안 됨 · 집에서 약 300m</span>
-                    </span>
-                </label>
-            </fieldset>
-            <div class="edit-foot">
-                <button type="button" class="btn btn--primary" data-apply-pickup>이 위치로 적용</button>
-                <a href="map-pick.html?mode=pickup" class="edit-foot__link">지도에서 다른 위치 고르기</a>
-            </div>
         </div>
     </div>
 
@@ -397,29 +355,6 @@
             RideInfo.save({ contact: picked.value });
             renderRide();
             closeContact();
-        });
-
-        // 탑승 위치: 지금 고른 출입구를 체크해 열고, 적용하면 저장 → 지도 핀·경로·시간·요금 다시
-        var pickupSheet = document.getElementById('pickup-sheet');
-        var closePickup = setupSheet(pickupSheet, document.querySelector('[data-open-pickup]'), function () {
-            var t = Trip.get();
-            var current = t.pickupCustom ? null : (t.pickupShort || '정문');
-            pickupSheet.querySelectorAll('input[name="pickup"]').forEach(function (input) {
-                input.checked = input.dataset.short === current;
-            });
-        });
-        pickupSheet.querySelector('[data-apply-pickup]').addEventListener('click', function () {
-            var picked = pickupSheet.querySelector('input[name="pickup"]:checked');
-            if (!picked) return closePickup();
-            var d = picked.dataset;
-            var pos = { lat: Number(d.lat), lng: Number(d.lng) };
-            Trip.set({ pickupName: d.name, pickupShort: d.short, pickupSpot: d.spot, pickupPos: pos, pickupCustom: null });
-            Trip.bind(document);
-            MapKit.setPlace('pickup', pos);
-            MapKit.refreshRoute();
-            // 지도가 없어도 새 경로로 시간·거리·요금을 다시 (받으면 글자가 바뀜)
-            Trip.ensureRoute();
-            closePickup();
         });
 
         // 호출하기: 접수 시각과 인원을 저장하고 진행 화면으로

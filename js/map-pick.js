@@ -23,7 +23,7 @@
     document.querySelector('[data-pick-title]').textContent = m.title;
     document.querySelector('[data-pin-label]').textContent = m.pin;
     okBtn.textContent = m.ok;
-    if (mode === 'pickup') document.querySelector('.pick__back').href = 'confirm.html';
+    if (mode === 'pickup') document.querySelector('.pick__back').href = 'pickup.html';
     if (mode === 'fav') document.querySelector('.pick__back').href = 'fav-add.html' + (edit ? '?edit=' + edit : '');
 
     // 카드 높이만큼 내 위치 버튼을 위로
@@ -147,7 +147,7 @@
             location.href = 'confirm.html';
         } else if (mode === 'dest') {
             Trip.start({ name: picked.name, addr: picked.addr, lat: picked.lat, lng: picked.lng });
-            location.href = 'confirm.html';
+            location.href = 'pickup.html';
         } else {
             try { sessionStorage.setItem('favPick', JSON.stringify(picked)); } catch (e) {}
             // 지도 화면을 기록에 남기지 않음 (이름 입력에서 뒤로 → 목록)
