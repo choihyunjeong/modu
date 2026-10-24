@@ -158,6 +158,8 @@ var Trip = (function () {
 
     // 도로 경로 시간, 없으면 평균 시속 30km + 승하차 3분
     function rideMinutes() {
+        // 출발지와 도착지가 같은 곳(100m 안 · 집에서 집 등)이면 이동 시간 0분
+        if (rideKm() < 0.1) return 0;
         if (route()) return route().min;
         return Math.max(5, Math.round(rideKm() / 30 * 60 + 3));
     }
