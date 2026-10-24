@@ -298,6 +298,8 @@ var Trip = (function () {
 
     document.addEventListener('DOMContentLoaded', function () {
         bind(document);
+        // 이번 호출 경로가 아직 없으면 받아 둠 → 받으면 거리·시간 글자가 다시 채워짐 (화면마다 같은 값)
+        if (load().destination && !route()) ensureRoute();
         // 탑승 중 남은 시간은 계속 다시 채움 (지도 핀 · 시트 둘 다)
         var leftEls = document.querySelectorAll('[data-trip="ride-left"], [data-trip="ride-arrive-pin"]');
         if (leftEls.length) setInterval(function () {

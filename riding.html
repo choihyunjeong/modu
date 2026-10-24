@@ -15,19 +15,19 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>탑승 중 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241137">
-    <link rel="stylesheet" href="css/progress.css?v=2610241137">
-    <script src="js/common.js?v=2610241137"></script>
-    <script src="js/config.js?v=2610241137"></script>
-    <script src="js/trip.js?v=2610241137"></script>
-    <script src="js/ride-info.js?v=2610241137"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241218">
+    <link rel="stylesheet" href="css/progress.css?v=2610241218">
+    <script src="js/common.js?v=2610241218"></script>
+    <script src="js/config.js?v=2610241218"></script>
+    <script src="js/trip.js?v=2610241218"></script>
+    <script src="js/ride-info.js?v=2610241218"></script>
     <script>
         // 탑승 시각 기록 (도착 예상·이동 완료 시각 계산에 씀)
         if (!Trip.get().boardedAt) Trip.set({ boardedAt: Date.now() });
     </script>
-    <script src="js/map.js?v=2610241137"></script>
-    <script src="js/push.js?v=2610241137"></script>
-    <script src="js/actions.js?v=2610241137"></script>
+    <script src="js/map.js?v=2610241218"></script>
+    <script src="js/push.js?v=2610241218"></script>
+    <script src="js/actions.js?v=2610241218"></script>
 </head>
 <body>
     <div id="wrap" class="map-page" data-sheet-fit="40" data-progress-stage="riding" data-stage="riding">
@@ -71,7 +71,6 @@
             </div>
             <div class="riding-info">
                 <p><span data-trip="dest-name">은평성모병원</span> · <span data-trip="arrive-clock">오후 3:43 도착 예상</span></p>
-                <p>33바 5521 · 흰색 PV5 · 강민준 기사님</p>
             </div>
 
             <p class="boarding-note">
@@ -115,14 +114,12 @@
                 <dl class="riding-rows">
                     <div class="riding-rows__row"><dt>탑승 시각</dt><dd data-trip="board-clock">오후 2:20</dd></div>
                     <div class="riding-rows__row"><dt>도착 예정</dt><dd data-trip="arrive-at">오후 2:34</dd></div>
-                    <div class="riding-rows__row"><dt>이동 거리</dt><dd data-trip="ride-dist">5.2km</dd></div>
+                    <div class="riding-rows__row"><dt>이동 거리</dt><dd data-trip="ride-dist">4.5km</dd></div>
                     <div class="riding-rows__row"><dt>예상 요금</dt><dd data-trip="ride-fare">약 1,500원</dd></div>
                 </dl>
                 <ul class="tag-list" aria-label="함께 전달된 정보" data-ride-tags>
                     <li class="tag" data-trip="riders">본인 + 동승자 1명</li>
-                    <li class="tag">수동 휠체어</li>
-                    <li class="tag tag--primary">UD 가능</li>
-                    <li class="tag">문자·앱 메시지로 연락</li>
+                    <li class="tag tag--warning">탑승 정보 미등록</li>
                 </ul>
             </div>
 

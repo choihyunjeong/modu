@@ -225,7 +225,8 @@ var RideInfo = (function () {
             else if (wc.status === 'model') list.push({ text: wc.model, tone: '' });
             else if (wc.status === 'size') list.push({ text: '폭 ' + wc.w + ' · 길이 ' + wc.l + 'mm', tone: '' });
             else list.push({ text: '규격 미확인', tone: '' });
-            if (wc.status !== 'over' && !data.otherBoarding) list.push({ text: 'UD 가능', tone: 'primary' });
+            // 크기를 알 때만 "UD 가능" (규격 미확인이면 탈 수 있다고 단정하지 않음)
+            if ((wc.status === 'model' || wc.status === 'size') && !data.otherBoarding) list.push({ text: 'UD 가능', tone: 'primary' });
         }
         (data.requests || []).forEach(function (v) { if (REQUEST_SHORT[v]) list.push({ text: REQUEST_SHORT[v], tone: '' }); });
         if (data.requestEtc) list.push({ text: '기타 요청 있음', tone: '' });
@@ -233,8 +234,20 @@ var RideInfo = (function () {
         return list;
     }
 
+    // 저장 완료 화면 "탑승 조건" 한 줄 (휠체어가 아니면 null)
+    function condition() {
+        var data = load();
+        if (!data || WHEELCHAIRS.indexOf(data.device) < 0) return null;
+        var wc = data.wheelchair || {};
+        if (data.otherBoarding) return '다른 탑승 방법은 접수할 때 함께 확인해요';
+        if (wc.status === 'over') return '접수 전에 탈 수 있는 차를 확인해요';
+        if (wc.status === 'model' || wc.status === 'size') return 'UD택시도 탈 수 있어요';
+        return '휠체어 크기는 접수할 때 함께 확인해요';
+    }
+
     return {
         tags: tags,
+        condition: condition,
         load: load,
         save: save,
         fillDevice: fillDevice,

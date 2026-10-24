@@ -198,13 +198,15 @@ var MapKit = (function () {
         view.classList.add('is-kakao');
         tidyCopyright(canvas);
         var overlays = {};
-        mounted.push({ map: map, overlays: overlays });
+        var entry = { map: map, overlays: overlays };
+        mounted.push(entry);
         var pad = view.dataset.fitPad ? Number(view.dataset.fitPad) : null;
 
         // 경로: 먼저 직선으로 그리고, 도로 경로를 받으면 그 길로 바꿈
         if (view.dataset.route) {
             var straight = view.dataset.route.split(',').map(toLatLng).filter(Boolean);
             var routeLine = new kakao.maps.Polyline(Object.assign({ map: map, path: straight }, ROUTE_STYLE));
+            entry.route = { line: routeLine, names: view.dataset.route.split(','), pad: pad };
             fit(map, straight, pad);
             withRoute(function (route) {
                 if (!route) return;
@@ -333,5 +335,21 @@ var MapKit = (function () {
         });
     }
 
-    return { load: load, setPlace: setPlace, relayout: relayout };
+    // 탑승 위치를 바꾼 뒤 경로를 다시 그림 (먼저 직선 → 도로 경로를 받으면 그 길로)
+    function refreshRoute() {
+        mounted.forEach(function (m) {
+            if (!m.route) return;
+            var straight = m.route.names.map(toLatLng).filter(Boolean);
+            m.route.line.setPath(straight);
+            fit(m.map, straight, m.route.pad);
+            withRoute(function (route) {
+                if (!route) return;
+                var road = toPath(route.path);
+                m.route.line.setPath(road);
+                fit(m.map, road, m.route.pad);
+            });
+        });
+    }
+
+    return { load: load, setPlace: setPlace, relayout: relayout, refreshRoute: refreshRoute };
 })();

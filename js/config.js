@@ -12,7 +12,7 @@ window.APP_CONFIG = {
     driver: { name: '강민준 기사님', plate: '33바 5521', car: '흰색 PV5', tel: '050-0000-0000' },
     callCenter: { name: '관제센터', tel: '1588-4388' },
     // 홈 인사·맨 위 동네 (시연용 승객)
-    user: { name: '최현정', area: '은평구 불광동' },
+    user: { name: '최현정', area: '은평구 녹번동' },
     // 보호자는 처음엔 없음 · 홈 "보호자 연결"에서 초대하면 수락 뒤 연결됨 (common.js Guardians)
 
     // 예시 좌표 (실제 서비스에선 검색·호출 데이터로 바뀜)

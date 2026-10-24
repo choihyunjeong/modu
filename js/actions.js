@@ -358,7 +358,7 @@ var Actions = (function () {
                     '<span class="help-119__text">' +
                         '<span class="help-119__title">119 전화 연결</span>' +
                         '<span class="help-119__desc">' + (riding
-                            ? '전화 앱으로 119에 연결돼요 · 위치는 직접 말씀해 주세요 · 통화 여부는 앱에 남지 않아요'
+                            ? '전화 앱으로 119에 연결돼요 · 위치는 직접 말씀해 주세요'
                             : '긴급 상황에서만 · 전화 앱이 열려요') + '</span>' +
                     '</span>' +
                 '</a>' +

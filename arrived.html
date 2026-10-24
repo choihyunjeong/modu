@@ -15,14 +15,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>차량 도착 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241137">
-    <link rel="stylesheet" href="css/progress.css?v=2610241137">
-    <script src="js/common.js?v=2610241137"></script>
-    <script src="js/config.js?v=2610241137"></script>
-    <script src="js/trip.js?v=2610241137"></script>
-    <script src="js/map.js?v=2610241137"></script>
-    <script src="js/push.js?v=2610241137"></script>
-    <script src="js/actions.js?v=2610241137"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241218">
+    <link rel="stylesheet" href="css/progress.css?v=2610241218">
+    <script src="js/common.js?v=2610241218"></script>
+    <script src="js/config.js?v=2610241218"></script>
+    <script src="js/trip.js?v=2610241218"></script>
+    <script src="js/map.js?v=2610241218"></script>
+    <script src="js/push.js?v=2610241218"></script>
+    <script src="js/actions.js?v=2610241218"></script>
 </head>
 <body>
     <div id="wrap" class="map-page" data-sheet-fit data-progress-stage="arrived"
@@ -47,41 +47,59 @@
             </button>
         </div>
 
-        <section class="sheet sheet--assigned">
+        <section class="sheet sheet--assigned sheet--grouped">
             <span class="sheet__grabber" aria-hidden="true"></span>
 
-            <div>
-                <h1 class="assigned-title">차량이 도착했어요</h1>
-                <p class="assigned-desc">선택한 탑승 위치에 차가 섰어요</p>
-            </div>
-
-            <p class="pickup-row">
-                <img class="pin-pickup-icon" src="image/pin-pickup.svg" alt="">
-                <span class="pickup-row__label">탑승 위치</span>
-                <span class="pickup-row__place" data-trip="pickup-spot">정문 · 경사로 쪽</span>
-            </p>
-
-            <p class="boarding-note">
-                <span class="icon icon--sm icon--information" aria-hidden="true"></span>
-                기사님이 내려 탑승을 도와드려요.
-            </p>
-
-            <div class="card driver-card">
-                <img class="driver-card__photo" src="image/driver.png" alt="">
-                <div class="driver-card__text">
-                    <p class="driver-card__plate">33바 5521</p>
-                    <p class="driver-card__info">강민준 기사님 · 흰색 PV5</p>
+            <!-- 요약 · 위치 · 인원 (차량 배정 화면과 같은 구성 · 내용만 도착 상태) -->
+            <div class="assigned-group assigned-group--summary">
+                <div class="assigned-head">
+                    <div class="assigned-head__text">
+                        <h1 class="assigned-title">차량이 도착했어요</h1>
+                        <p class="assigned-desc">선택한 탑승 위치에 차가 섰어요</p>
+                    </div>
+                    <!-- 더보기: 보호자 공유 · 접수 취소 -->
+                    <button type="button" class="btn-icon-round" aria-label="더보기" aria-haspopup="dialog" data-action="more">
+                        <span class="icon icon--more" aria-hidden="true"></span>
+                    </button>
                 </div>
-                <img class="driver-card__car" src="image/pv5-side.png" alt="">
+
+                <div class="info-rows">
+                    <p class="pickup-row">
+                        <span class="pickup-row__label">
+                            <span class="icon icon--sm icon--location" aria-hidden="true"></span>
+                            탑승 위치
+                        </span>
+                        <span class="pickup-row__place" data-trip="pickup-spot">정문 · 경사로 쪽</span>
+                    </p>
+                    <p class="pickup-row">
+                        <span class="pickup-row__label">
+                            <span class="icon icon--sm icon--user-multiple" aria-hidden="true"></span>
+                            탑승 인원
+                        </span>
+                        <span class="pickup-row__place" data-trip="riders">본인 + 동승자 1명</span>
+                    </p>
+                </div>
             </div>
 
-            <p class="riders-row">
-                <span class="riders-row__label">탑승 인원</span>
-                <span class="riders-row__value" data-trip="riders">본인 + 동승자 1명</span>
-            </p>
+            <!-- 안내 · 기사 -->
+            <div class="assigned-group">
+                <p class="boarding-note">
+                    <span class="icon icon--sm icon--information" aria-hidden="true"></span>
+                    기사님이 내려 탑승을 도와드려요.
+                </p>
 
-            <div class="contact-block">
-                <h2 class="contact-block__title">기사님께 연락</h2>
+                <div class="driver-card">
+                    <img class="driver-card__photo" src="image/driver.png" alt="">
+                    <div class="driver-card__text">
+                        <p class="driver-card__plate">33바 5521</p>
+                        <p class="driver-card__info">강민준 기사님 · 흰색 PV5</p>
+                    </div>
+                    <img class="driver-card__car" src="image/pv5-side.png" alt="">
+                </div>
+            </div>
+
+            <!-- 연락 · 자주 쓰는 말 · 도움 -->
+            <div class="assigned-group assigned-group--contact">
                 <div class="btn-line-row">
                     <a href="chat.html?stage=arrived" class="btn-line">
                         <span class="icon icon--chat" aria-hidden="true"></span>
@@ -106,19 +124,12 @@
                         <span class="icon icon--sm icon--send" aria-hidden="true"></span>
                     </button>
                 </div>
-            </div>
-
-            <hr class="divider-line">
-
-            <div class="btn-line-row">
-                <button type="button" class="btn-line" aria-haspopup="dialog" data-action="help">
-                    <span class="icon icon--sm icon--hand" aria-hidden="true"></span>
-                    도움 요청
-                </button>
-                <button type="button" class="btn-line btn-line--more" aria-haspopup="dialog" data-action="more">
-                    <span class="icon icon--more" aria-hidden="true"></span>
-                    더보기
-                </button>
+                <div class="help-row">
+                    <button type="button" class="btn-help" aria-haspopup="dialog" data-action="help">
+                        <span class="icon icon--sm icon--help" aria-hidden="true"></span>
+                        도움이 필요해요
+                    </button>
+                </div>
             </div>
         </section>
     </div>

@@ -15,16 +15,16 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>차량 찾는 중 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241137">
-    <link rel="stylesheet" href="css/progress.css?v=2610241137">
-    <script src="js/common.js?v=2610241137"></script>
-    <script src="js/config.js?v=2610241137"></script>
-    <script src="js/trip.js?v=2610241137"></script>
-    <script src="js/map.js?v=2610241137"></script>
-    <script src="js/push.js?v=2610241137"></script>
-    <script src="js/actions.js?v=2610241137"></script>
-    <script src="js/stats.js?v=2610241137"></script>
-    <script src="js/ride-info.js?v=2610241137"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241218">
+    <link rel="stylesheet" href="css/progress.css?v=2610241218">
+    <script src="js/common.js?v=2610241218"></script>
+    <script src="js/config.js?v=2610241218"></script>
+    <script src="js/trip.js?v=2610241218"></script>
+    <script src="js/map.js?v=2610241218"></script>
+    <script src="js/push.js?v=2610241218"></script>
+    <script src="js/actions.js?v=2610241218"></script>
+    <script src="js/stats.js?v=2610241218"></script>
+    <script src="js/ride-info.js?v=2610241218"></script>
 </head>
 <body>
     <div id="wrap" class="map-page" data-sheet-fit data-progress-stage="waiting" data-cancel-stage="before">
@@ -72,19 +72,8 @@
                 <div class="wait-card">
                     <div class="wait-card__head">
                         <p class="wait-card__label">승차까지 예상</p>
-                        <span class="live-badge">
-                            <img src="image/live-dot.svg" alt="">
-                            실시간
-                        </span>
                     </div>
-                    <p class="wait-card__minutes">약 <span data-stat="avg">32</span>분</p>
-                    <div class="wait-card__foot">
-                        <span class="wait-card__nearby">주변 대기 3명</span>
-                        <button type="button" class="wait-card__more" data-open-wait aria-haspopup="dialog">
-                            대기 현황 보기
-                            <span class="icon icon--xs icon--chevron-right" aria-hidden="true"></span>
-                        </button>
-                    </div>
+                    <p class="wait-card__minutes">약 <span data-stat="nowWait">27</span>분</p>
                 </div>
             </div>
 
@@ -106,9 +95,7 @@
 
                 <ul class="tag-list" aria-label="함께 전달된 정보" data-ride-tags>
                     <li class="tag" data-trip="riders">본인 + 동승자 1명</li>
-                    <li class="tag">수동 휠체어</li>
-                    <li class="tag tag--primary">UD 가능</li>
-                    <li class="tag">문자·앱 메시지로 연락</li>
+                    <li class="tag tag--warning">탑승 정보 미등록</li>
                 </ul>
             </div>
 
@@ -127,41 +114,11 @@
         </section>
     </div>
 
-    <!-- E4a 대기 현황 상세 시트 (스크림 위로 열림) -->
-    <div class="modal-sheet modal-sheet--wait" id="wait-sheet" role="dialog" aria-modal="true" aria-labelledby="wait-title" hidden>
-        <div class="modal-sheet__panel modal-sheet__panel--wait">
-            <span class="sheet__grabber" aria-hidden="true"></span>
-            <div class="wait-detail">
-                <h2 class="modal-sheet__title" id="wait-title">현재 대기 현황</h2>
-                <div class="wait-detail__main">
-                    <p class="wait-detail__label">승차까지 예상</p>
-                    <p class="wait-detail__minutes">약 <span data-stat="avg">32</span>분</p>
-                    <p class="wait-detail__note"><span data-stat="basis">은평구 · 2026년 1월 같은 요일 평균</span>이에요. 같은 요일엔 보통 <span data-stat="range">30~36</span>분 기다렸어요.</p>
-                </div>
-            </div>
-            <div class="wait-detail wait-detail--status">
-                <dl class="card wait-rows">
-                    <div class="wait-rows__row">
-                        <dt class="wait-rows__label"><span>주변 대기</span><span>출발지가 있는 자치구 접수</span></dt>
-                        <dd class="wait-rows__value">3명</dd>
-                    </div>
-                    <div class="wait-rows__row">
-                        <dt class="wait-rows__label"><span>전체 대기</span><span>서울 전체 접수</span></dt>
-                        <dd class="wait-rows__value">12명</dd>
-                    </div>
-                </dl>
-                <p class="wait-detail__basis">오후 2:34 기준</p>
-                <p class="wait-detail__note">차량 운행·접수 상황에 따라 달라질 수 있어요.</p>
-            </div>
-            <button type="button" class="btn btn--close" data-close-wait>닫기</button>
-        </div>
-    </div>
-
     <script>
         // 함께 전달된 정보: 접수할 때 담은 탑승 정보 (없으면 지금 저장된 탑승 정보 · 그것도 없으면 디자인 예시 그대로)
         (function () {
             var tags = Trip.get().ride || RideInfo.tags();
-            if (!tags) return;
+            if (!tags) return;   // 등록 안 했으면 "탑승 정보 미등록" 그대로
             var box = document.querySelector('[data-ride-tags]');
             var riders = box.querySelector('[data-trip="riders"]');
             box.innerHTML = '';
@@ -173,25 +130,6 @@
                 box.appendChild(li);
             });
         })();
-
-        // 대기 현황 시트 열기/닫기 (#detail로 들어오면 바로 열림 · N3 알림에서)
-        var sheet = document.getElementById('wait-sheet');
-        var opener = document.querySelector('[data-open-wait]');
-        function openSheet() {
-            sheet.hidden = false;
-            document.body.classList.add('is-modal-open');
-            sheet.querySelector('[data-close-wait]').focus();
-        }
-        function closeSheet() {
-            sheet.hidden = true;
-            document.body.classList.remove('is-modal-open');
-            opener.focus();
-        }
-        opener.addEventListener('click', openSheet);
-        sheet.querySelector('[data-close-wait]').addEventListener('click', closeSheet);
-        sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
-        if (location.hash === '#detail') openSheet();
     </script>
 </body>
 </html>

@@ -15,9 +15,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>예약 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241137">
-    <link rel="stylesheet" href="css/tabs.css?v=2610241137">
-    <script src="js/common.js?v=2610241137"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241218">
+    <link rel="stylesheet" href="css/tabs.css?v=2610241218">
+    <script src="js/common.js?v=2610241218"></script>
 </head>
 <body>
     <!-- 예약탭_v12 (하단 "예약" · 전일접수 / 정기접수) -->
@@ -39,7 +39,7 @@
 
                 <div class="date-line">
                     <p class="date-line__date" data-tomorrow>내일</p>
-                    <p class="date-line__note">평일 시간대별 100명 선착순</p>
+                    <p class="date-line__note" data-slot-note>평일 시간대별 100명 선착순</p>
                 </div>
 
                 <ul class="slot-list" data-slots></ul>
@@ -113,6 +113,10 @@
         var dateKey = tomorrow.getFullYear() + '-' + (tomorrow.getMonth() + 1) + '-' + tomorrow.getDate();
         var dateText = (tomorrow.getMonth() + 1) + '월 ' + tomorrow.getDate() + '일 (' + DAYS[tomorrow.getDay()] + ')';
         document.querySelector('[data-tomorrow]').textContent = '내일 · ' + dateText;
+        // 주말엔 평일 정원 안내 대신
+        if (tomorrow.getDay() === 0 || tomorrow.getDay() === 6) {
+            document.querySelector('[data-slot-note]').textContent = '주말 · 시간대별 선착순';
+        }
 
         // 배차 시각 · opensAt: 오늘 이 시각부터 신청할 수 있음
         var SLOTS = [

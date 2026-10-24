@@ -15,11 +15,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>탑승 정보 저장 완료 | 모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241137">
-    <link rel="stylesheet" href="css/ride-info.css?v=2610241137">
-    <script src="js/common.js?v=2610241137"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241218">
+    <link rel="stylesheet" href="css/ride-info.css?v=2610241218">
+    <script src="js/common.js?v=2610241218"></script>
     <!-- 여기 닿아야 등록한 탑승 정보가 진짜로 저장됨 -->
-    <script src="js/ride-info.js?v=2610241137"></script>
+    <script src="js/ride-info.js?v=2610241218"></script>
 </head>
 <body>
     <div id="wrap">
@@ -44,15 +44,19 @@
             <dl class="card info-list">
                 <div class="info-list__row">
                     <dt>탑승 방식</dt>
-                    <dd>수동 휠체어에 앉은 채 · 폭 65cm</dd>
+                    <dd data-done="device">등록하지 않았어요</dd>
+                </div>
+                <div class="info-list__row" data-done-row="requests" hidden>
+                    <dt>미리 전할 요청</dt>
+                    <dd data-done="requests"></dd>
                 </div>
                 <div class="info-list__row">
                     <dt>연락</dt>
-                    <dd>문자·앱 메시지 · 전화 통화 어려움</dd>
+                    <dd data-done="contact">정하지 않았어요</dd>
                 </div>
-                <div class="info-list__row">
+                <div class="info-list__row" data-done-row="condition" hidden>
                     <dt>탑승 조건</dt>
-                    <dd>UD택시도 탈 수 있어요</dd>
+                    <dd data-done="condition"></dd>
                 </div>
             </dl>
 
@@ -71,5 +75,22 @@
             <a href="index.html" class="btn btn--primary">홈으로</a>
         </div>
     </div>
+    <script>
+        // 방금 저장한 탑승 정보를 그대로 보여 줌
+        (function () {
+            var ride = RideInfo.describe() || {};
+            var condition = RideInfo.condition();
+            function put(key, text) {
+                var el = document.querySelector('[data-done="' + key + '"]');
+                if (text) el.textContent = text;
+                var row = document.querySelector('[data-done-row="' + key + '"]');
+                if (row) row.hidden = !text;
+            }
+            put('device', ride.device);
+            put('requests', ride.requests && ride.requests.replace(/^미리 전할 요청 · /, ''));
+            put('contact', ride.contact);
+            put('condition', condition);
+        })();
+    </script>
 </body>
 </html>

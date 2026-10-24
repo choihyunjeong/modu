@@ -23,7 +23,7 @@
     document.querySelector('[data-pick-title]').textContent = m.title;
     document.querySelector('[data-pin-label]').textContent = m.pin;
     okBtn.textContent = m.ok;
-    if (mode === 'pickup') document.querySelector('.pick__back').href = 'pickup.html';
+    if (mode === 'pickup') document.querySelector('.pick__back').href = 'confirm.html';
     if (mode === 'fav') document.querySelector('.pick__back').href = 'fav-add.html' + (edit ? '?edit=' + edit : '');
 
     // 카드 높이만큼 내 위치 버튼을 위로

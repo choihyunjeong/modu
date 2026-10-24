@@ -15,9 +15,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="모두의 이동">
     <title>모두의 이동</title>
-    <link rel="stylesheet" href="css/common.css?v=2610241137">
-    <link rel="stylesheet" href="css/home.css?v=2610241137">
-    <script src="js/common.js?v=2610241137"></script>
+    <link rel="stylesheet" href="css/common.css?v=2610241218">
+    <link rel="stylesheet" href="css/home.css?v=2610241218">
+    <script src="js/common.js?v=2610241218"></script>
     <script>
         // 앱을 처음 열 때(바깥에서 들어올 때)는 스플래시부터 · 앱 안에서 홈으로 돌아올 땐 바로 홈
         try {
@@ -25,14 +25,14 @@
             if (!sessionStorage.getItem('splashShown') && !fromInside) location.replace('splash.html');
         } catch (e) {}
     </script>
-    <script src="js/config.js?v=2610241137"></script>
-    <script src="js/ride-info.js?v=2610241137"></script>
-    <script src="js/stats.js?v=2610241137"></script>
-    <script src="js/reader.js?v=2610241137"></script>
-    <script src="js/trip.js?v=2610241137"></script>
-    <script src="js/actions.js?v=2610241137"></script>
-    <script src="js/push.js?v=2610241137"></script>
-    <script src="js/notices.js?v=2610241137"></script>
+    <script src="js/config.js?v=2610241218"></script>
+    <script src="js/ride-info.js?v=2610241218"></script>
+    <script src="js/stats.js?v=2610241218"></script>
+    <script src="js/reader.js?v=2610241218"></script>
+    <script src="js/trip.js?v=2610241218"></script>
+    <script src="js/actions.js?v=2610241218"></script>
+    <script src="js/push.js?v=2610241218"></script>
+    <script src="js/notices.js?v=2610241218"></script>
 </head>
 <body>
     <div id="wrap">
@@ -44,7 +44,7 @@
                     <p class="home-top__place">
                         <span class="icon icon--location-filled" aria-hidden="true"></span>
                         <span class="blind">지금 위치</span>
-                        <span data-home-area>은평구 불광동</span>
+                        <span data-home-area>은평구 녹번동</span>
                     </p>
                     <span class="home-top__actions">
                     <button type="button" class="btn-circle btn-circle--text" aria-label="글자 크기·화면 색 바꾸기" aria-haspopup="dialog" aria-controls="font-size-sheet" data-open-font-size>가</button>
@@ -125,7 +125,7 @@
                 </div>
                 <button type="button" class="wait-card__more" aria-haspopup="dialog" data-open-basis>
                     <span class="wait-card__cars" data-read><span data-home-cars-label>내 휠체어로 탈 수 있는 차</span> <b>5대</b></span>
-                    <span class="wait-card__link">자세히 보기</span>
+                    <span class="wait-card__link">계산 기준</span>
                     <span class="icon icon--sm icon--chevron-right" aria-hidden="true"></span>
                 </button>
             </section>
@@ -168,10 +168,6 @@
             <section class="section" data-read-part="콜센터 연결">
                 <h2 class="section__title" data-read>콜센터 연결</h2>
                 <div class="center-btns">
-                    <a href="tel:15884388" class="center-btn" data-center-tel>
-                        <img src="image/call-phone.png" alt="">
-                        전화로 접수
-                    </a>
                     <a href="sms:15884388" class="center-btn" data-center-sms>
                         <img src="image/call-sms.png" alt="">
                         문자로 접수
@@ -271,8 +267,8 @@
                 <p class="modal-sheet__desc">실제 기다리는 시간은 그날 차량·접수 상황에 따라 달라질 수 있어요.</p>
             </div>
             <ul class="basis-sheet__list">
-                <li><b>자료</b> 서울시설공단 장애인콜택시 일별 이용현황 · 2026년 1월 · 은평구</li>
-                <li><b>계산</b> 1월 중 오늘과 같은 요일(<span data-stat="day">목요일</span>)의 하루 평균 대기시간을 다시 평균 냈어요 · 공휴일은 뺐어요</li>
+                <li><b>자료</b> 서울시설공단 장애인콜택시 일별 이용현황 · 2026년 10월 · 은평구</li>
+                <li><b>계산</b> 10월 중 오늘과 같은 요일(<span data-stat="day">목요일</span>)의 하루 평균 대기시간을 다시 평균 냈어요 · 공휴일은 뺐어요</li>
                 <li><b>같은 요일 범위</b> 가장 짧은 날 ~ 긴 날 <span data-stat="range">30~36</span>분</li>
             </ul>
             <button type="button" class="btn btn--primary" data-close-basis>확인</button>
@@ -304,7 +300,7 @@
                 </div>
                 <div class="font-preview" data-font-size-preview data-size="normal">
                     <p class="font-preview__label">미리보기</p>
-                    <p class="font-preview__title">승차까지 평균 <span data-stat="avg">32</span>분</p>
+                    <p class="font-preview__title">승차까지 약 <span data-stat="nowWait">27</span>분</p>
                     <p class="font-preview__desc">주변 배차 가능 차량 5대</p>
                 </div>
                 <!-- 화면 색 (누르면 바로 바뀜 · 자동은 휴대폰 다크모드를 따름) -->
@@ -444,7 +440,7 @@
             var pickup = '탑승 위치 · ' + (trip.pickupSpot || '정문 · 경사로 쪽');
             var dest = (trip.destination && trip.destination.name) || '은평성모병원';
             var desc = trip.stage === 'waiting'
-                ? '승차까지 예상 약 ' + WaitStats.forDay().avg + '분 · 접수번호 1125'
+                ? '승차까지 예상 약 ' + WaitStats.nowWait() + '분 · 접수번호 1125'
                 : trip.stage === 'riding' ? dest + '(으)로 가고 있어요' : s.desc + '\n' + pickup;
             document.querySelectorAll('[data-now]').forEach(function (el) { el.hidden = true; });
             box.hidden = false;
