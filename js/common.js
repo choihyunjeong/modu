@@ -188,7 +188,11 @@ var SheetDrag = (function () {
                 base = map.offsetHeight;
                 sheetBase = sheet.offsetHeight;
             }
-            return { min: MAP_MIN, base: base, max: Math.max(base, wrap.clientHeight - PEEK) };
+            // 가장 높이 올린 자리: 시트 내용이 다 보이는 데까지 (더 올려도 빈칸만 생기니 막음 · 내용이 길면 지도 96px까지)
+            var need = sheet.offsetHeight - scroller.clientHeight + scroller.scrollHeight;
+            var room = wrap.clientHeight - (action ? action.offsetHeight : 0) + OVERLAP;
+            var top = Math.min(base, Math.max(MAP_MIN, room - need));
+            return { min: top, base: base, max: Math.max(base, wrap.clientHeight - PEEK) };
         }
 
         function setHeight(h, animate) {
@@ -200,7 +204,7 @@ var SheetDrag = (function () {
             var room = wrap.clientHeight - h - (action ? action.offsetHeight : 0) + OVERLAP;
             sheet.style.flex = 'none';
             sheet.style.height = Math.max(sheetBase, room) + 'px';
-            sheet.dataset.state = h <= MAP_MIN + 1 ? 'expanded' : (h >= l.max - 1 ? 'collapsed' : 'default');
+            sheet.dataset.state = h <= l.min + 1 ? 'expanded' : (h >= l.max - 1 ? 'collapsed' : 'default');
             handle.setAttribute('aria-expanded', sheet.dataset.state !== 'collapsed');
             if (animate) setTimeout(relayoutMaps, 260);
             else relayoutMaps();
@@ -269,7 +273,7 @@ var SheetDrag = (function () {
         //  아래로: 안이 맨 위일 때는 시트가 내려가고, 스크롤된 상태면 먼저 안이 위로 스크롤됨
         var lastDy = 0;
         contentDrag(scroller, function (dy) {
-            if (dy < 0) return map.offsetHeight > MAP_MIN + 1;
+            if (dy < 0) return map.offsetHeight > limits().min + 1;
             return scroller.scrollTop <= 0;
         }, function () {
             startHeight = map.offsetHeight;
