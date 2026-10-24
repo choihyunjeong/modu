@@ -20,7 +20,9 @@ self.addEventListener('fetch', function (e) {
     var req = e.request;
     // 이 사이트의 GET 요청만 (카카오 지도·길찾기 등 바깥 요청은 그대로)
     if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
-    e.respondWith(fetch(req).then(function (res) {
+    // 화면(HTML)은 브라우저가 잠시 저장해 둔 옛 화면을 쓰지 않고 늘 새로 확인 (고친 화면이 바로 보이게)
+    var fresh = req.mode === 'navigate' ? fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(req);
+    e.respondWith(fresh.then(function (res) {
         if (res.ok) {
             var copy = res.clone();
             caches.open(CACHE).then(function (c) { c.put(req, copy); });
