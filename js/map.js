@@ -225,8 +225,8 @@ var MapKit = (function () {
             var overlay = new kakao.maps.CustomOverlay({
                 map: map, position: position, content: el,
                 yAnchor: el.classList.contains('map-pin') ? 1 : 0.5,
-                // 퍼지는 원은 핀·차 아래에 깔림
-                zIndex: el.classList.contains('map-pulse') ? 0 : 1
+                // 퍼지는 원은 맨 아래 · 내 위치 점은 핀 말풍선보다 위 (탑승 위치가 바로 옆이어도 보이게)
+                zIndex: el.classList.contains('map-pulse') ? 0 : (el.classList.contains('map-me') ? 2 : 1)
             });
             (overlays[el.dataset.place] = overlays[el.dataset.place] || []).push(overlay);
 

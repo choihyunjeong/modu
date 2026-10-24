@@ -48,14 +48,15 @@
         noteEl.hidden = true;
     }
 
-    // 가까운 도로 (OSRM nearest · 이름 있는 도로 우선)
-    //  아파트 단지 안 길은 이름이 없어서, 후보를 넉넉히(30개) 받아 250m 안의 이름 있는 도로(바깥 큰길)를 고름
+    // 가까운 도로 (OSRM nearest · 차가 다닐 수 있는 가장 가까운 길)
+    //  아파트 단지 앞·안 길처럼 이름 없는 도로도 그대로 씀 (큰길로 멀리 옮기지 않음)
     function nearestRoad(lat, lng, cb) {
         fetch('https://router.project-osrm.org/nearest/v1/driving/' + lng + ',' + lat + '?number=30')
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 var list = (data.waypoints || []).filter(function (w) { return w.distance < 250; });
-                var best = list.filter(function (w) { return w.name; })[0] || list[0];
+                // 가까운 순으로 오니 첫 번째 (250m 안)
+                var best = list[0];
                 cb(best ? { lat: best.location[1], lng: best.location[0], road: best.name || '', moved: best.distance } : null);
             })
             .catch(function () { cb(null); });
@@ -84,10 +85,11 @@
             nameEl.textContent = name;
             addrEl.textContent = picked.addr;
             // 단지·건물 안에서 도로로 옮겼을 때 안내
-            noteEl.hidden = !(moved > 8 && road);
+            noteEl.hidden = !(moved > 8);
+            var roadName = road ? '도로(' + road + ')' : '도로';
             noteEl.textContent = mode === 'pickup'
-                ? '차가 설 수 있게 가까운 도로(' + road + ')로 핀을 옮겼어요'
-                : '차가 들어갈 수 있게 가까운 도로(' + road + ')로 핀을 옮겼어요';
+                ? '차가 설 수 있게 가까운 ' + roadName + '로 핀을 옮겼어요'
+                : '차가 들어갈 수 있게 가까운 ' + roadName + '로 핀을 옮겼어요';
             okBtn.disabled = false;
         });
     }
