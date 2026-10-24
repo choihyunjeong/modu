@@ -100,6 +100,16 @@
         var snapping = false;
         wrap.pickMap = map;    // 점검용 (지도 가운데 확인)
 
+        // 내 위치 표시 (다른 지도와 같은 파란 점 · 가운데 핀 아래에 깔림)
+        var meEl = document.createElement('div');
+        meEl.className = 'map-me';
+        meEl.setAttribute('aria-hidden', 'true');
+        meEl.innerHTML = '<img src="image/map-heading.svg" alt="">';
+        var meMark = new kakao.maps.CustomOverlay({
+            map: map, content: meEl, zIndex: 0,
+            position: new kakao.maps.LatLng(places.me.lat, places.me.lng)
+        });
+
         function settle() {
             if (snapping) { snapping = false; return; }
             var c = map.getCenter();
@@ -124,7 +134,9 @@
         document.querySelector('[data-pick-locate]').addEventListener('click', function () {
             if (!navigator.geolocation) return map.panTo(new kakao.maps.LatLng(places.me.lat, places.me.lng));
             navigator.geolocation.getCurrentPosition(function (p) {
-                map.panTo(new kakao.maps.LatLng(p.coords.latitude, p.coords.longitude));
+                var here = new kakao.maps.LatLng(p.coords.latitude, p.coords.longitude);
+                meMark.setPosition(here);
+                map.panTo(here);
             }, function () {
                 Toast.show('내 위치를 찾지 못했어요. 위치 권한을 확인해 주세요');
                 map.panTo(new kakao.maps.LatLng(places.me.lat, places.me.lng));
